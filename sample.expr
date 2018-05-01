@@ -1,0 +1,10 @@
+# サンプル
+
+{
+  var_a <- 1 + 3;  # comment test
+  var_a <- var_a + 2;
+  var_b <- 'b';
+  var_c <- -1;
+  var_d <- -var_c;
+}
+
