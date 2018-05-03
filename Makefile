@@ -1,7 +1,7 @@
 CXX := g++
 # -fexceptions を付けないとbisonが生成したファイルをビルドできない
 CXXFLAGS := `llvm-config --cxxflags` -fexceptions
-LDLIBS := `llvm-config --ldflags --libs core` -lfl -ly
+LDLIBS := `llvm-config --ldflags --system-libs --libs core` -lfl -ly
 
 DEST := exprc
 SRC  := main.cpp Ast.cpp IRGenerator.cpp

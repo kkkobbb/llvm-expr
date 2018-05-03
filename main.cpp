@@ -3,6 +3,8 @@
  */
 #include <fstream>
 
+#include <llvm/Support/CommandLine.h>
+
 #include "Lexer.h"
 #include "Parser.hh"
 
@@ -15,6 +17,10 @@ using namespace expr;
 
 int main(int argc, char *argv[])
 {
+	llvm::cl::ParseCommandLineOptions(argc, argv);
+
+
+
 	ifstream fin;
 	fin.open("sample.expr", ios::binary);
 	Lexer lexer(&fin);
