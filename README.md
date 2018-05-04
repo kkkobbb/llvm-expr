@@ -1,6 +1,7 @@
 # expr
 簡易言語
 
+* コンパイラ名 `exprc`
 * LLVM 確認用
 * c++でのflex bison 確認用
 
