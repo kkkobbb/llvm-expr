@@ -27,6 +27,10 @@
 * `llvm-config --system-libs`の-lzには、zlibの開発版が必要となる
   (インストールは `sudo apt intall zlib1g-dev`)
 
+* `opt<>`のcl::init()での指定がない場合の初期値
+    * `opt<string>` `""`
+    * `opt<bool>` `false`
+
 * clangでも使っている？
     * `llvm::cl::ParseCommandLineOptions()`を使っているコードもある
       (e.g. `clang/tools/driver/cc1as_main.cpp`)
