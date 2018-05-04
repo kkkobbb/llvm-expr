@@ -8,6 +8,7 @@
 ## 準備
 * Ubuntu 16.04
 * `sudo apt install llvm`
+* `sudo apt intall zlib1g-dev` (ビルドオプションで`-lz`が指定されるため)
 
 
 ## 文法
