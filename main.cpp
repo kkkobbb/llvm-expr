@@ -1,5 +1,5 @@
 /*
- * flex c++
+ * LLVM確認用言語 Expr コンパイラ
  */
 #include <fstream>
 
@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 			llvm::cl::value_desc("filename"));
 	llvm::cl::opt<bool> Force("f",
 			llvm::cl::desc("Enable binary output on terminals"));
-	llvm::cl::ParseCommandLineOptions(argc, argv);
+	llvm::cl::ParseCommandLineOptions(argc, argv, "tiny LLVM compiler\n");
 
 	ifstream fin;
 	fin.open(InputFilename, ios::binary);
