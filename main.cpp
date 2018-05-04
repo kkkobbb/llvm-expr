@@ -17,12 +17,22 @@ using namespace expr;
 
 int main(int argc, char *argv[])
 {
+	llvm::cl::opt<string> InputFilename(llvm::cl::Positional,
+			llvm::cl::desc("<input file>"),
+			llvm::cl::Required);
+	llvm::cl::opt<string> OutputFilename("o",
+			llvm::cl::desc("specify output filename"),
+			llvm::cl::value_desc("filename"));
+	llvm::cl::opt<bool> Force("f",
+			llvm::cl::desc("Enable binary output on terminals"));
 	llvm::cl::ParseCommandLineOptions(argc, argv);
 
-
-
 	ifstream fin;
-	fin.open("sample.expr", ios::binary);
+	fin.open(InputFilename, ios::binary);
+	if (!fin) {
+		cerr << "Error: open \"" << InputFilename << "\"" << endl;
+		return 1;
+	}
 	Lexer lexer(&fin);
 
 	Parser parser(lexer);
