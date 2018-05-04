@@ -17,8 +17,8 @@ using namespace expr;
 
 int main(int argc, char *argv[])
 {
-	llvm::cl::OptionCategory CompilerCategory(
-			"Compiler Options");
+	// コマンドライン引数の設定
+	llvm::cl::OptionCategory CompilerCategory("Compiler Options");
 	llvm::cl::opt<string> InputFilename(llvm::cl::Positional,
 			llvm::cl::desc("<input file>"),
 			llvm::cl::Required,
@@ -30,8 +30,8 @@ int main(int argc, char *argv[])
 	llvm::cl::opt<bool> Force("f",
 			llvm::cl::desc("Enable binary output on terminals"),
 			llvm::cl::cat(CompilerCategory));
-	// CompilerCategory以外は非表示にする
-	llvm::cl::HideUnrelatedOptions(CompilerCategory);
+	// CompilerCategory以外は非表示
+	llvm::cl::HideUnrelatedOptions({&CompilerCategory});
 	llvm::cl::ParseCommandLineOptions(argc, argv, "tiny LLVM compiler\n");
 
 	ifstream fin;
