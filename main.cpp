@@ -1,7 +1,9 @@
 /*
- * flex c++
+ * LLVM確認用言語 Expr コンパイラ
  */
 #include <fstream>
+
+#include <llvm/Support/CommandLine.h>
 
 #include "Lexer.h"
 #include "Parser.hh"
@@ -15,8 +17,30 @@ using namespace expr;
 
 int main(int argc, char *argv[])
 {
+	// コマンドライン引数の設定
+	llvm::cl::OptionCategory CompilerCategory("Compiler Options");
+	llvm::cl::opt<string> InputFilename(llvm::cl::Positional,
+			llvm::cl::desc("<input file>"),
+			llvm::cl::Required,
+			llvm::cl::cat(CompilerCategory));
+	llvm::cl::opt<string> OutputFilename("o",
+			llvm::cl::desc("specify output filename"),
+			llvm::cl::value_desc("filename"),
+			llvm::cl::init("a.out"),
+			llvm::cl::cat(CompilerCategory));
+	llvm::cl::opt<bool> Force("f",
+			llvm::cl::desc("Enable binary output on terminals"),
+			llvm::cl::cat(CompilerCategory));
+	// CompilerCategory以外は非表示
+	llvm::cl::HideUnrelatedOptions({&CompilerCategory});
+	llvm::cl::ParseCommandLineOptions(argc, argv, "tiny LLVM compiler\n");
+
 	ifstream fin;
-	fin.open("sample.expr", ios::binary);
+	fin.open(InputFilename, ios::binary);
+	if (!fin) {
+		cerr << "Error: open \"" << InputFilename << "\"" << endl;
+		return 1;
+	}
 	Lexer lexer(&fin);
 
 	Parser parser(lexer);

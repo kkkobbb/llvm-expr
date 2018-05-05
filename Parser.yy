@@ -319,6 +319,6 @@ identifier
 void Parser::error(const location_type& l, const std::string& msg)
 {
 	add_err();
-	std::cerr << "error (" << l.end.line << "): " << msg << std::endl;
+	std::cerr << "Error (" << l.end.line << "): " << msg << std::endl;
 }
 
