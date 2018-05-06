@@ -1,7 +1,7 @@
 CXX := g++
-LLVM-CONFIG := llvm-config-5.0
+LLVM-CONFIG := llvm-config
 CXXFLAGS := `$(LLVM-CONFIG) --cxxflags`
-LDLIBS := `$(LLVM-CONFIG) --ldflags --system-libs --libs core` -lfl -ly
+LDLIBS := `$(LLVM-CONFIG) --ldflags --system-libs --libs core` -ly
 
 DEST := exprc
 SRC  := main.cpp Ast.cpp IRGenerator.cpp
@@ -38,5 +38,6 @@ clean:
 
 
 .PHONY: all clean
+.PRECIOUS: %.cc %.hh
 
 
