@@ -29,6 +29,8 @@ bool AstGenerator::genarate(ifstream &fin)
 
 	parser.parse();
 
+	// 構文解析でエラーが発生した場合、終了
+	// エラーメッセージは構文解析時に出力される
 	if (is_parse_err())
 		return false;
 

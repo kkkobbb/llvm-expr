@@ -42,13 +42,16 @@ int main(int argc, char *argv[])
 	}
 
 	AstGenerator astGen;
-	// 構文木生成でエラーが発生した場合、終了
-	// エラーメッセージは構文木生成時に出力される
 	if (!astGen.genarate(fin))
 		return 1;
 
-	unique_ptr<AstNode> root(astGen.get());
-	root->print_debug(cout);  // 各ノードの表示
+	IRGenerator irGen;
+	if(!irGen.genarate(astGen.get()))
+		return 1;
+
+	// TODO Module受け取り
+
+	// TODO 目的ファイル生成
 
 	return 0;
 }

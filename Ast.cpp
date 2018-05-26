@@ -10,9 +10,6 @@ using namespace std;
 using namespace expr;
 
 
-static std::unique_ptr<AstNode> ast_root;
-
-
 
 void AstList::print_debug(ostream &dout, int indent)
 {
@@ -102,28 +99,5 @@ void AstIdentifier::print_debug(ostream &dout, int indent)
 {
 	AstNode::print_debug(dout, indent);
 	dout << "\"" << *name << "\"" << endl;
-}
-
-
-
-
-// global関数
-
-/*
- * 構文木のルートを設定する
- *
- * 構文解析時に1度だけ使用する
- */
-void expr::set_ast(AstNode *root)
-{
-	ast_root.reset(root);
-}
-
-/*
- * 構文木のルートを取得する
- */
-std::unique_ptr<AstNode> expr::get_ast()
-{
-	return std::move(ast_root);
 }
 

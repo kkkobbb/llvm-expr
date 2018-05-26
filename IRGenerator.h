@@ -16,7 +16,7 @@ namespace expr {
 		std::unique_ptr<llvm::Module> module;
 
 		public:
-		bool genarate(std::unique_ptr<AstUnit> ast_root);
+		bool genarate(std::unique_ptr<AstNode> ast_root);
 		std::unique_ptr<llvm::Module> get();
 	};
 }

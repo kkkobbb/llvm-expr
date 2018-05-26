@@ -21,11 +21,14 @@ using namespace expr;
  *
  * 生成に成功した場合、真を返す
  */
-bool IRGenerator::genarate(std::unique_ptr<AstUnit> ast_root)
+bool IRGenerator::genarate(std::unique_ptr<AstNode> ast_root)
 {
 	// TODO
 
-	return false;
+	// debug 各ノードの表示
+	ast_root->print_debug(cout);
+
+	return true;
 }
 
 

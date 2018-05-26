@@ -6,9 +6,6 @@
 #include <memory>
 #include <vector>
 
-// llvm
-#include <llvm/IR/Value.h>
-
 
 namespace expr {
 	// ノード
@@ -145,9 +142,6 @@ namespace expr {
 
 		virtual void print_debug(std::ostream &dout, int indent = 0) override;
 	};
-
-	void set_ast(AstNode *root);
-	std::unique_ptr<AstNode> get_ast();
 }
 
 #endif  // MY_AST_H

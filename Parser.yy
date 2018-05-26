@@ -7,6 +7,7 @@
 %{
 #include <iostream>
 #include <string>
+#include <memory>
 #include <utility>
 
 #include "ope.h"
@@ -19,6 +20,8 @@
 #define MY_NAMESPACE expr
 namespace MY_NAMESPACE {
 	bool is_parse_err();
+	void set_ast(AstNode *root);
+	std::unique_ptr<AstNode> get_ast();
 	class Lexer;
 }
 }
@@ -32,9 +35,12 @@ using namespace MY_NAMESPACE;
 /* 関数名を強引に変更している */
 #define yylex lexer.yylex
 
+/* 構文木格納用 */
+static std::unique_ptr<AstNode> ast_root;
+
 /* エラー確認用の変数 */
-bool parse_err_f = false;
-int parse_err_num = 0;
+static bool parse_err_f = false;
+static int parse_err_num = 0;
 }
 
 %code
@@ -321,6 +327,7 @@ identifier
 
 %%
 
+
 void Parser::error(const location_type& l, const std::string& msg)
 {
 	parse_err_f = true;
@@ -332,5 +339,23 @@ void Parser::error(const location_type& l, const std::string& msg)
 bool expr::is_parse_err()
 {
 	return parse_err_f;
+}
+
+
+/*
+ * 構文木のルートを保存する
+ */
+void expr::set_ast(AstNode *root)
+{
+	ast_root.reset(root);
+}
+
+
+/*
+ * 構文木のルートを取得する
+ */
+std::unique_ptr<AstNode> expr::get_ast()
+{
+	return std::move(ast_root);
 }
 
