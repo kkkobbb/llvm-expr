@@ -1,5 +1,5 @@
-#ifndef IRGENERATOR_H_H
-#define IRGENERATOR_H_H
+#ifndef IRGENERATOR_H
+#define IRGENERATOR_H
 
 #include <memory>
 
@@ -16,11 +16,10 @@ namespace expr {
 		std::unique_ptr<llvm::Module> module;
 
 		public:
-		IRGenerator(std::unique_ptr<AstUnit> ast_root);
-		bool genarate();
-		std::unique_ptr<llvm::Module> get_module();
+		bool genarate(std::unique_ptr<AstUnit> ast_root);
+		std::unique_ptr<llvm::Module> get();
 	};
 }
 
-#endif  // IRGENERATOR_H_H
+#endif  // IRGENERATOR_H
 

@@ -21,7 +21,7 @@ using namespace expr;
  *
  * 生成に成功した場合、真を返す
  */
-bool IRGenerator::genarate()
+bool IRGenerator::genarate(std::unique_ptr<AstUnit> ast_root)
 {
 	// TODO
 
@@ -32,7 +32,7 @@ bool IRGenerator::genarate()
 /*
  * 生成したModuleを返す
  */
-unique_ptr<llvm::Module> IRGenerator::get_module()
+unique_ptr<llvm::Module> IRGenerator::get()
 {
 	// TODO
 
