@@ -1,6 +1,6 @@
 /* vim: set filetype=lex:
  *
- * flex 2.6.0
+ * flex 2.6.4
  * generating c++ code
  */
 

@@ -146,10 +146,8 @@ namespace expr {
 		virtual void print_debug(std::ostream &dout, int indent = 0) override;
 	};
 
-	void add_err();
 	void set_ast(AstNode *root);
 	std::unique_ptr<AstNode> get_ast();
-	bool is_ast_err();
 }
 
 #endif  // MY_AST_H

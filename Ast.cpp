@@ -11,8 +11,6 @@ using namespace expr;
 
 
 static std::unique_ptr<AstNode> ast_root;
-static bool error_flag = false;
-static int error_count = 0;
 
 
 
@@ -112,15 +110,6 @@ void AstIdentifier::print_debug(ostream &dout, int indent)
 // global関数
 
 /*
- * エラー発生時に印を付ける
- */
-void expr::add_err()
-{
-	error_flag = true;
-	++error_count;
-}
-
-/*
  * 構文木のルートを設定する
  *
  * 構文解析時に1度だけ使用する
@@ -136,15 +125,5 @@ void expr::set_ast(AstNode *root)
 std::unique_ptr<AstNode> expr::get_ast()
 {
 	return std::move(ast_root);
-}
-
-/*
- * 構文木でエラーがあったか確認する
- *
- * エラーがあった場合、真を返す
- */
-bool expr::is_ast_err()
-{
-	return error_flag;
 }
 

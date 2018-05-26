@@ -18,6 +18,7 @@
 #include "Ast.h"
 #define MY_NAMESPACE expr
 namespace MY_NAMESPACE {
+	bool is_parse_err();
 	class Lexer;
 }
 }
@@ -30,6 +31,10 @@ using namespace MY_NAMESPACE;
 
 /* 関数名を強引に変更している */
 #define yylex lexer.yylex
+
+/* エラー確認用の変数 */
+bool parse_err_f = false;
+int parse_err_num = 0;
 }
 
 %code
@@ -318,7 +323,14 @@ identifier
 
 void Parser::error(const location_type& l, const std::string& msg)
 {
-	add_err();
+	parse_err_f = true;
+	++parse_err_num;
 	std::cerr << "Error (" << l.end.line << "): " << msg << std::endl;
+}
+
+
+bool expr::is_parse_err()
+{
+	return parse_err_f;
 }
 

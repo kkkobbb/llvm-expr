@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 
 	// 構文解析でエラーが発生した場合、終了
 	// エラーメッセージは構文解析時に出力される
-	if (is_ast_err())
+	if (is_parse_err())
 		return 1;
 
 	unique_ptr<AstNode> root(get_ast());
