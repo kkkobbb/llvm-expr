@@ -17,7 +17,8 @@ all: $(DEST)
 main.o: Ast.h AstGenerator.h IRGenerator.h
 Ast.o: Ast.h
 AstGenerator.o: AstGenerator.h Ast.h Lexer.h Parser.hh
-IRGenerator.o: IRGenerator.h ope.h
+IRGenerator.o: IRGenerator.h Ast.h ope.h
+Lexer.o: Parser.hh
 Parser.o: ope.h
 
 
