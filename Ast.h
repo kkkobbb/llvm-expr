@@ -13,13 +13,14 @@ namespace expr {
 	{
 		protected:
 		bool throughFlag = false;
+		std::string node_type = "Node";
 
 		public:
-		// インデントのみ
 		virtual void print_debug(std::ostream &dout, int indent = 0)
 		{
 			for (int i = 0; i < indent; ++i)
 				dout << "  ";
+			dout << node_type << std::endl;
 		}
 	};
 
@@ -32,6 +33,7 @@ namespace expr {
 		public:
 		AstList(AstNode *n)
 		{
+			node_type = "AstList";
 			add(n);
 		}
 
@@ -43,25 +45,35 @@ namespace expr {
 			return this;
 		}
 
-		virtual void print_debug(std::ostream &dout, int indent = 0) override;
+		virtual void print_debug(std::ostream &dout, int indent = 0) override
+		{
+			AstNode::print_debug(dout, indent);
+
+			// 子要素の表示
+			int next_indent = indent + 1;
+			for (auto itr = children.cbegin(); itr != children.cend(); ++itr)
+				(*itr)->print_debug(dout, next_indent);
+		}
 	};
 
 	// 翻訳単位
 	class AstUnit: public AstList
 	{
 		public:
-		AstUnit(AstNode *n) : AstList(n) {}
-
-		virtual void print_debug(std::ostream &dout, int indent = 0) override;
+		AstUnit(AstNode *n) : AstList(n)
+		{
+			node_type = "AstUnit";
+		}
 	};
 
 	// 文のリスト
 	class AstStatementList: public AstList
 	{
 		public:
-		AstStatementList(AstNode *n) : AstList(n) {}
-
-		virtual void print_debug(std::ostream &dout, int indent = 0) override;
+		AstStatementList(AstNode *n) : AstList(n)
+		{
+			node_type = "AstStatementList";
+		}
 	};
 
 	// 文
@@ -72,10 +84,15 @@ namespace expr {
 		public:
 		AstStatement(AstNode *n)
 		{
+			node_type = "AstStatement";
 			this->n.reset(n);
 		}
 
-		virtual void print_debug(std::ostream &dout, int indent = 0) override;
+		virtual void print_debug(std::ostream &dout, int indent = 0) override
+		{
+			AstNode::print_debug(dout, indent);
+			n->print_debug(dout, indent + 1);
+		}
 	};
 
 	// 式
@@ -89,12 +106,35 @@ namespace expr {
 		public:
 		AstExpression(int ope, AstNode *l, AstNode *r)
 		{
+			node_type = "AstExpression";
 			this->ope = ope;
 			this->r.reset(r);
 			this->l.reset(l);
 		}
 
-		virtual void print_debug(std::ostream &dout, int indent = 0) override;
+		virtual void print_debug(std::ostream &dout, int indent = 0) override
+		{
+			AstNode::print_debug(dout, indent);
+			// 子要素の表示
+			int next_indent = indent + 1;
+			if (l != nullptr)
+				l->print_debug(dout, next_indent);
+			if (r != nullptr)
+				r->print_debug(dout, next_indent);
+		}
+	};
+
+	class AstExpressionCOMMA: public AstExpression
+	{
+		public:
+		AstExpressionCOMMA(AstNode *l, AstNode *r): AstExpression(0, l, r)
+		{
+			node_type = "AstExpressionCOMMA";
+		}
+		virtual void print_debug(std::ostream &dout, int indent = 0) override
+		{
+			AstExpression::print_debug(dout, indent);
+		}
 	};
 
 	// 単項演算子 前置
@@ -103,7 +143,10 @@ namespace expr {
 		public:
 		AstPrefixExpression(int ope, AstNode *n) : AstExpression(ope, nullptr, n) {}
 
-		virtual void print_debug(std::ostream &dout, int indent = 0) override;
+		virtual void print_debug(std::ostream &dout, int indent = 0) override
+		{
+			AstExpression::print_debug(dout, indent);
+		}
 	};
 
 	// 単項演算子 後置
@@ -112,7 +155,10 @@ namespace expr {
 		public:
 		AstPostfixExpression(int ope, AstNode *n) : AstExpression(ope, n, nullptr) {}
 
-		virtual void print_debug(std::ostream &dout, int indent = 0) override;
+		virtual void print_debug(std::ostream &dout, int indent = 0) override
+		{
+			AstExpression::print_debug(dout, indent);
+		}
 	};
 
 	// 値
@@ -124,9 +170,10 @@ namespace expr {
 		AstConstant(int number)
 		{
 			this->number = number;
+			node_type = "AstConstant (";
+			node_type += std::to_string(number);
+			node_type += ")";
 		}
-
-		virtual void print_debug(std::ostream &dout, int indent = 0) override;
 	};
 
 	// 識別子
@@ -138,9 +185,10 @@ namespace expr {
 		AstIdentifier(std::string *name)
 		{
 			this->name.reset(name);
+			node_type = "AstIdentifier \"";
+			node_type += this->name->c_str();
+			node_type += "\"";
 		}
-
-		virtual void print_debug(std::ostream &dout, int indent = 0) override;
 	};
 }
 

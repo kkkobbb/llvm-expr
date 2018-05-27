@@ -167,7 +167,7 @@ expression
     : assignment_expression
         { $$ = std::move($1); }
     | expression ',' assignment_expression
-        { $$ = new AstExpression(ope::OP_COMMA, $1, $3); }
+        { $$ = new AstExpressionCOMMA($1, $3); }
     ;
 
 /* 代入式 */
