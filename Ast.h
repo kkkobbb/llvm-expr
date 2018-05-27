@@ -127,13 +127,9 @@ namespace expr {
 	class AstExpressionCOMMA: public AstExpression
 	{
 		public:
-		AstExpressionCOMMA(AstNode *l, AstNode *r): AstExpression(0, l, r)
+		AstExpressionCOMMA(AstNode *l, AstNode *r) : AstExpression(0, l, r)
 		{
 			node_type = "AstExpressionCOMMA";
-		}
-		virtual void print_debug(std::ostream &dout, int indent = 0) override
-		{
-			AstExpression::print_debug(dout, indent);
 		}
 	};
 
@@ -141,11 +137,9 @@ namespace expr {
 	class AstPrefixExpression: public AstExpression
 	{
 		public:
-		AstPrefixExpression(int ope, AstNode *n) : AstExpression(ope, nullptr, n) {}
-
-		virtual void print_debug(std::ostream &dout, int indent = 0) override
+		AstPrefixExpression(int ope, AstNode *n) : AstExpression(ope, nullptr, n)
 		{
-			AstExpression::print_debug(dout, indent);
+			// TODO
 		}
 	};
 
@@ -153,11 +147,9 @@ namespace expr {
 	class AstPostfixExpression: public AstExpression
 	{
 		public:
-		AstPostfixExpression(int ope, AstNode *n) : AstExpression(ope, n, nullptr) {}
-
-		virtual void print_debug(std::ostream &dout, int indent = 0) override
+		AstPostfixExpression(int ope, AstNode *n) : AstExpression(ope, n, nullptr)
 		{
-			AstExpression::print_debug(dout, indent);
+			// TODO
 		}
 	};
 
