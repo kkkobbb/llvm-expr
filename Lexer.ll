@@ -1,6 +1,6 @@
 /* vim: set filetype=lex:
  *
- * flex 2.6.0
+ * flex 2.6.4
  * generating c++ code
  */
 
@@ -19,7 +19,7 @@ typedef int yy_size_t;
 #include "Parser.hh"
 using namespace expr;
 
-typedef Parser::token token;
+typedef Parser::token_type token_type;
 typedef Parser::semantic_type semantic_type;
 typedef Parser::location_type location_type;
 
@@ -49,30 +49,30 @@ Space   [ \t]
 
 
  /* 予約語 */
-"through"  { return token::RE_THROUGH; }
-"return"   { return token::RE_RETURN; }
-"void"     { return token::RE_VOID; }
-"int"      { return token::RE_INT; }
-"if"       { return token::RE_IF; }
-"else"     { return token::RE_ELSE; }
-"while"    { return token::RE_WHILE; }
+"through"  { return token_type::RE_THROUGH; }
+"return"   { return token_type::RE_RETURN; }
+"void"     { return token_type::RE_VOID; }
+"int"      { return token_type::RE_INT; }
+"if"       { return token_type::RE_IF; }
+"else"     { return token_type::RE_ELSE; }
+"while"    { return token_type::RE_WHILE; }
 
  /* 識別子 */
-{Letter}({Letter}|{Digit})*  { val->sval = new std::string(yytext, yyleng); return token::IDENTIFIER; }
+{Letter}({Letter}|{Digit})*  { val->sval = new std::string(yytext, yyleng); return token_type::IDENTIFIER; }
  /* 10進数の整数定数 */
-{Digit}+                     { val->ival = atoi(yytext); return token::INTEGER; }
+{Digit}+                     { val->ival = atoi(yytext); return token_type::INTEGER; }
  /* 文字定数 */
-'(\\.|[^\\'\n])+'            { val->ival = yytext[1]; return token::INTEGER; }
+'(\\.|[^\\'\n])+'            { val->ival = yytext[1]; return token_type::INTEGER; }
 
  /* 演算子 */
-"<="  { return token::OP_LTE; }
-">="  { return token::OP_GTE; }
-"=="  { return token::OP_EQ; }
-"!="  { return token::OP_NE; }
-"||"  { return token::OP_LOR; }
-"&&"  { return token::OP_LAND; }
-"<-"  { return token::OP_ARROW_L; }
-"->"  { return token::OP_ARROW_R; }
+"<="  { return token_type::OP_LTE; }
+">="  { return token_type::OP_GTE; }
+"=="  { return token_type::OP_EQ; }
+"!="  { return token_type::OP_NE; }
+"||"  { return token_type::OP_LOR; }
+"&&"  { return token_type::OP_LAND; }
+"<-"  { return token_type::OP_ARROW_L; }
+"->"  { return token_type::OP_ARROW_R; }
 "="   { return '='; }
 "<"   { return '<'; }
 ">"   { return '>'; }
