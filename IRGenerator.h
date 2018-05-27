@@ -6,7 +6,7 @@
 // llvm
 #include <llvm/IR/Module.h>
 
-#include "Ast.h"
+#include "AstNode.h"
 
 
 namespace expr {

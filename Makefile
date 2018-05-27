@@ -5,7 +5,7 @@ CXXFLAGS := `$(LLVM-CONFIG) --cxxflags`
 LDLIBS := `$(LLVM-CONFIG) --ldflags --system-libs --libs core`
 
 DEST := exprc
-SRC  := main.cpp Ast.cpp \
+SRC  := main.cpp AstNode.cpp \
         AstGenerator.cpp IRGenerator.cpp
 
 OBJS := $(patsubst %.cpp,%.o,$(SRC)) Lexer.o Parser.o
@@ -14,12 +14,12 @@ OBJS := $(patsubst %.cpp,%.o,$(SRC)) Lexer.o Parser.o
 all: $(DEST)
 
 # header
-main.o: Ast.h AstGenerator.h IRGenerator.h
-Ast.o: Ast.h
-AstGenerator.o: AstGenerator.h Ast.h Lexer.h Parser.hh
-IRGenerator.o: IRGenerator.h Ast.h ope.h
+main.o: AstNode.h AstGenerator.h IRGenerator.h
+Ast.o: AstNode.h
+AstGenerator.o: AstGenerator.h AstNode.h Lexer.h Parser.hh
+IRGenerator.o: IRGenerator.h AstNode.h ope.h
 Lexer.o: Parser.hh
-Parser.o: Ast.h ope.h
+Parser.o: AstNode.h ope.h
 
 
 $(DEST): $(OBJS)

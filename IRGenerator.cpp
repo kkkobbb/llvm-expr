@@ -6,7 +6,7 @@
 
 #include <llvm/IR/Module.h>
 
-#include "Ast.h"
+#include "AstNode.h"
 #include "ope.h"
 #include "IRGenerator.h"
 

@@ -5,7 +5,7 @@
 
 #include <llvm/Support/CommandLine.h>
 
-#include "Ast.h"
+#include "AstNode.h"
 #include "AstGenerator.h"
 #include "IRGenerator.h"
 
