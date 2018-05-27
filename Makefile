@@ -19,7 +19,7 @@ Ast.o: Ast.h
 AstGenerator.o: AstGenerator.h Ast.h Lexer.h Parser.hh
 IRGenerator.o: IRGenerator.h Ast.h ope.h
 Lexer.o: Parser.hh
-Parser.o: ope.h
+Parser.o: Ast.h ope.h
 
 
 $(DEST): $(OBJS)
