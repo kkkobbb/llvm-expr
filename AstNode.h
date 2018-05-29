@@ -22,10 +22,11 @@ namespace expr {
 			for (int i = 0; i < indent; ++i)
 				dout << "  ";
 
-			// クラス名等表示
+			// クラス名かメッセージ表示
 			if (!dbg_msg.empty())
 				dout << dbg_msg << " ";
-			dout << typeid(*this).name();
+			else
+				dout << typeid(*this).name();
 			dout << std::endl;
 		}
 	};
