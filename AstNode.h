@@ -22,7 +22,7 @@ namespace expr {
 			for (int i = 0; i < indent; ++i)
 				dout << "  ";
 
-			// クラス名表示
+			// クラス名等表示
 			if (!dbg_msg.empty())
 				dout << dbg_msg << " ";
 			dout << typeid(*this).name();
@@ -189,7 +189,7 @@ namespace expr {
 		AstExpressionLT(AstNode *l, AstNode *r) : AstExpression(l, r) {}
 	};
 
-	// 関係 >
+	// 関係演算 >
 	class AstExpressionGT: public AstExpression
 	{
 		public:
@@ -203,7 +203,7 @@ namespace expr {
 		AstExpressionLTE(AstNode *l, AstNode *r) : AstExpression(l, r) {}
 	};
 
-	// 関係 >=
+	// 関係演算 >=
 	class AstExpressionGTE: public AstExpression
 	{
 		public:
@@ -282,9 +282,7 @@ namespace expr {
 		AstConstant(int number)
 		{
 			this->number = number;
-			dbg_msg = "(";
-			dbg_msg += std::to_string(number);
-			dbg_msg += ")";
+			dbg_msg = "(" + std::to_string(number) + ")";
 		}
 	};
 
@@ -297,9 +295,7 @@ namespace expr {
 		AstIdentifier(std::string *name)
 		{
 			this->name.reset(name);
-			dbg_msg = "\"";
-			dbg_msg += this->name->c_str();
-			dbg_msg += "\"";
+			dbg_msg = "\"" + *this->name + "\"";
 		}
 	};
 }
