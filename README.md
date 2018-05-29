@@ -8,9 +8,11 @@
 
 ## 準備
 * Ubuntu 16.04
-* `sudo apt install llvm`
-* `sudo apt install llvm-5.0` (llvm 5.0を使う場合)
-* `sudo apt intall zlib1g-dev` (llvm 3.8のビルドオプションで`-lz`が指定されるため)
+    * `sudo apt install llvm`
+    * `sudo apt install llvm-5.0` (llvm 5.0を使う場合)
+    * `sudo apt intall zlib1g-dev` (llvm 3.8のビルドオプションで`-lz`が指定されるため)
+* Ubuntu 18.04
+    * `sudo apt install llvm` (llvm 6.0)
 
 
 ## 文法
