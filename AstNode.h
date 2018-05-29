@@ -1,5 +1,5 @@
-#ifndef MY_AST_H
-#define MY_AST_H
+#ifndef ASTNODE_H
+#define ASTNODE_H
 
 #include <iostream>
 #include <string>
@@ -13,14 +13,20 @@ namespace expr {
 	{
 		protected:
 		bool throughFlag = false;
-		std::string node_type = "Node";
+		std::string dbg_msg;
 
 		public:
 		virtual void print_debug(std::ostream &dout, int indent = 0)
 		{
+			// インデント
 			for (int i = 0; i < indent; ++i)
 				dout << "  ";
-			dout << node_type << std::endl;
+
+			// クラス名表示
+			if (!dbg_msg.empty())
+				dout << dbg_msg << " ";
+			dout << typeid(*this).name();
+			dout << std::endl;
 		}
 	};
 
@@ -33,7 +39,6 @@ namespace expr {
 		public:
 		AstList(AstNode *n)
 		{
-			node_type = "AstList";
 			add(n);
 		}
 
@@ -60,20 +65,14 @@ namespace expr {
 	class AstUnit: public AstList
 	{
 		public:
-		AstUnit(AstNode *n) : AstList(n)
-		{
-			node_type = "AstUnit";
-		}
+		AstUnit(AstNode *n) : AstList(n) {}
 	};
 
 	// 文のリスト
 	class AstStatementList: public AstList
 	{
 		public:
-		AstStatementList(AstNode *n) : AstList(n)
-		{
-			node_type = "AstStatementList";
-		}
+		AstStatementList(AstNode *n) : AstList(n) {}
 	};
 
 	// 文
@@ -84,7 +83,6 @@ namespace expr {
 		public:
 		AstStatement(AstNode *n)
 		{
-			node_type = "AstStatement";
 			this->n.reset(n);
 		}
 
@@ -99,15 +97,12 @@ namespace expr {
 	class AstExpression: public AstNode
 	{
 		protected:
-		int ope;  // 演算子
 		std::unique_ptr<AstNode> l;  // 左辺
 		std::unique_ptr<AstNode> r;  // 右辺
 
 		public:
-		AstExpression(int ope, AstNode *l, AstNode *r)
+		AstExpression(AstNode *l, AstNode *r)
 		{
-			node_type = "AstExpression";
-			this->ope = ope;
 			this->r.reset(r);
 			this->l.reset(l);
 		}
@@ -124,33 +119,158 @@ namespace expr {
 		}
 	};
 
+	// 代入演算子
+	class AstExpressionAS: public AstExpression
+	{
+		public:
+		AstExpressionAS(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+	};
+
+	// コンマ演算子
 	class AstExpressionCOMMA: public AstExpression
 	{
 		public:
-		AstExpressionCOMMA(AstNode *l, AstNode *r) : AstExpression(0, l, r)
-		{
-			node_type = "AstExpressionCOMMA";
-		}
+		AstExpressionCOMMA(AstNode *l, AstNode *r) : AstExpression(l, r) {}
 	};
 
-	// 単項演算子 前置
-	class AstPrefixExpression: public AstExpression
+	// 論理演算 OR
+	class AstExpressionLOR: public AstExpression
 	{
 		public:
-		AstPrefixExpression(int ope, AstNode *n) : AstExpression(ope, nullptr, n)
-		{
-			// TODO
-		}
+		AstExpressionLOR(AstNode *l, AstNode *r) : AstExpression(l, r) {}
 	};
 
-	// 単項演算子 後置
-	class AstPostfixExpression: public AstExpression
+	// 論理演算 AND
+	class AstExpressionLAND: public AstExpression
 	{
 		public:
-		AstPostfixExpression(int ope, AstNode *n) : AstExpression(ope, n, nullptr)
-		{
-			// TODO
-		}
+		AstExpressionLAND(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+	};
+
+	// ビット演算 OR
+	class AstExpressionBOR: public AstExpression
+	{
+		public:
+		AstExpressionBOR(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+	};
+
+	// ビット演算 XOR
+	class AstExpressionBXOR: public AstExpression
+	{
+		public:
+		AstExpressionBXOR(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+	};
+
+	// ビット演算 AND
+	class AstExpressionBAND: public AstExpression
+	{
+		public:
+		AstExpressionBAND(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+	};
+
+	// 関係演算 等値
+	class AstExpressionEQ: public AstExpression
+	{
+		public:
+		AstExpressionEQ(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+	};
+
+	// 関係演算 非等値
+	class AstExpressionNE: public AstExpression
+	{
+		public:
+		AstExpressionNE(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+	};
+
+	// 関係演算 <
+	class AstExpressionLT: public AstExpression
+	{
+		public:
+		AstExpressionLT(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+	};
+
+	// 関係 >
+	class AstExpressionGT: public AstExpression
+	{
+		public:
+		AstExpressionGT(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+	};
+
+	// 関係演算 <=
+	class AstExpressionLTE: public AstExpression
+	{
+		public:
+		AstExpressionLTE(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+	};
+
+	// 関係 >=
+	class AstExpressionGTE: public AstExpression
+	{
+		public:
+		AstExpressionGTE(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+	};
+
+	// 加算
+	class AstExpressionADD: public AstExpression
+	{
+		public:
+		AstExpressionADD(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+	};
+
+	// 減算
+	class AstExpressionSUB: public AstExpression
+	{
+		public:
+		AstExpressionSUB(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+	};
+
+	// 乗算
+	class AstExpressionMUL: public AstExpression
+	{
+		public:
+		AstExpressionMUL(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+	};
+
+	// 除算
+	class AstExpressionDIV: public AstExpression
+	{
+		public:
+		AstExpressionDIV(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+	};
+
+	// 余算
+	class AstExpressionMOD: public AstExpression
+	{
+		public:
+		AstExpressionMOD(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+	};
+
+	// 単項演算子 正
+	class AstExpressionSPOS: public AstExpression
+	{
+		public:
+		AstExpressionSPOS(AstNode *n) : AstExpression(nullptr, n) {}
+	};
+
+	// 単項演算子 負
+	class AstExpressionSNEG: public AstExpression
+	{
+		public:
+		AstExpressionSNEG(AstNode *n) : AstExpression(nullptr, n) {}
+	};
+
+	// 論理演算 否定
+	class AstExpressionLNOT: public AstExpression
+	{
+		public:
+		AstExpressionLNOT(AstNode *n) : AstExpression(nullptr, n) {}
+	};
+
+	// ビット演算 否定
+	class AstExpressionBNOT: public AstExpression
+	{
+		public:
+		AstExpressionBNOT(AstNode *n) : AstExpression(nullptr, n) {}
 	};
 
 	// 値
@@ -162,9 +282,9 @@ namespace expr {
 		AstConstant(int number)
 		{
 			this->number = number;
-			node_type = "AstConstant (";
-			node_type += std::to_string(number);
-			node_type += ")";
+			dbg_msg = "(";
+			dbg_msg += std::to_string(number);
+			dbg_msg += ")";
 		}
 	};
 
@@ -177,12 +297,12 @@ namespace expr {
 		AstIdentifier(std::string *name)
 		{
 			this->name.reset(name);
-			node_type = "AstIdentifier \"";
-			node_type += this->name->c_str();
-			node_type += "\"";
+			dbg_msg = "\"";
+			dbg_msg += this->name->c_str();
+			dbg_msg += "\"";
 		}
 	};
 }
 
-#endif  // MY_AST_H
+#endif  // ASTNODE_H
 

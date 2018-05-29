@@ -7,7 +7,6 @@
 #include <llvm/IR/Module.h>
 
 #include "AstNode.h"
-#include "ope.h"
 #include "IRGenerator.h"
 
 

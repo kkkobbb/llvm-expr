@@ -9,8 +9,6 @@
 #include <string>
 #include <memory>
 #include <utility>
-
-#include "ope.h"
 %}
 
 %code requires
@@ -106,7 +104,6 @@ static int parse_err_num = 0;
 %type <astnode>  additive_expression multiplicative_expression
 %type <astnode>  cast_expression
 %type <astnode>  unary_expression
-%type <ntype>    unary_operator
 %type <astnode>  postfix_expression
 %type <astnode>  primary_expression
 %type <astnode>  constant
@@ -175,7 +172,7 @@ assignment_expression
     : constant_expression
         { $$ = std::move($1); }
     | identifier OP_ARROW_L assignment_expression
-        { $$ = new AstExpression(ope::OP_ARROW_L, $1, $3); }
+        { $$ = new AstExpressionAS($1, $3); }
     ;
 
 /* 定数式 */
@@ -189,7 +186,7 @@ logical_OR_expression
     : logical_AND_expression
         { $$ = std::move($1); }
     | logical_OR_expression OP_LOR logical_AND_expression
-        { $$ = new AstExpression(ope::OP_LOR, $1, $3); }
+        { $$ = new AstExpressionLOR($1, $3); }
     ;
 
 /* 論理積 */
@@ -197,7 +194,7 @@ logical_AND_expression
     : inclusive_OR_expression
         { $$ = std::move($1); }
     | logical_AND_expression OP_LAND inclusive_OR_expression
-        { $$ = new AstExpression(ope::OP_LAND, $1, $3); }
+        { $$ = new AstExpressionLAND($1, $3); }
     ;
 
 /* ビット演算OR */
@@ -205,7 +202,7 @@ inclusive_OR_expression
     : exclusive_OR_expression
         { $$ = std::move($1); }
     | inclusive_OR_expression '|' exclusive_OR_expression
-        { $$ = new AstExpression(ope::OP_BOR, $1, $3); }
+        { $$ = new AstExpressionBOR($1, $3); }
     ;
 
 /* ビット演算XOR */
@@ -213,7 +210,7 @@ exclusive_OR_expression
     : AND_expression
         { $$ = std::move($1); }
     | exclusive_OR_expression '^' AND_expression
-        { $$ = new AstExpression(ope::OP_BXOR, $1, $3); }
+        { $$ = new AstExpressionBXOR($1, $3); }
     ;
 
 /* ビット演算AND */
@@ -221,7 +218,7 @@ AND_expression
     : equality_expression
         { $$ = std::move($1); }
     | AND_expression '&' equality_expression
-        { $$ = new AstExpression(ope::OP_BAND, $1, $3); }
+        { $$ = new AstExpressionBAND($1, $3); }
     ;
 
 /* 等値演算 */
@@ -229,9 +226,9 @@ equality_expression
     : relational_expression
         { $$ = std::move($1); }
     | equality_expression OP_EQ relational_expression
-        { $$ = new AstExpression(ope::OP_EQ, $1, $3); }
+        { $$ = new AstExpressionEQ($1, $3); }
     | equality_expression OP_NE relational_expression
-        { $$ = new AstExpression(ope::OP_NE, $1, $3); }
+        { $$ = new AstExpressionNE($1, $3); }
     ;
 
 /* 関係演算 */
@@ -239,13 +236,13 @@ relational_expression
     : additive_expression
         { $$ = std::move($1); }
     | relational_expression '<' additive_expression
-        { $$ = new AstExpression(ope::OP_LT, $1, $3); }
+        { $$ = new AstExpressionLT($1, $3); }
     | relational_expression '>' additive_expression
-        { $$ = new AstExpression(ope::OP_GT, $1, $3); }
+        { $$ = new AstExpressionGT($1, $3); }
     | relational_expression OP_LTE additive_expression
-        { $$ = new AstExpression(ope::OP_LTE, $1, $3); }
+        { $$ = new AstExpressionLTE($1, $3); }
     | relational_expression OP_GTE additive_expression
-        { $$ = new AstExpression(ope::OP_GTE, $1, $3); }
+        { $$ = new AstExpressionGTE($1, $3); }
     ;
 
 /* 加減算 */
@@ -253,9 +250,9 @@ additive_expression
     : multiplicative_expression
         { $$ = std::move($1); }
     | additive_expression '+' multiplicative_expression
-        { $$ = new AstExpression(ope::OP_ADD, $1, $3); }
+        { $$ = new AstExpressionADD($1, $3); }
     | additive_expression '-' multiplicative_expression
-        { $$ = new AstExpression(ope::OP_SUB, $1, $3); }
+        { $$ = new AstExpressionSUB($1, $3); }
     ;
 
 /* 乗除余算 */
@@ -263,11 +260,11 @@ multiplicative_expression
     : cast_expression
         { $$ = std::move($1); }
     | multiplicative_expression '*' cast_expression
-        { $$ = new AstExpression(ope::OP_MUL, $1, $3); }
+        { $$ = new AstExpressionMUL($1, $3); }
     | multiplicative_expression '/' cast_expression
-        { $$ = new AstExpression(ope::OP_DIV, $1, $3); }
+        { $$ = new AstExpressionDIV($1, $3); }
     | multiplicative_expression '%' cast_expression
-        { $$ = new AstExpression(ope::OP_MOD, $1, $3); }
+        { $$ = new AstExpressionMOD($1, $3); }
     ;
 
 /* キャスト */
@@ -280,20 +277,14 @@ cast_expression
 unary_expression
     : postfix_expression
         { $$ = std::move($1); }
-    | unary_operator cast_expression
-        { $$ = new AstPrefixExpression($1, $2); }
-    ;
-
-/* 単項演算子 */
-unary_operator
-    : '+'
-        { $$ = ope::OP_ADD; }
-    | '-'
-        { $$ = ope::OP_SUB; }
-    | '!'
-        { $$ = ope::OP_NOT; }
-    | '~'
-        { $$ = ope::OP_BNOT; }
+    | '+' cast_expression
+        { $$ = new AstExpressionSPOS($2); }
+    | '-' cast_expression
+        { $$ = new AstExpressionSNEG($2); }
+    | '~' cast_expression
+        { $$ = new AstExpressionBNOT($2); }
+    | '!' cast_expression
+        { $$ = new AstExpressionLNOT($2); }
     ;
 
 /* 後置演算子 */

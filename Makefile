@@ -17,9 +17,9 @@ all: $(DEST)
 main.o: AstNode.h AstGenerator.h IRGenerator.h
 Ast.o: AstNode.h
 AstGenerator.o: AstGenerator.h AstNode.h Lexer.h Parser.hh
-IRGenerator.o: IRGenerator.h AstNode.h ope.h
+IRGenerator.o: IRGenerator.h AstNode.h
 Lexer.o: Parser.hh
-Parser.o: AstNode.h ope.h
+Parser.o: AstNode.h
 
 
 $(DEST): $(OBJS)
