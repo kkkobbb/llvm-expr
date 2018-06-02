@@ -72,14 +72,14 @@ namespace expr {
 	class AstUnit: public AstList
 	{
 		public:
-		AstUnit(AstNode *n) : AstList(n) {}
+		using AstList::AstList;
 	};
 
 	// 文のリスト
 	class AstStatementList: public AstList
 	{
 		public:
-		AstStatementList(AstNode *n) : AstList(n) {}
+		using AstList::AstList;
 	};
 
 	// 文
@@ -130,126 +130,126 @@ namespace expr {
 	class AstExpressionAS: public AstExpression
 	{
 		public:
-		AstExpressionAS(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+		using AstExpression::AstExpression;
 	};
 
 	// コンマ演算子
 	class AstExpressionCOMMA: public AstExpression
 	{
 		public:
-		AstExpressionCOMMA(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+		using AstExpression::AstExpression;
 	};
 
 	// 論理演算 OR
 	class AstExpressionLOR: public AstExpression
 	{
 		public:
-		AstExpressionLOR(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+		using AstExpression::AstExpression;
 	};
 
 	// 論理演算 AND
 	class AstExpressionLAND: public AstExpression
 	{
 		public:
-		AstExpressionLAND(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+		using AstExpression::AstExpression;
 	};
 
 	// ビット演算 OR
 	class AstExpressionBOR: public AstExpression
 	{
 		public:
-		AstExpressionBOR(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+		using AstExpression::AstExpression;
 	};
 
 	// ビット演算 XOR
 	class AstExpressionBXOR: public AstExpression
 	{
 		public:
-		AstExpressionBXOR(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+		using AstExpression::AstExpression;
 	};
 
 	// ビット演算 AND
 	class AstExpressionBAND: public AstExpression
 	{
 		public:
-		AstExpressionBAND(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+		using AstExpression::AstExpression;
 	};
 
 	// 関係演算 等値
 	class AstExpressionEQ: public AstExpression
 	{
 		public:
-		AstExpressionEQ(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+		using AstExpression::AstExpression;
 	};
 
 	// 関係演算 非等値
 	class AstExpressionNE: public AstExpression
 	{
 		public:
-		AstExpressionNE(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+		using AstExpression::AstExpression;
 	};
 
 	// 関係演算 <
 	class AstExpressionLT: public AstExpression
 	{
 		public:
-		AstExpressionLT(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+		using AstExpression::AstExpression;
 	};
 
 	// 関係演算 >
 	class AstExpressionGT: public AstExpression
 	{
 		public:
-		AstExpressionGT(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+		using AstExpression::AstExpression;
 	};
 
 	// 関係演算 <=
 	class AstExpressionLTE: public AstExpression
 	{
 		public:
-		AstExpressionLTE(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+		using AstExpression::AstExpression;
 	};
 
 	// 関係演算 >=
 	class AstExpressionGTE: public AstExpression
 	{
 		public:
-		AstExpressionGTE(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+		using AstExpression::AstExpression;
 	};
 
 	// 加算
 	class AstExpressionADD: public AstExpression
 	{
 		public:
-		AstExpressionADD(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+		using AstExpression::AstExpression;
 	};
 
 	// 減算
 	class AstExpressionSUB: public AstExpression
 	{
 		public:
-		AstExpressionSUB(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+		using AstExpression::AstExpression;
 	};
 
 	// 乗算
 	class AstExpressionMUL: public AstExpression
 	{
 		public:
-		AstExpressionMUL(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+		using AstExpression::AstExpression;
 	};
 
 	// 除算
 	class AstExpressionDIV: public AstExpression
 	{
 		public:
-		AstExpressionDIV(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+		using AstExpression::AstExpression;
 	};
 
 	// 余算
 	class AstExpressionMOD: public AstExpression
 	{
 		public:
-		AstExpressionMOD(AstNode *l, AstNode *r) : AstExpression(l, r) {}
+		using AstExpression::AstExpression;
 	};
 
 	// 単項演算子 正
