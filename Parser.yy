@@ -327,7 +327,7 @@ void Parser::error(const location_type& l, const std::string& msg)
 }
 
 
-bool expr::is_parse_err()
+bool MY_NAMESPACE::is_parse_err()
 {
 	return parse_err_f;
 }
@@ -336,7 +336,7 @@ bool expr::is_parse_err()
 /*
  * 構文木のルートを保存する
  */
-void expr::set_ast(AstNode *root)
+void MY_NAMESPACE::set_ast(AstNode *root)
 {
 	ast_root.reset(root);
 }
@@ -345,7 +345,7 @@ void expr::set_ast(AstNode *root)
 /*
  * 構文木のルートを取得する
  */
-std::unique_ptr<AstNode> expr::get_ast()
+std::unique_ptr<AstNode> MY_NAMESPACE::get_ast()
 {
 	return std::move(ast_root);
 }
