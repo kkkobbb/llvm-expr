@@ -138,7 +138,10 @@ statement_list
     : statement
         { $$ = new AstStatementList($1); }
     | statement_list statement
-        { $$ = std::move(((AstStatementList *)$1)->add($2)); }
+        {
+          ((AstStatementList *)$1)->add($2);
+          $$ = std::move($1);
+        }
     ;
 
 compound_statement

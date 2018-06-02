@@ -6,6 +6,9 @@
 #include <memory>
 #include <vector>
 
+#include <llvm/IR/Module.h>
+#include <llvm/IR/IRBuilder.h>
+
 
 namespace expr {
 	// ノード
@@ -16,6 +19,11 @@ namespace expr {
 		std::string dbg_msg;
 
 		public:
+		virtual llvm::Value *generate(llvm::IRBuilder<> &builder)
+		{
+			return nullptr;
+		}
+
 		virtual void print_debug(std::ostream &dout, int indent = 0)
 		{
 			// インデント
@@ -43,12 +51,10 @@ namespace expr {
 			add(n);
 		}
 
-		AstNode *add(AstNode *n)
+		void add(AstNode *n)
 		{
 			if (n != nullptr)
 				children.push_back(std::unique_ptr<AstNode>(n));
-
-			return this;
 		}
 
 		virtual void print_debug(std::ostream &dout, int indent = 0) override
