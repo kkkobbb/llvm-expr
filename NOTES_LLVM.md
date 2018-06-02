@@ -31,6 +31,13 @@
 * `-help`するとデフォルトでたくさんのオプションが表示されるため、それらを非表示にする必要がある
 
 
+## LLVM 6.0
+
+* `llvm::getGlobalContext()`はなくなっている
+    * `llvm::LLVMContext TheContext`とか宣言して、共通のLLVMContextを使用すれば良い
+    * <http://llvm.org/docs/tutorial/LangImpl03.html#full-code-listing>
+
+
 ---
 
 
