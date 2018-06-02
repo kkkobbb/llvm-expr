@@ -5,6 +5,7 @@
 #include <memory>
 
 #include <llvm/IR/Module.h>
+#include <llvm/IR/IRBuilder.h>
 
 #include "AstNode.h"
 #include "IRGenerator.h"
@@ -22,10 +23,14 @@ using namespace expr;
  */
 bool IRGenerator::genarate(std::unique_ptr<AstNode> ast_root)
 {
-	// TODO
+	llvm::IRBuilder<> builder(TheContext);
 
 	// debug 各ノードの表示
 	ast_root->print_debug(cout);
+
+	TheModule = llvm::make_unique<llvm::Module>("code", TheContext);
+
+	// TODO
 
 	return true;
 }
@@ -36,8 +41,6 @@ bool IRGenerator::genarate(std::unique_ptr<AstNode> ast_root)
  */
 unique_ptr<llvm::Module> IRGenerator::get()
 {
-	// TODO
-
-	return nullptr;
+	return move(TheModule);
 }
 
