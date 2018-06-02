@@ -15,7 +15,7 @@ all: $(DEST)
 
 # header
 main.o: AstNode.h AstGenerator.h IRGenerator.h
-Ast.o: AstNode.h
+AstNode.o: AstNode.h
 AstGenerator.o: AstGenerator.h AstNode.h Lexer.h Parser.hh
 IRGenerator.o: IRGenerator.h AstNode.h
 Lexer.o: Parser.hh
@@ -23,9 +23,9 @@ Parser.o: AstNode.h
 
 
 $(DEST): $(OBJS)
-	$(CXX) -o $@ $(CXXFLAGS) $^ $(LDLIBS)
+	$(CXX) -Wall -o $@ $^ $(LDLIBS)
 
-# bisonが生成したファイルは-fexceptionsを付ける必要があるのでここに記述する
+# bisonが生成したファイルは-fno-exceptionsが付いているとコンパイルに失敗する
 Parser.o: Parser.cc
 	$(CXX) $(CXXFLAGS) -fexceptions -c -o $@ $<
 
