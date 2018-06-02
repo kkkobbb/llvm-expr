@@ -57,6 +57,15 @@ namespace expr {
 				children.push_back(std::unique_ptr<AstNode>(n));
 		}
 
+		virtual llvm::Value *generate(llvm::IRBuilder<> &builder) override
+		{
+			// 子要素の実行
+			for (auto itr = children.cbegin(); itr != children.cend(); ++itr)
+				(*itr)->generate(builder);
+
+			return nullptr;
+		}
+
 		virtual void print_debug(std::ostream &dout, int indent = 0) override
 		{
 			AstNode::print_debug(dout, indent);
@@ -91,6 +100,14 @@ namespace expr {
 		AstStatement(AstNode *n)
 		{
 			this->n.reset(n);
+		}
+
+		virtual llvm::Value *generate(llvm::IRBuilder<> &builder) override
+		{
+			// 子要素の実行
+			n->generate(builder);
+
+			return nullptr;
 		}
 
 		virtual void print_debug(std::ostream &dout, int indent = 0) override
@@ -281,16 +298,17 @@ namespace expr {
 	};
 
 	// 値
-	class AstConstant: public AstNode
+	class AstConstantInt: public AstNode
 	{
-		int number;
+		int value;
 
 		public:
-		AstConstant(int number)
+		AstConstantInt(int value)
 		{
-			this->number = number;
-			dbg_msg = "(" + std::to_string(number) + ")";
+			this->value = value;
+			dbg_msg = "(" + std::to_string(value) + ")";
 		}
+		virtual llvm::Value *generate(llvm::IRBuilder<> &builder) override;
 	};
 
 	// 識別子

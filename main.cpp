@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 		return 1;
 
 	IRGenerator irGen;
-	if(!irGen.genarate(astGen.get()))
+	if (!irGen.genarate(astGen.get()))
 		return 1;
 
 	// TODO Module受け取り
