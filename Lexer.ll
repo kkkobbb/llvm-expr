@@ -6,9 +6,6 @@
 
 %top {
 /* .ccの先頭に追加するコード */
-// TODO yy_size_t の変数とintにキャストした変数の比較をしているアホな処理への応急処置
-typedef int yy_size_t;
-#define YY_TYPEDEF_YY_SIZE_T
 }
 
 %{
