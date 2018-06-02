@@ -1,11 +1,11 @@
 CXX := g++
 LLVM-CONFIG := llvm-config
-CXXFLAGS := `$(LLVM-CONFIG) --cxxflags`
+CXXFLAGS := -g `$(LLVM-CONFIG) --cxxflags`
 #LDLIBS := `$(LLVM-CONFIG) --ldflags --system-libs --libs core` -lfl -ly -Xlinker --allow-shlib-undefined
 LDLIBS := `$(LLVM-CONFIG) --ldflags --system-libs --libs core`
 
 DEST := exprc
-SRC  := main.cpp Ast.cpp \
+SRC  := main.cpp AstNode.cpp \
         AstGenerator.cpp IRGenerator.cpp
 
 OBJS := $(patsubst %.cpp,%.o,$(SRC)) Lexer.o Parser.o
@@ -14,17 +14,18 @@ OBJS := $(patsubst %.cpp,%.o,$(SRC)) Lexer.o Parser.o
 all: $(DEST)
 
 # header
-main.o: Ast.h AstGenerator.h IRGenerator.h
-Ast.o: Ast.h
-AstGenerator.o: AstGenerator.h Ast.h Lexer.h Parser.hh
-IRGenerator.o: IRGenerator.h ope.h
-Parser.o: ope.h
+main.o: AstNode.h AstGenerator.h IRGenerator.h
+AstNode.o: AstNode.h
+AstGenerator.o: AstGenerator.h AstNode.h Lexer.h Parser.hh
+IRGenerator.o: IRGenerator.h AstNode.h
+Lexer.o: Parser.hh
+Parser.o: AstNode.h
 
 
 $(DEST): $(OBJS)
-	$(CXX) -o $@ $(CXXFLAGS) $^ $(LDLIBS)
+	$(CXX) -Wall -o $@ $^ $(LDLIBS)
 
-# bisonが生成したファイルは-fexceptionsを付ける必要があるのでここに記述する
+# bisonが生成したファイルは-fno-exceptionsが付いているとコンパイルに失敗する
 Parser.o: Parser.cc
 	$(CXX) $(CXXFLAGS) -fexceptions -c -o $@ $<
 

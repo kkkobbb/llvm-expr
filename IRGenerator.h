@@ -4,16 +4,18 @@
 #include <memory>
 
 // llvm
+#include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 
-#include "Ast.h"
+#include "AstNode.h"
 
 
 namespace expr {
 	// LLVM IR 生成器
 	class IRGenerator
 	{
-		std::unique_ptr<llvm::Module> module;
+		llvm::LLVMContext TheContext;
+		std::unique_ptr<llvm::Module> TheModule;
 
 		public:
 		bool genarate(std::unique_ptr<AstNode> ast_root);

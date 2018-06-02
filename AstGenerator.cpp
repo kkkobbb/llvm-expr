@@ -8,7 +8,7 @@
 #include "Lexer.h"
 #include "Parser.hh"
 
-#include "Ast.h"
+#include "AstNode.h"
 #include "AstGenerator.h"
 
 

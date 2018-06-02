@@ -14,6 +14,17 @@
     * `llvm::cl::readConfigFile()`を使っている？
       (e.g. `clang/lib/Driver/Driver.cpp`)
 
+* `unique_ptr<llvm::Module>` `llvm::LLVMContext`の順番でメンバ変数を宣言すると
+  `LLVMContext`内で実行時エラー(`Segmentation fault`)となる
+    * 自動変数は宣言の逆順で破棄される
+        * <http://cimadai.hateblo.jp/entry/20080422/1208878033>
+        * <https://detail.chiebukuro.yahoo.co.jp/qa/question_detail/q1043000740>
+        * TODO:  規格ではどこに記載されている？
+    * 最初に`LLVMContext`を破棄、次に`Module`を破棄、
+      `Module`破棄中に`LLVMContext`内の関数(`LLVMContext::removeModule()`)を呼び出すためエラーとなる?
+    * `llvm::LLVMContext` `unique_ptr<llvm::Module>`の順番で宣言するとエラーにならない
+        * `Module(LLVMContext, ...)`なコンストラクタなので、この順番が自然ではある?
+
 
 ## LLVM 3.8
 
@@ -29,6 +40,13 @@
 * zlib開発版は不要
 
 * `-help`するとデフォルトでたくさんのオプションが表示されるため、それらを非表示にする必要がある
+
+
+## LLVM 6.0
+
+* `llvm::getGlobalContext()`はなくなっている
+    * `llvm::LLVMContext TheContext`とか宣言して、共通のLLVMContextを使用すれば良い
+    * <http://llvm.org/docs/tutorial/LangImpl03.html#full-code-listing>
 
 
 ---

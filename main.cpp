@@ -5,7 +5,7 @@
 
 #include <llvm/Support/CommandLine.h>
 
-#include "Ast.h"
+#include "AstNode.h"
 #include "AstGenerator.h"
 #include "IRGenerator.h"
 
@@ -29,6 +29,12 @@ int main(int argc, char *argv[])
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<bool> Force("f",
 			llvm::cl::desc("Enable binary output on terminals"),
+			llvm::cl::cat(CompilerCategory));
+	llvm::cl::opt<bool> EmitAst("emit-ast",
+			llvm::cl::desc("emit AST"),
+			llvm::cl::cat(CompilerCategory));
+	llvm::cl::opt<bool> EmitLlvm("emit-llvm",
+			llvm::cl::desc("emit llvm IR"),
 			llvm::cl::cat(CompilerCategory));
 	// CompilerCategory以外は非表示
 	llvm::cl::HideUnrelatedOptions({&CompilerCategory});
