@@ -25,12 +25,9 @@ bool IRGenerator::genarate(std::unique_ptr<AstNode> ast_root)
 {
 	llvm::IRBuilder<> builder(TheContext);
 
-	// debug 各ノードの表示
-	ast_root->print_debug(cout);
-
 	TheModule = llvm::make_unique<llvm::Module>("code", TheContext);
 
-	// TODO
+	ast_root->generate(TheModule.get(), builder);
 
 	return true;
 }

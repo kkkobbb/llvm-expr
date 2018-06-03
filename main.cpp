@@ -3,7 +3,9 @@
  */
 #include <fstream>
 
+#include <llvm/IR/Module.h>
 #include <llvm/Support/CommandLine.h>
+#include <llvm/Support/raw_ostream.h>
 
 #include "AstNode.h"
 #include "AstGenerator.h"
@@ -30,11 +32,11 @@ int main(int argc, char *argv[])
 	llvm::cl::opt<bool> Force("f",
 			llvm::cl::desc("Enable binary output on terminals"),
 			llvm::cl::cat(CompilerCategory));
-	llvm::cl::opt<bool> EmitAst("emit-ast",
-			llvm::cl::desc("emit AST"),
+	llvm::cl::opt<bool> PrintAst("print-ast",
+			llvm::cl::desc("print AST"),
 			llvm::cl::cat(CompilerCategory));
-	llvm::cl::opt<bool> EmitLlvm("emit-llvm",
-			llvm::cl::desc("emit llvm IR"),
+	llvm::cl::opt<bool> PrintLlvm("print-llvm",
+			llvm::cl::desc("print llvm IR"),
 			llvm::cl::cat(CompilerCategory));
 	// CompilerCategory以外は非表示
 	llvm::cl::HideUnrelatedOptions({&CompilerCategory});
@@ -47,15 +49,29 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	// AST生成
 	AstGenerator astGen;
 	if (!astGen.genarate(fin))
 		return 1;
+	auto ast = astGen.get();
 
+	if (PrintAst) {
+		ast->print_debug(cout);
+		cout << endl;
+	}
+
+	// IR生成
 	IRGenerator irGen;
-	if (!irGen.genarate(astGen.get()))
+	if (!irGen.genarate(move(ast)))
 		return 1;
+	auto m = irGen.get();
+	// FIXME ファイル名の設定 必要？
+	m->setSourceFileName(InputFilename);
 
-	// TODO Module受け取り
+	if (PrintLlvm) {
+		m->print(llvm::errs(), nullptr);
+		llvm::errs() << "\n";
+	}
 
 	// TODO 目的ファイル生成
 

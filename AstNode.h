@@ -19,7 +19,7 @@ namespace expr {
 		std::string dbg_msg;
 
 		public:
-		virtual llvm::Value *generate(llvm::IRBuilder<> &builder)
+		virtual llvm::Value *generate(llvm::Module *m, llvm::IRBuilder<> &builder)
 		{
 			return nullptr;
 		}
@@ -56,15 +56,7 @@ namespace expr {
 			if (n != nullptr)
 				children.push_back(std::unique_ptr<AstNode>(n));
 		}
-
-		virtual llvm::Value *generate(llvm::IRBuilder<> &builder) override
-		{
-			// 子要素の実行
-			for (auto itr = children.cbegin(); itr != children.cend(); ++itr)
-				(*itr)->generate(builder);
-
-			return nullptr;
-		}
+		virtual llvm::Value *generate(llvm::Module *m, llvm::IRBuilder<> &builder) override;
 
 		virtual void print_debug(std::ostream &dout, int indent = 0) override
 		{
@@ -82,6 +74,7 @@ namespace expr {
 	{
 		public:
 		using AstList::AstList;
+		virtual llvm::Value *generate(llvm::Module *m, llvm::IRBuilder<> &builder) override;
 	};
 
 	// 文のリスト
@@ -101,14 +94,7 @@ namespace expr {
 		{
 			this->n.reset(n);
 		}
-
-		virtual llvm::Value *generate(llvm::IRBuilder<> &builder) override
-		{
-			// 子要素の実行
-			n->generate(builder);
-
-			return nullptr;
-		}
+		virtual llvm::Value *generate(llvm::Module *m, llvm::IRBuilder<> &builder) override;
 
 		virtual void print_debug(std::ostream &dout, int indent = 0) override
 		{
@@ -239,6 +225,8 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
+		virtual llvm::Value *generate(llvm::Module *m, llvm::IRBuilder<> &builder) override;
+
 	};
 
 	// 減算
@@ -308,7 +296,7 @@ namespace expr {
 			this->value = value;
 			dbg_msg = "(" + std::to_string(value) + ")";
 		}
-		virtual llvm::Value *generate(llvm::IRBuilder<> &builder) override;
+		virtual llvm::Value *generate(llvm::Module *m, llvm::IRBuilder<> &builder) override;
 	};
 
 	// 識別子
@@ -322,6 +310,7 @@ namespace expr {
 			this->name.reset(name);
 			dbg_msg = "\"" + *this->name + "\"";
 		}
+		virtual llvm::Value *generate(llvm::Module *m, llvm::IRBuilder<> &builder) override;
 	};
 }
 
