@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 	auto ast = astGen.get();
 
 	if (PrintAst) {
-		ast->print_debug(cout);
+		ast->print_ast(cout);
 		cout << endl;
 	}
 

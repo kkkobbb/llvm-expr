@@ -15,9 +15,9 @@ all: $(DEST)
 
 # header
 main.o: AstNode.h AstGenerator.h IRGenerator.h
-AstNode.o: AstNode.h
+AstNode.o: AstNode.h IRGenInfo.h
 AstGenerator.o: AstGenerator.h AstNode.h Lexer.h Parser.hh
-IRGenerator.o: IRGenerator.h AstNode.h
+IRGenerator.o: IRGenerator.h AstNode.h IRGenInfo.h
 Lexer.o: Parser.hh
 Parser.o: AstNode.h
 

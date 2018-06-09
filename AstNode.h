@@ -10,7 +10,9 @@
 #include <llvm/IR/IRBuilder.h>
 
 
+
 namespace expr {
+	class IRGenInfo;
 	// ノード
 	class AstNode
 	{
@@ -19,12 +21,12 @@ namespace expr {
 		std::string dbg_msg;
 
 		public:
-		virtual llvm::Value *generate(llvm::Module *m, llvm::IRBuilder<> &builder)
+		virtual llvm::Value *generate(IRGenInfo &igi)
 		{
 			return nullptr;
 		}
 
-		virtual void print_debug(std::ostream &dout, int indent = 0)
+		virtual void print_ast(std::ostream &dout, int indent = 0)
 		{
 			// インデント
 			for (int i = 0; i < indent; ++i)
@@ -56,16 +58,16 @@ namespace expr {
 			if (n != nullptr)
 				children.push_back(std::unique_ptr<AstNode>(n));
 		}
-		virtual llvm::Value *generate(llvm::Module *m, llvm::IRBuilder<> &builder) override;
+		virtual llvm::Value *generate(IRGenInfo &igi) override;
 
-		virtual void print_debug(std::ostream &dout, int indent = 0) override
+		virtual void print_ast(std::ostream &dout, int indent = 0) override
 		{
-			AstNode::print_debug(dout, indent);
+			AstNode::print_ast(dout, indent);
 
 			// 子要素の表示
 			int next_indent = indent + 1;
 			for (auto itr = children.cbegin(); itr != children.cend(); ++itr)
-				(*itr)->print_debug(dout, next_indent);
+				(*itr)->print_ast(dout, next_indent);
 		}
 	};
 
@@ -74,7 +76,7 @@ namespace expr {
 	{
 		public:
 		using AstList::AstList;
-		virtual llvm::Value *generate(llvm::Module *m, llvm::IRBuilder<> &builder) override;
+		virtual llvm::Value *generate(IRGenInfo &igi) override;
 	};
 
 	// 文のリスト
@@ -94,12 +96,12 @@ namespace expr {
 		{
 			this->n.reset(n);
 		}
-		virtual llvm::Value *generate(llvm::Module *m, llvm::IRBuilder<> &builder) override;
+		virtual llvm::Value *generate(IRGenInfo &igi) override;
 
-		virtual void print_debug(std::ostream &dout, int indent = 0) override
+		virtual void print_ast(std::ostream &dout, int indent = 0) override
 		{
-			AstNode::print_debug(dout, indent);
-			n->print_debug(dout, indent + 1);
+			AstNode::print_ast(dout, indent);
+			n->print_ast(dout, indent + 1);
 		}
 	};
 
@@ -113,19 +115,19 @@ namespace expr {
 		public:
 		AstExpression(AstNode *l, AstNode *r)
 		{
-			this->r.reset(r);
 			this->l.reset(l);
+			this->r.reset(r);
 		}
 
-		virtual void print_debug(std::ostream &dout, int indent = 0) override
+		virtual void print_ast(std::ostream &dout, int indent = 0) override
 		{
-			AstNode::print_debug(dout, indent);
+			AstNode::print_ast(dout, indent);
 			// 子要素の表示
 			int next_indent = indent + 1;
 			if (l != nullptr)
-				l->print_debug(dout, next_indent);
+				l->print_ast(dout, next_indent);
 			if (r != nullptr)
-				r->print_debug(dout, next_indent);
+				r->print_ast(dout, next_indent);
 		}
 	};
 
@@ -134,6 +136,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
+		virtual llvm::Value *generate(IRGenInfo &igi) override;
 	};
 
 	// コンマ演算子
@@ -225,7 +228,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
-		virtual llvm::Value *generate(llvm::Module *m, llvm::IRBuilder<> &builder) override;
+		virtual llvm::Value *generate(IRGenInfo &igi) override;
 
 	};
 
@@ -288,15 +291,15 @@ namespace expr {
 	// 値
 	class AstConstantInt: public AstNode
 	{
-		int value;
+		int num;
 
 		public:
-		AstConstantInt(int value)
+		AstConstantInt(int num)
 		{
-			this->value = value;
-			dbg_msg = "(" + std::to_string(value) + ")";
+			this->num = num;
+			dbg_msg = "(" + std::to_string(num) + ")";
 		}
-		virtual llvm::Value *generate(llvm::Module *m, llvm::IRBuilder<> &builder) override;
+		virtual llvm::Value *generate(IRGenInfo &igi) override;
 	};
 
 	// 識別子
@@ -310,7 +313,11 @@ namespace expr {
 			this->name.reset(name);
 			dbg_msg = "\"" + *this->name + "\"";
 		}
-		virtual llvm::Value *generate(llvm::Module *m, llvm::IRBuilder<> &builder) override;
+		const std::string &getName()
+		{
+			return *name;
+		}
+		virtual llvm::Value *generate(IRGenInfo &igi) override;
 	};
 }
 

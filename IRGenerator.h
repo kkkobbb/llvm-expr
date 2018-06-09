@@ -8,14 +8,14 @@
 #include <llvm/IR/Module.h>
 
 #include "AstNode.h"
+#include "IRGenInfo.h"
 
 
 namespace expr {
 	// LLVM IR 生成器
 	class IRGenerator
 	{
-		llvm::LLVMContext TheContext;
-		std::unique_ptr<llvm::Module> TheModule;
+		IRGenInfo igi;
 
 		public:
 		bool genarate(std::unique_ptr<AstNode> ast_root);

@@ -10,26 +10,28 @@
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/BasicBlock.h>
+#include <llvm/IR/ValueSymbolTable.h>
 
 #include "AstNode.h"
+#include "IRGenInfo.h"
 
 
 using namespace std;
-using namespace expr;
 using namespace llvm;
+using namespace expr;
 
 
 
 /*
  * IR 生成
  */
-llvm::Value *AstList::generate(llvm::Module *m, llvm::IRBuilder<> &builder)
+llvm::Value *AstList::generate(IRGenInfo &igi)
 {
 	Value *lastVal = nullptr;
 
 	// 子要素の実行
 	for (auto itr = children.cbegin(); itr != children.cend(); ++itr)
-		lastVal = (*itr)->generate(m, builder);
+		lastVal = (*itr)->generate(igi);
 
 	return lastVal;
 }
@@ -38,9 +40,11 @@ llvm::Value *AstList::generate(llvm::Module *m, llvm::IRBuilder<> &builder)
 /*
  * IR 生成
  */
-Value *AstUnit::generate(Module *m, IRBuilder<> &builder)
+Value *AstUnit::generate(IRGenInfo &igi)
 {
-	LLVMContext &c = builder.getContext();
+	LLVMContext &c = igi.getContext();
+	Module &m = igi.getModule();
+	IRBuilder<> &builder = igi.getBuilder();
 
 	// 文法には関数定義はないが、
 	// LLVM IRでは関数を定義する必要があるため
@@ -49,13 +53,15 @@ Value *AstUnit::generate(Module *m, IRBuilder<> &builder)
 
 	Function *func = Function::Create(
 			FunctionType::get(Type::getInt32Ty(c), false),
-			Function::ExternalLinkage, "main", m);
+			Function::ExternalLinkage, "main", &m);
 
 	BasicBlock *bb = BasicBlock::Create(c, "entry", func);
 	builder.SetInsertPoint(bb);
 
+	igi.curFunc = func;
+
 	// 子要素の実行
-	Value *v = AstList::generate(m, builder);
+	Value *v = AstList::generate(igi);
 
 	builder.CreateRet(v);
 
@@ -66,9 +72,9 @@ Value *AstUnit::generate(Module *m, IRBuilder<> &builder)
 /*
  * IR 生成
  */
-Value *AstStatement::generate(Module *m, IRBuilder<> &builder)
+Value *AstStatement::generate(IRGenInfo &igi)
 {
-	Value *v = n->generate(m, builder);
+	Value *v = n->generate(igi);
 
 	return v;
 }
@@ -77,10 +83,37 @@ Value *AstStatement::generate(Module *m, IRBuilder<> &builder)
 /*
  * IR 生成
  */
-Value *AstExpressionADD::generate(Module *m, IRBuilder<> &builder)
+Value *AstExpressionAS::generate(IRGenInfo &igi)
 {
-	Value *lhs = l->generate(m, builder);
-	Value *rhs = r->generate(m, builder);
+	LLVMContext &c = igi.getContext();
+	IRBuilder<> &builder = igi.getBuilder();
+	Value *rhs = r->generate(igi);
+
+	AstIdentifier *id = dynamic_cast<AstIdentifier*>(l.get());
+	if (!id) {
+		// TODO エラー処理
+		return nullptr;
+	}
+	const string &name = id->getName();
+
+	IRBuilder<> fBuilder(&igi.curFunc->getEntryBlock(),
+			igi.curFunc->getEntryBlock().begin());
+	AllocaInst *alloca = fBuilder.CreateAlloca(Type::getInt32Ty(c), 0, name);
+
+	builder.CreateStore(rhs, alloca);
+
+	return alloca;
+}
+
+
+/*
+ * IR 生成
+ */
+Value *AstExpressionADD::generate(IRGenInfo &igi)
+{
+	IRBuilder<> &builder = igi.getBuilder();
+	Value *lhs = l->generate(igi);
+	Value *rhs = r->generate(igi);
 
 	return builder.CreateAdd(lhs, rhs, "add_tmp");
 }
@@ -89,24 +122,30 @@ Value *AstExpressionADD::generate(Module *m, IRBuilder<> &builder)
 /*
  * IR 生成
  */
-Value *AstConstantInt::generate(Module *m, IRBuilder<> &builder)
+Value *AstConstantInt::generate(IRGenInfo &igi)
 {
-	LLVMContext &c = builder.getContext();
+	LLVMContext &c = igi.getContext();
 
 	// Builderからの定数取得
-	//return builder.getInt32(value);
+	//return builder.getInt32(num);
 
-	return ConstantInt::get(c, APInt(sizeof(int) * 8, value, true));
+	return ConstantInt::get(c, APInt(sizeof(int) * 8, num, true));
 }
 
 
 /*
  * IR 生成
+ *
+ * AstIdentifierのgenerate()が呼ばれた場合、変数の値を返す
+ * それ以外の用途(代入先、関数名など)の場合、getName()呼び出しで
+ * 親ノードが処理すること
  */
-Value *AstIdentifier::generate(Module *m, IRBuilder<> &builder)
+Value *AstIdentifier::generate(IRGenInfo &igi)
 {
-	// TODO 名前管理
+	IRBuilder<> &builder = igi.getBuilder();
+	ValueSymbolTable *vs_table = igi.curFunc->getValueSymbolTable();
+	Value *alloca = vs_table->lookup(*name);
 
-	return nullptr;
+	return builder.CreateLoad(alloca, "var");
 }
 

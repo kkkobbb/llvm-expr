@@ -9,6 +9,7 @@
 
 #include "AstNode.h"
 #include "IRGenerator.h"
+#include "IRGenInfo.h"
 
 
 using namespace std;
@@ -23,11 +24,7 @@ using namespace expr;
  */
 bool IRGenerator::genarate(std::unique_ptr<AstNode> ast_root)
 {
-	llvm::IRBuilder<> builder(TheContext);
-
-	TheModule = llvm::make_unique<llvm::Module>("code", TheContext);
-
-	ast_root->generate(TheModule.get(), builder);
+	ast_root->generate(igi);
 
 	return true;
 }
@@ -38,6 +35,6 @@ bool IRGenerator::genarate(std::unique_ptr<AstNode> ast_root)
  */
 unique_ptr<llvm::Module> IRGenerator::get()
 {
-	return move(TheModule);
+	return igi.moveModule();
 }
 
