@@ -6,6 +6,8 @@
 #include <llvm/IR/Module.h>
 #include <llvm/Support/CommandLine.h>
 #include <llvm/Support/raw_ostream.h>
+#include <llvm/Support/FileSystem.h>
+#include <llvm/Bitcode/BitcodeWriter.h>
 
 #include "AstNode.h"
 #include "AstGenerator.h"
@@ -27,7 +29,7 @@ int main(int argc, char *argv[])
 	llvm::cl::opt<string> OutputFilename("o",
 			llvm::cl::desc("specify output filename"),
 			llvm::cl::value_desc("filename"),
-			llvm::cl::init("a.out"),
+			llvm::cl::init("a.ll"),
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<bool> Force("f",
 			llvm::cl::desc("Enable binary output on terminals"),
@@ -65,7 +67,6 @@ int main(int argc, char *argv[])
 	if (!irGen.genarate(move(ast)))
 		return 1;
 	auto m = irGen.get();
-	// FIXME ファイル名の設定 必要？
 	m->setSourceFileName(InputFilename);
 
 	if (PrintLlvm) {
@@ -73,7 +74,22 @@ int main(int argc, char *argv[])
 		llvm::errs() << "\n";
 	}
 
-	// TODO 目的ファイル生成
+	// 表示系のオプションが指定されていた場合、
+	// ファイル出力は行わない
+	if (PrintAst || PrintLlvm)
+		return 0;
+
+	// 目的ファイル生成
+	if (Force) {
+		llvm::WriteBitcodeToFile(m.get(), llvm::outs());
+	} else {
+		error_code errorInfo;
+		llvm::raw_fd_ostream outfile(
+				OutputFilename,
+				errorInfo,
+				llvm::sys::fs::OpenFlags::F_None);
+		llvm::WriteBitcodeToFile(m.get(), outfile);
+	}
 
 	return 0;
 }
