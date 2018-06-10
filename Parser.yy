@@ -157,7 +157,7 @@ expression_statement
     | ';'
         { $$ = nullptr; }
     | error
-        { $$ = nullptr; yyerrok; }  /* エラー処理 */
+        { $$ = nullptr; }  /* エラー処理 */
     ;
 
 
