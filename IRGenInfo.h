@@ -11,6 +11,7 @@
 namespace expr {
 	class IRGenInfo {
 		public:
+		bool errorFlag = false;
 		llvm::Function *curFunc = nullptr;
 
 		IRGenInfo()
@@ -41,7 +42,6 @@ namespace expr {
 		llvm::LLVMContext TheContext;
 		std::unique_ptr<llvm::Module> TheModule;
 		std::unique_ptr<llvm::IRBuilder<>> builder;
-		bool error = false;
 	};
 }
 

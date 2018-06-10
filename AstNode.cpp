@@ -124,27 +124,34 @@ Value *AstExpressionADD::generate(IRGenInfo &igi)
  */
 Value *AstConstantInt::generate(IRGenInfo &igi)
 {
-	LLVMContext &c = igi.getContext();
+	IRBuilder<> &builder = igi.getBuilder();
 
-	// Builderからの定数取得
-	//return builder.getInt32(num);
-
-	return ConstantInt::get(c, APInt(sizeof(int) * 8, num, true));
+	return builder.getInt32(num);
 }
 
 
 /*
  * IR 生成
  *
- * AstIdentifierのgenerate()が呼ばれた場合、変数の値を返す
- * それ以外の用途(代入先、関数名など)の場合、getName()呼び出しで
+ * 変数の値を返す
+ * 現在の関数のスコープを確認して変数が存在しない場合、
+ * モジュールに登録された変数(global)を確認する
+ *
+ * 値の参照以外の用途(代入先、関数名など)の場合、getName()呼び出しで
  * 親ノードが処理すること
  */
 Value *AstIdentifier::generate(IRGenInfo &igi)
 {
+	Module &m = igi.getModule();
 	IRBuilder<> &builder = igi.getBuilder();
+
 	ValueSymbolTable *vs_table = igi.curFunc->getValueSymbolTable();
 	Value *alloca = vs_table->lookup(*name);
+
+	if(!alloca) {
+		ValueSymbolTable &global_vs_table = m.getValueSymbolTable();
+		alloca = global_vs_table.lookup(*name);
+	}
 
 	return builder.CreateLoad(alloca, "var");
 }

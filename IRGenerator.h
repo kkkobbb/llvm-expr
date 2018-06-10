@@ -2,10 +2,12 @@
 #define IRGENERATOR_H
 
 #include <memory>
+#include <vector>
 
 // llvm
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
+#include <llvm/IR/GlobalVariable.h>
 
 #include "AstNode.h"
 #include "IRGenInfo.h"
@@ -15,6 +17,10 @@ namespace expr {
 	// LLVM IR 生成器
 	class IRGenerator
 	{
+		std::unique_ptr<llvm::Module> TheModule = nullptr;
+		// グローバル変数保存用
+		// ここから取り出す必要はない
+		std::vector<std::unique_ptr<llvm::GlobalVariable>> globalList;
 		IRGenInfo igi;
 
 		public:

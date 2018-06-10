@@ -6,6 +6,7 @@
 
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/GlobalVariable.h>
 
 #include "AstNode.h"
 #include "IRGenerator.h"
@@ -24,9 +25,25 @@ using namespace expr;
  */
 bool IRGenerator::genarate(std::unique_ptr<AstNode> ast_root)
 {
-	ast_root->generate(igi);
+	// グローバル変数(定数)を生成する
+	llvm::LLVMContext &c = igi.getContext();
+	llvm::Module &m = igi.getModule();
+	llvm::IRBuilder<> &builder = igi.getBuilder();
+	auto gv = unique_ptr<llvm::GlobalVariable>(new llvm::GlobalVariable(
+			m,
+			llvm::Type::getInt32Ty(c),
+			true,  /* isConstant */
+			llvm::GlobalValue::PrivateLinkage,
+			builder.getInt32(20),  /* Initializer */
+			"test"  /* name */
+			));
+	globalList.push_back(move(gv));
 
-	return true;
+	// IR生成
+	ast_root->generate(igi);
+	TheModule = igi.moveModule();
+
+	return !igi.errorFlag;
 }
 
 
@@ -35,6 +52,6 @@ bool IRGenerator::genarate(std::unique_ptr<AstNode> ast_root)
  */
 unique_ptr<llvm::Module> IRGenerator::get()
 {
-	return igi.moveModule();
+	return move(TheModule);
 }
 
