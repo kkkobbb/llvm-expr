@@ -70,8 +70,8 @@ int main(int argc, char *argv[])
 	m->setSourceFileName(InputFilename);
 
 	if (PrintLlvm) {
-		m->print(llvm::errs(), nullptr);
-		llvm::errs() << "\n";
+		m->print(llvm::outs(), nullptr);
+		llvm::outs() << "\n";
 	}
 
 	// 表示系のオプションが指定されていた場合、
