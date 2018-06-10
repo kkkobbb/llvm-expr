@@ -42,26 +42,26 @@ llvm::Value *AstList::generate(IRGenInfo &igi)
  */
 Value *AstUnit::generate(IRGenInfo &igi)
 {
-	LLVMContext &c = igi.getContext();
-	Module &m = igi.getModule();
-	IRBuilder<> &builder = igi.getBuilder();
+	auto &c = igi.getContext();
+	auto &m = igi.getModule();
+	auto &builder = igi.getBuilder();
 
 	// 文法には関数定義はないが、
 	// LLVM IRでは関数を定義する必要があるため
 	// 便宜上ここで関数mainを定義する
 	// (全ての処理は関数mainの処理とする)
 
-	Function *func = Function::Create(
+	auto func = Function::Create(
 			FunctionType::get(Type::getInt32Ty(c), false),
 			Function::ExternalLinkage, "main", &m);
 
-	BasicBlock *bb = BasicBlock::Create(c, "entry", func);
+	auto *bb = BasicBlock::Create(c, "entry", func);
 	builder.SetInsertPoint(bb);
 
 	igi.curFunc = func;
 
 	// 子要素の実行
-	Value *v = AstList::generate(igi);
+	auto *v = AstList::generate(igi);
 
 	builder.CreateRet(v);
 
@@ -74,7 +74,7 @@ Value *AstUnit::generate(IRGenInfo &igi)
  */
 Value *AstStatement::generate(IRGenInfo &igi)
 {
-	Value *v = n->generate(igi);
+	auto *v = n->generate(igi);
 
 	return v;
 }
@@ -85,20 +85,20 @@ Value *AstStatement::generate(IRGenInfo &igi)
  */
 Value *AstExpressionAS::generate(IRGenInfo &igi)
 {
-	LLVMContext &c = igi.getContext();
-	IRBuilder<> &builder = igi.getBuilder();
-	Value *rhs = r->generate(igi);
+	auto &c = igi.getContext();
+	auto &builder = igi.getBuilder();
+	auto rhs = r->generate(igi);
 
-	AstIdentifier *id = dynamic_cast<AstIdentifier*>(l.get());
+	auto id = dynamic_cast<AstIdentifier*>(l.get());
 	if (!id) {
 		// TODO エラー処理
 		return nullptr;
 	}
-	const string &name = id->getName();
+	auto &name = id->getName();
 
 	IRBuilder<> fBuilder(&igi.curFunc->getEntryBlock(),
 			igi.curFunc->getEntryBlock().begin());
-	AllocaInst *alloca = fBuilder.CreateAlloca(Type::getInt32Ty(c), 0, name);
+	auto alloca = fBuilder.CreateAlloca(Type::getInt32Ty(c), 0, name);
 
 	builder.CreateStore(rhs, alloca);
 
@@ -111,9 +111,9 @@ Value *AstExpressionAS::generate(IRGenInfo &igi)
  */
 Value *AstExpressionADD::generate(IRGenInfo &igi)
 {
-	IRBuilder<> &builder = igi.getBuilder();
-	Value *lhs = l->generate(igi);
-	Value *rhs = r->generate(igi);
+	auto &builder = igi.getBuilder();
+	auto lhs = l->generate(igi);
+	auto rhs = r->generate(igi);
 
 	return builder.CreateAdd(lhs, rhs, "add_tmp");
 }
@@ -124,7 +124,7 @@ Value *AstExpressionADD::generate(IRGenInfo &igi)
  */
 Value *AstConstantInt::generate(IRGenInfo &igi)
 {
-	IRBuilder<> &builder = igi.getBuilder();
+	auto &builder = igi.getBuilder();
 
 	return builder.getInt32(num);
 }
@@ -142,14 +142,14 @@ Value *AstConstantInt::generate(IRGenInfo &igi)
  */
 Value *AstIdentifier::generate(IRGenInfo &igi)
 {
-	Module &m = igi.getModule();
-	IRBuilder<> &builder = igi.getBuilder();
+	auto &m = igi.getModule();
+	auto &builder = igi.getBuilder();
 
-	ValueSymbolTable *vs_table = igi.curFunc->getValueSymbolTable();
-	Value *alloca = vs_table->lookup(*name);
+	auto vs_table = igi.curFunc->getValueSymbolTable();
+	auto alloca = vs_table->lookup(*name);
 
 	if(!alloca) {
-		ValueSymbolTable &global_vs_table = m.getValueSymbolTable();
+		auto &global_vs_table = m.getValueSymbolTable();
 		alloca = global_vs_table.lookup(*name);
 	}
 
