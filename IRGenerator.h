@@ -20,7 +20,6 @@ namespace expr {
 		std::unique_ptr<llvm::Module> TheModule = nullptr;
 		// グローバル変数保存用
 		// ここから取り出す必要はない
-		std::vector<std::unique_ptr<llvm::GlobalVariable>> globalList;
 		IRGenInfo igi;
 
 		public:

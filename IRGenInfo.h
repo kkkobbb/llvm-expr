@@ -37,11 +37,21 @@ namespace expr {
 		{
 			return *builder;
 		}
+		std::size_t addGlobalValue(llvm::Value *val)
+		{
+			llvm::unique_value uv(val);
+			GlobalList.push_back(std::move(uv));
+
+			return GlobalList.size();
+		}
 
 		private:
 		llvm::LLVMContext TheContext;
 		std::unique_ptr<llvm::Module> TheModule;
 		std::unique_ptr<llvm::IRBuilder<>> builder;
+		// グローバルのValueの保存用
+		// 取り出しは考慮していない
+		std::vector<llvm::unique_value> GlobalList;
 	};
 }
 
