@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 	llvm::cl::opt<string> OutputFilename("o",
 			llvm::cl::desc("specify output filename"),
 			llvm::cl::value_desc("filename"),
-			llvm::cl::init("a.ll"),
+			llvm::cl::init("a.bc"),
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<bool> Force("f",
 			llvm::cl::desc("Enable binary output on terminals"),
