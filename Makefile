@@ -45,7 +45,7 @@ DEPENDS := $(patsubst %.cpp,$(DEPEND_DIR)/%.d,$(SRC))
 
 $(DEPEND_DIR)/%.d: %.cpp
 	@install -d $(dir $@)
-	$(CC) -MM -MG -MF $@ $<
+	$(CXX) -MM -MG -MF $@ $<
 
 .PHONY: cleandep
 cleandep:
