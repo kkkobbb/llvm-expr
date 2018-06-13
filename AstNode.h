@@ -26,6 +26,15 @@ namespace expr {
 			return nullptr;
 		}
 
+		bool get_through()
+		{
+			return throughFlag;
+		}
+		void set_through(bool t)
+		{
+			throughFlag = throughFlag || t;
+		}
+
 		virtual void print_ast(std::ostream &dout, int indent = 0)
 		{
 			// インデント
@@ -55,8 +64,10 @@ namespace expr {
 
 		void add(AstNode *n)
 		{
-			if (n != nullptr)
-				children.push_back(std::unique_ptr<AstNode>(n));
+			if (n == nullptr)
+				return;
+			set_through(n->get_through());
+			children.push_back(std::unique_ptr<AstNode>(n));
 		}
 		virtual llvm::Value *generate(IRGenInfo &igi) override;
 
@@ -94,6 +105,8 @@ namespace expr {
 		public:
 		AstStatement(AstNode *n)
 		{
+			if(n != nullptr)
+				set_through(n->get_through());
 			this->n.reset(n);
 		}
 		virtual llvm::Value *generate(IRGenInfo &igi) override;
@@ -115,6 +128,10 @@ namespace expr {
 		public:
 		AstExpression(AstNode *l, AstNode *r)
 		{
+			if(l != nullptr)
+				set_through(l->get_through());
+			if(r != nullptr)
+				set_through(r->get_through());
 			this->l.reset(l);
 			this->r.reset(r);
 		}
