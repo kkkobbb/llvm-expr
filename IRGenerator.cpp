@@ -35,7 +35,7 @@ bool IRGenerator::genarate(std::unique_ptr<AstNode> ast_root)
 			true,  /* isConstant */
 			llvm::GlobalValue::PrivateLinkage,
 			builder.getInt32(20),  /* Initializer */
-			"test"  /* name */
+			"test_const_20"  /* name */
 			));
 
 	// IR生成
