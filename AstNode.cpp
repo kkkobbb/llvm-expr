@@ -108,6 +108,7 @@ Value *AstExpressionAS::generate(IRGenInfo &igi)
 
 /*
  * IR 生成
+ * 加算
  */
 Value *AstExpressionADD::generate(IRGenInfo &igi)
 {
@@ -116,6 +117,62 @@ Value *AstExpressionADD::generate(IRGenInfo &igi)
 	auto rhs = r->generate(igi);
 
 	return builder.CreateAdd(lhs, rhs, "add_tmp");
+}
+
+
+/*
+ * IR 生成
+ * 減算
+ */
+Value *AstExpressionSUB::generate(IRGenInfo &igi)
+{
+	auto &builder = igi.getBuilder();
+	auto lhs = l->generate(igi);
+	auto rhs = r->generate(igi);
+
+	return builder.CreateSub(lhs, rhs, "sub_tmp");
+}
+
+
+/*
+ * IR 生成
+ * 乗算
+ */
+Value *AstExpressionMUL::generate(IRGenInfo &igi)
+{
+	auto &builder = igi.getBuilder();
+	auto lhs = l->generate(igi);
+	auto rhs = r->generate(igi);
+
+	return builder.CreateMul(lhs, rhs, "mul_tmp");
+}
+
+
+/*
+ * IR 生成
+ * 除算
+ */
+Value *AstExpressionDIV::generate(IRGenInfo &igi)
+{
+	auto &builder = igi.getBuilder();
+	auto lhs = l->generate(igi);
+	auto rhs = r->generate(igi);
+
+	return builder.CreateSDiv(lhs, rhs, "div_tmp");
+}
+
+
+/*
+ * IR 生成
+ * 余算
+ */
+Value *AstExpressionMOD::generate(IRGenInfo &igi)
+{
+	auto &builder = igi.getBuilder();
+	auto lhs = l->generate(igi);
+	auto rhs = r->generate(igi);
+
+	return builder.CreateSRem(lhs, rhs, "mod_tmp");
 }
 
 

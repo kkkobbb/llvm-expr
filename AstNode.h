@@ -246,7 +246,6 @@ namespace expr {
 		public:
 		using AstExpression::AstExpression;
 		virtual llvm::Value *generate(IRGenInfo &igi) override;
-
 	};
 
 	// 減算
@@ -254,6 +253,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
+		virtual llvm::Value *generate(IRGenInfo &igi) override;
 	};
 
 	// 乗算
@@ -261,6 +261,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
+		virtual llvm::Value *generate(IRGenInfo &igi) override;
 	};
 
 	// 除算
@@ -268,6 +269,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
+		virtual llvm::Value *generate(IRGenInfo &igi) override;
 	};
 
 	// 余算
@@ -275,6 +277,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
+		virtual llvm::Value *generate(IRGenInfo &igi) override;
 	};
 
 	// 単項演算子 正
