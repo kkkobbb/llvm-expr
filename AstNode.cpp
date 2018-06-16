@@ -24,12 +24,14 @@ using namespace expr;
 
 /*
  * IR 生成
+ * List
+ *
+ * 子要素の実行のみ
  */
 llvm::Value *AstList::generate(IRGenInfo &igi)
 {
 	Value *lastVal = nullptr;
 
-	// 子要素の実行
 	for (auto itr = children.cbegin(); itr != children.cend(); ++itr)
 		lastVal = (*itr)->generate(igi);
 
@@ -39,6 +41,7 @@ llvm::Value *AstList::generate(IRGenInfo &igi)
 
 /*
  * IR 生成
+ * 翻訳単位 (1ファイル分)
  */
 Value *AstUnit::generate(IRGenInfo &igi)
 {
@@ -71,9 +74,13 @@ Value *AstUnit::generate(IRGenInfo &igi)
 
 /*
  * IR 生成
+ * 文
+ *
+ * 子要素の実行のみ
  */
 Value *AstStatement::generate(IRGenInfo &igi)
 {
+	// 子要素の実行
 	auto *v = n->generate(igi);
 
 	return v;
@@ -82,6 +89,7 @@ Value *AstStatement::generate(IRGenInfo &igi)
 
 /*
  * IR 生成
+ * 代入
  */
 Value *AstExpressionAS::generate(IRGenInfo &igi)
 {
@@ -178,6 +186,7 @@ Value *AstExpressionMOD::generate(IRGenInfo &igi)
 
 /*
  * IR 生成
+ * 定数 整数
  */
 Value *AstConstantInt::generate(IRGenInfo &igi)
 {
