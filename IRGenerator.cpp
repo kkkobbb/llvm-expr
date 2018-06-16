@@ -6,9 +6,11 @@
 
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/GlobalVariable.h>
 
 #include "AstNode.h"
 #include "IRGenerator.h"
+#include "IRGenInfo.h"
 
 
 using namespace std;
@@ -23,16 +25,24 @@ using namespace expr;
  */
 bool IRGenerator::genarate(std::unique_ptr<AstNode> ast_root)
 {
-	llvm::IRBuilder<> builder(TheContext);
+	// グローバル変数(定数)を生成する
+	auto &c = igi.getContext();
+	auto &m = igi.getModule();
+	auto &builder = igi.getBuilder();
+	igi.addGlobalValue(new llvm::GlobalVariable(
+			m,
+			llvm::Type::getInt32Ty(c),
+			true,  /* isConstant */
+			llvm::GlobalValue::PrivateLinkage,
+			builder.getInt32(20),  /* Initializer */
+			"test_const_20"  /* name */
+			));
 
-	// debug 各ノードの表示
-	ast_root->print_debug(cout);
+	// IR生成
+	ast_root->generate(igi);
+	TheModule = igi.moveModule();
 
-	TheModule = llvm::make_unique<llvm::Module>("code", TheContext);
-
-	// TODO
-
-	return true;
+	return !igi.errorFlag;
 }
 
 

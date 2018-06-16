@@ -13,15 +13,6 @@ OBJS := $(patsubst %.cpp,%.o,$(SRC)) Lexer.o Parser.o
 
 all: $(DEST)
 
-# header
-main.o: AstNode.h AstGenerator.h IRGenerator.h
-AstNode.o: AstNode.h
-AstGenerator.o: AstGenerator.h AstNode.h Lexer.h Parser.hh
-IRGenerator.o: IRGenerator.h AstNode.h
-Lexer.o: Parser.hh
-Parser.o: AstNode.h
-
-
 $(DEST): $(OBJS)
 	$(CXX) -Wall -o $@ $^ $(LDLIBS)
 
@@ -43,5 +34,26 @@ clean:
 
 .PHONY: all clean
 .PRECIOUS: %.cc %.hh
+
+
+
+distclean: clean
+
+### ヘッダ依存関係 自動解決 ###
+DEPEND_DIR := _depend
+DEPENDS := $(patsubst %.cpp,$(DEPEND_DIR)/%.d,$(SRC))
+
+$(DEPEND_DIR)/%.d: %.cpp
+	@install -d $(dir $@)
+	$(CXX) -MM -MG -MF $@ $<
+
+.PHONY: cleandep
+cleandep:
+	$(RM) -r $(DEPEND_DIR)
+distclean: cleandep
+
+ifneq "$(findstring clean, $(MAKECMDGOALS))" "clean"
+  -include $(DEPENDS)
+endif
 
 

@@ -157,7 +157,7 @@ expression_statement
     | ';'
         { $$ = nullptr; }
     | error
-        { $$ = nullptr; yyerrok; }  /* エラー処理 */
+        { $$ = nullptr; }  /* エラー処理 */
     ;
 
 
@@ -311,7 +311,7 @@ constant
     : RE_THROUGH
         { error(yyla.location, "through"); }
     | INTEGER
-        { $$ = new AstConstant($1); }
+        { $$ = new AstConstantInt($1); }
     ;
 
 identifier

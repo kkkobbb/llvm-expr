@@ -17,3 +17,6 @@ location.hh
 position.hh
 stack.hh
 
+
+# LLVM IR file
+*.ll
