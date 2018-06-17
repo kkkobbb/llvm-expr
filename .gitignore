@@ -20,3 +20,5 @@ stack.hh
 
 # LLVM IR file
 *.ll
+*.bc
+
