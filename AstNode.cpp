@@ -66,6 +66,9 @@ Value *AstUnit::generate(IRGenInfo &igi)
 	// 子要素の実行
 	auto *v = AstList::generate(igi);
 
+	if(!v)
+		v = builder.getInt32(0);
+
 	builder.CreateRet(v);
 
 	return nullptr;
@@ -80,6 +83,9 @@ Value *AstUnit::generate(IRGenInfo &igi)
  */
 Value *AstExpressionUnit::generate(IRGenInfo &igi)
 {
+	if(get_through())
+		return nullptr;
+
 	// 子要素の実行
 	auto *v = l->generate(igi);
 

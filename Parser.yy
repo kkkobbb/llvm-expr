@@ -159,8 +159,7 @@ compound_expression
 
 expression_unit
     : pure_expression ';'
-        /* { $$ = new AstExpressionUnit($1); } */
-        { $$ = std::move($1); }
+        { $$ = new AstExpressionUnit($1); }
     | ';'
         { $$ = nullptr; }
     | error

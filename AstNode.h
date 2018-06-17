@@ -66,7 +66,6 @@ namespace expr {
 		{
 			if (n == nullptr)
 				return;
-			set_through(n->get_through());
 			children.push_back(std::unique_ptr<AstNode>(n));
 		}
 		virtual llvm::Value *generate(IRGenInfo &igi) override;
@@ -91,6 +90,8 @@ namespace expr {
 	};
 
 	// 式
+	//
+	// 子がthrough状態の場合、through状態となる
 	class AstExpression: public AstNode
 	{
 		protected:
