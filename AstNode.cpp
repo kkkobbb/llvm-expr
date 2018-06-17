@@ -78,10 +78,10 @@ Value *AstUnit::generate(IRGenInfo &igi)
  *
  * 子要素の実行のみ
  */
-Value *AstStatement::generate(IRGenInfo &igi)
+Value *AstExpressionUnit::generate(IRGenInfo &igi)
 {
 	// 子要素の実行
-	auto *v = n->generate(igi);
+	auto *v = l->generate(igi);
 
 	return v;
 }

@@ -90,11 +90,12 @@ static int parse_err_num = 0;
 %type <astnode>  ast_root
 %type <astnode>  translation_unit
 /* 文 */
-%type <astnode>  statement statement_list
-%type <astnode>  compound_statement
-%type <astnode>  expression_statement
+%type <astnode>  expression expression_list
+%type <astnode>  compound_expression
+%type <astnode>  expression_unit
 /* 式 */
-%type <astnode>  expression
+%type <astnode>  pure_expression
+%type <astnode>  comma_expression
 %type <astnode>  assignment_expression
 %type <astnode>  constant_expression
 %type <astnode>  logical_OR_expression logical_AND_expression
@@ -121,52 +122,62 @@ ast_root
 /* 翻訳単位 */
 /* 一文のみ */
 translation_unit
-    : statement
+    : expression
         { $$ = new AstUnit($1); }
-    ;
-
-
-/********* 文 ***********/
-statement
-    : expression_statement
-        { $$ = std::move($1); }
-    | compound_statement
-        { $$ = std::move($1); }
-    ;
-
-statement_list
-    : statement
-        { $$ = new AstStatementList($1); }
-    | statement_list statement
+    | translation_unit expression
         {
-          ((AstStatementList *)$1)->add($2);
+          ((AstUnit *)$1)->add($2);
           $$ = std::move($1);
         }
     ;
 
-compound_statement
-    : '{' statement_list '}'
+
+/********** 式 **********/
+expression
+    : expression_unit
+        { $$ = std::move($1); }
+    | compound_expression
+        { $$ = std::move($1); }
+    ;
+
+expression_list
+    : expression
+        { $$ = new AstList($1); }
+    | expression_list expression
+        {
+          ((AstList *)$1)->add($2);
+          $$ = std::move($1);
+        }
+    ;
+
+compound_expression
+    : '{' expression_list '}'
         { $$ = std::move($2); }
     | '{' '}'
         { $$ = nullptr; }
     ;
 
-expression_statement
-    : expression ';'
-        { $$ = new AstStatement($1); }
+expression_unit
+    : pure_expression ';'
+        /* { $$ = new AstExpressionUnit($1); } */
+        { $$ = std::move($1); }
     | ';'
         { $$ = nullptr; }
     | error
         { $$ = nullptr; }  /* エラー処理 */
     ;
 
+/* 純粋な式 */
+pure_expression
+    : comma_expression
+        { $$ = std::move($1); }
+    ;
 
-/********** 式 **********/
 /* コンマ演算子 */
-expression
+comma_expression
     : assignment_expression
         { $$ = std::move($1); }
-    | expression ',' assignment_expression
+    | pure_expression ',' assignment_expression
         { $$ = new AstExpressionCOMMA($1, $3); }
     ;
 
@@ -302,14 +313,14 @@ primary_expression
         { $$ = std::move($1); }
     | constant
         { $$ = std::move($1); }
-    | '(' expression ')'
+    | '(' pure_expression ')'
         { $$ = std::move($2); }
     ;
 
 /* 定数 */
 constant
     : RE_THROUGH
-        { error(yyla.location, "through"); }
+        { $$ = new AstConstantThrough(); }
     | INTEGER
         { $$ = new AstConstantInt($1); }
     ;

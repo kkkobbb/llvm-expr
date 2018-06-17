@@ -90,34 +90,6 @@ namespace expr {
 		virtual llvm::Value *generate(IRGenInfo &igi) override;
 	};
 
-	// 文のリスト
-	class AstStatementList: public AstList
-	{
-		public:
-		using AstList::AstList;
-	};
-
-	// 文
-	class AstStatement: public AstNode
-	{
-		std::unique_ptr<AstNode> n;
-
-		public:
-		AstStatement(AstNode *n)
-		{
-			if(n != nullptr)
-				set_through(n->get_through());
-			this->n.reset(n);
-		}
-		virtual llvm::Value *generate(IRGenInfo &igi) override;
-
-		virtual void print_ast(std::ostream &dout, int indent = 0) override
-		{
-			AstNode::print_ast(dout, indent);
-			n->print_ast(dout, indent + 1);
-		}
-	};
-
 	// 式
 	class AstExpression: public AstNode
 	{
@@ -146,6 +118,14 @@ namespace expr {
 			if (r != nullptr)
 				r->print_ast(dout, next_indent);
 		}
+	};
+
+	// 式 1つ分
+	class AstExpressionUnit: public AstExpression
+	{
+		public:
+		AstExpressionUnit(AstNode *n) : AstExpression(n, nullptr) {}
+		virtual llvm::Value *generate(IRGenInfo &igi) override;
 	};
 
 	// 代入演算子
@@ -308,7 +288,7 @@ namespace expr {
 		AstExpressionBNOT(AstNode *n) : AstExpression(nullptr, n) {}
 	};
 
-	// 値
+	// 定数 整数
 	class AstConstantInt: public AstNode
 	{
 		int num;
@@ -320,6 +300,17 @@ namespace expr {
 			dbg_msg = "(" + std::to_string(num) + ")";
 		}
 		virtual llvm::Value *generate(IRGenInfo &igi) override;
+	};
+
+	// 定数 through
+	class AstConstantThrough: public AstNode
+	{
+		public:
+		AstConstantThrough()
+		{
+			set_through(true);
+			dbg_msg = "(through)";
+		}
 	};
 
 	// 識別子
