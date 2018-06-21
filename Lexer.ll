@@ -53,6 +53,9 @@ Space   [ \t]
 "if"       { return token_type::RE_IF; }
 "else"     { return token_type::RE_ELSE; }
 "while"    { return token_type::RE_WHILE; }
+"var"      { return token_type::RE_VAR; }
+"fnc"      { return token_type::RE_FNC; }
+"decl"     { return token_type::RE_DECL; }
 
  /* 識別子 */
 {Letter}({Letter}|{Digit})*  { val->sval = new std::string(yytext, yyleng); return token_type::IDENTIFIER; }
@@ -61,7 +64,7 @@ Space   [ \t]
  /* 文字定数 */
 '(\\.|[^\\'\n])+'            { val->ival = yytext[1]; return token_type::INTEGER; }
 
- /* 演算子 */
+ /* 2文字 */
 "<="  { return token_type::OP_LTE; }
 ">="  { return token_type::OP_GTE; }
 "=="  { return token_type::OP_EQ; }
@@ -70,33 +73,8 @@ Space   [ \t]
 "&&"  { return token_type::OP_LAND; }
 "<-"  { return token_type::OP_ARROW_L; }
 "->"  { return token_type::OP_ARROW_R; }
-"="   { return '='; }
-"<"   { return '<'; }
-">"   { return '>'; }
-"|"   { return '|'; }
-"&"   { return '&'; }
-"^"   { return '^'; }
-"~"   { return '~'; }
-"-"   { return '-'; }
-"+"   { return '+'; }
-"*"   { return '*'; }
-"/"   { return '/'; }
-"%"   { return '%'; }
-"!"   { return '!'; }
-";"   { return ';'; }
-"{"   { return '{'; }
-"}"   { return '}'; }
-","   { return ','; }
-"?"   { return '?'; }
-":"   { return ':'; }
-"("   { return '('; }
-")"   { return ')'; }
-"["   { return '['; }
-"]"   { return ']'; }
-"."   { return '.'; }
-
- /* その他 */
-.     {};
+ /* 1文字 */
+.     { return yytext[0]; }
 
 %%
 

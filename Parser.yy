@@ -72,6 +72,8 @@ static int parse_err_num = 0;
 %token           RE_RETURN
 %token           RE_VOID RE_INT
 %token           RE_IF RE_ELSE RE_WHILE
+%token           RE_VAR RE_FNC
+%token           RE_DECL
 
 /* 1文字の演算子(定義のみ) */
 %token           OP_COMMA
@@ -159,7 +161,8 @@ compound_expression
 
 expression_unit
     : pure_expression ';'
-        { $$ = new AstExpressionUnit($1); }
+        /* { $$ = new AstExpressionUnit($1); } */
+        { $$ = std::move($1); }
     | ';'
         { $$ = nullptr; }
     | error
