@@ -26,13 +26,13 @@ namespace expr {
 			return nullptr;
 		}
 
-		bool get_through()
+		bool is_through()
 		{
 			return throughFlag;
 		}
-		void set_through(bool t)
+		void set_through()
 		{
-			throughFlag = throughFlag || t;
+			throughFlag = true;
 		}
 
 		virtual void print_ast(std::ostream &dout, int indent = 0)
@@ -89,6 +89,68 @@ namespace expr {
 		virtual llvm::Value *generate(IRGenInfo &igi) override;
 	};
 
+	class AstDeclaration: public AstNode
+	{
+		protected:
+		std::unique_ptr<AstNode> name;
+		std::unique_ptr<AstNode> type;
+
+		public:
+		using AstNode::AstNode;
+		AstDeclaration(AstNode *name, AstNode *type)
+		{
+			this->name.reset(name);
+			this->type.reset(type);
+		}
+
+		virtual void print_ast(std::ostream &dout, int indent = 0) override
+		{
+			AstNode::print_ast(dout, indent);
+			// 子要素の表示
+			int next_indent = indent + 1;
+			if (name != nullptr)
+				name->print_ast(dout, next_indent);
+			if (type != nullptr)
+				type->print_ast(dout, next_indent);
+		}
+	};
+
+	class AstDeclarationVar: public AstDeclaration
+	{
+		public:
+		using AstDeclaration::AstDeclaration;
+	};
+
+	class AstDeclarationFunc: public AstDeclaration
+	{
+		public:
+		AstDeclarationFunc(AstNode *name, AstNode *retType, AstNode *argTypeList)
+		{
+			AstList *ftype = new AstList(retType);
+			ftype->add(argTypeList);
+			this->name.reset(name);
+			this->type.reset(ftype);
+		}
+	};
+
+	class AstType: public AstNode
+	{
+		public:
+		using AstNode::AstNode;
+	};
+
+	class AstTypeInt: public AstType
+	{
+		public:
+		using AstType::AstType;
+	};
+
+	class AstTypeVoid: public AstType
+	{
+		public:
+		using AstType::AstType;
+	};
+
 	// 式
 	//
 	// 子がthrough状態の場合、through状態となる
@@ -101,12 +163,33 @@ namespace expr {
 		public:
 		AstExpression(AstNode *l, AstNode *r)
 		{
-			if(l != nullptr)
-				set_through(l->get_through());
-			if(r != nullptr)
-				set_through(r->get_through());
+			if (l != nullptr && l->is_through())
+				set_through();
+			if (r != nullptr && r->is_through())
+				set_through();
 			this->l.reset(l);
 			this->r.reset(r);
+		}
+
+		virtual llvm::Value *generate(IRGenInfo &igi) override;
+
+		/*
+		 * 子のthrough判定
+		 */
+		bool is_through_children()
+		{
+			return (l != nullptr && l->is_through()) ||
+				(r != nullptr && r->is_through());
+		}
+
+		/*
+		 * 演算処理
+		 *
+		 * 演算子毎に変更すること
+		 */
+		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv)
+		{
+			return nullptr;
 		}
 
 		virtual void print_ast(std::ostream &dout, int indent = 0) override
@@ -121,12 +204,11 @@ namespace expr {
 		}
 	};
 
-	// 式 1つ分
-	class AstExpressionUnit: public AstExpression
+	// 関数呼び出し
+	class AstExpressionFunc: public AstExpression
 	{
 		public:
-		AstExpressionUnit(AstNode *n) : AstExpression(n, nullptr) {}
-		virtual llvm::Value *generate(IRGenInfo &igi) override;
+		using AstExpression::AstExpression;
 	};
 
 	// 代入演算子
@@ -135,13 +217,6 @@ namespace expr {
 		public:
 		using AstExpression::AstExpression;
 		virtual llvm::Value *generate(IRGenInfo &igi) override;
-	};
-
-	// コンマ演算子
-	class AstExpressionCOMMA: public AstExpression
-	{
-		public:
-		using AstExpression::AstExpression;
 	};
 
 	// 論理演算 OR
@@ -226,7 +301,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
-		virtual llvm::Value *generate(IRGenInfo &igi) override;
+		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 減算
@@ -234,7 +309,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
-		virtual llvm::Value *generate(IRGenInfo &igi) override;
+		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 乗算
@@ -242,7 +317,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
-		virtual llvm::Value *generate(IRGenInfo &igi) override;
+		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 除算
@@ -250,7 +325,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
-		virtual llvm::Value *generate(IRGenInfo &igi) override;
+		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 余算
@@ -258,7 +333,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
-		virtual llvm::Value *generate(IRGenInfo &igi) override;
+		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 単項演算子 正
@@ -309,7 +384,7 @@ namespace expr {
 		public:
 		AstConstantThrough()
 		{
-			set_through(true);
+			set_through();
 			dbg_msg = "(through)";
 		}
 	};

@@ -95,9 +95,12 @@ static int parse_err_num = 0;
 %type <astnode>  expression expression_list
 %type <astnode>  compound_expression
 %type <astnode>  expression_unit
+/* 宣言 */
+%type <astnode>  declaration
+%type <astnode>  primary_type_list primary_type
+%type <astnode>  pure_expression_list
 /* 式 */
 %type <astnode>  pure_expression
-%type <astnode>  comma_expression
 %type <astnode>  assignment_expression
 %type <astnode>  constant_expression
 %type <astnode>  logical_OR_expression logical_AND_expression
@@ -161,7 +164,8 @@ compound_expression
 
 expression_unit
     : pure_expression ';'
-        /* { $$ = new AstExpressionUnit($1); } */
+        { $$ = std::move($1); }
+    | declaration ';'
         { $$ = std::move($1); }
     | ';'
         { $$ = nullptr; }
@@ -169,18 +173,57 @@ expression_unit
         { $$ = nullptr; }  /* エラー処理 */
     ;
 
-/* 純粋な式 */
-pure_expression
-    : comma_expression
-        { $$ = std::move($1); }
+/* 宣言 */
+declaration
+    : RE_DECL identifier OP_ARROW_R primary_type
+        /* 変数 戻り値有 引数有 */
+        { $$ = new AstDeclarationVar($2, $4); }
+    | RE_DECL identifier OP_ARROW_R primary_type '(' primary_type_list ')'
+        /* 関数 戻り値有 引数有 */
+        { $$ = new AstDeclarationFunc($2, $4, $6); }
+    | RE_DECL identifier OP_ARROW_R primary_type '(' ')'
+        /* 関数 戻り値有 引数無 */
+        { $$ = new AstDeclarationFunc($2, $4, new AstList(new AstTypeVoid())); }
+    | RE_DECL identifier OP_ARROW_R  '(' primary_type_list ')'
+        /* 関数 戻り値無 引数有 */
+        { $$ = new AstDeclarationFunc($2, new AstTypeVoid(), $5); }
+    | RE_DECL identifier OP_ARROW_R '(' ')'
+        /* 関数 戻り値無 引数無 */
+        { $$ = new AstDeclarationFunc($2, new AstTypeVoid(), new AstList(new AstTypeVoid())); }
     ;
 
-/* コンマ演算子 */
-comma_expression
+primary_type_list
+    : primary_type
+        { $$ = new AstList($1); }
+    | primary_type_list ',' primary_type
+        {
+          ((AstList *)$1)->add($3);
+          $$ = std::move($1);
+        }
+    ;
+
+primary_type
+    : RE_INT
+        { $$ = new AstTypeInt(); }
+    | RE_VOID
+        { $$ = new AstTypeVoid(); }
+    ;
+
+/* 式のリスト */
+pure_expression_list
+    : pure_expression
+        { $$ = new AstList($1); }
+    | pure_expression_list ',' pure_expression
+        {
+          ((AstList *)$1)->add($3);
+          $$ = std::move($1);
+        }
+    ;
+
+/* 純粋な式 */
+pure_expression
     : assignment_expression
         { $$ = std::move($1); }
-    | pure_expression ',' assignment_expression
-        { $$ = new AstExpressionCOMMA($1, $3); }
     ;
 
 /* 代入式 */
@@ -315,8 +358,10 @@ primary_expression
         { $$ = std::move($1); }
     | constant
         { $$ = std::move($1); }
-    | '(' pure_expression ')'
+    | '(' expression ')'
         { $$ = std::move($2); }
+    | identifier '(' pure_expression_list ')'
+        { $$ = new AstExpressionFunc($1, $3); }
     ;
 
 /* 定数 */
