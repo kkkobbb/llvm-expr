@@ -1,7 +1,8 @@
 # サンプル 宣言関係
 
 # int型 初期値3の変数
-gl_var -> int <- 3;
+decl gl_var -> int;
+gl_var <- 3;
 
 # int型 変数宣言
 decl ex_var -> int;
@@ -16,6 +17,14 @@ func <- (a, b) # 上記関数の定義
 
 # 戻り値、引数なし関数
 decl fff -> void();
-fff -> void() <-
-	1 + 2;
+fff <- () 1 + 2;
+
+
+decl func <- int(int, int, int);
+f <- (a, b, c)
+	if a then
+		b;
+	else
+		c;
+	end;
 

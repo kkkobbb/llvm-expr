@@ -11,6 +11,7 @@ decl f1 -> void();
 
 decl f2 -> (int);
 
+decl f3 -> ();
 
 func(a, b);
 

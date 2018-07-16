@@ -1,0 +1,14 @@
+
+
+var aaa:int;
+
+fnc func:int (a:int, b:int) {
+};
+
+
+aaa <- 12;
+12 -> bbb;
+
+aaa <- 12 -> bbb;
+
+
