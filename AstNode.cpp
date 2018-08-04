@@ -77,6 +77,39 @@ Value *AstUnit::generate(IRGenInfo &igi)
 
 /*
  * IR 生成
+ *
+ * 関数宣言
+ */
+Value *AstDeclarationFunc::generate(IRGenInfo &igi)
+{
+	auto &c = igi.getContext();
+	auto &m = igi.getModule();
+	//auto &builder = igi.getBuilder();
+
+	// TODO ASTを見て生成
+	auto argTypes = new vector<Type *>();
+	auto retType = Type::getVoidTy(c);
+	auto funcType = FunctionType::get(retType, *argTypes, false);
+
+	auto id = dynamic_cast<AstIdentifier*>(name.get());
+	if (!id) {
+		// TODO エラー処理
+		return nullptr;
+	}
+	auto &name = id->getName();
+
+	//auto func = 
+	Function::Create(
+			funcType,
+			Function::ExternalLinkage, name, &m);
+
+	// TODO 宣言時に返す値
+	return nullptr;
+}
+
+
+/*
+ * IR 生成
  * 式
  *
  * 最初に子のthrough判定をする

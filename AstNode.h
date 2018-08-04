@@ -131,6 +131,7 @@ namespace expr {
 			this->name.reset(name);
 			this->type.reset(ftype);
 		}
+		virtual llvm::Value *generate(IRGenInfo &igi) override;
 	};
 
 	class AstType: public AstNode
