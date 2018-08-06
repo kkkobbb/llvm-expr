@@ -72,6 +72,8 @@ static int parse_err_num = 0;
 %token           RE_RETURN
 %token           RE_VOID RE_INT
 %token           RE_IF RE_ELSE RE_WHILE
+%token           RE_VAR RE_FNC
+%token           RE_DECL
 
 /* 1文字の演算子(定義のみ) */
 %token           OP_COMMA
@@ -90,11 +92,15 @@ static int parse_err_num = 0;
 %type <astnode>  ast_root
 %type <astnode>  translation_unit
 /* 文 */
-%type <astnode>  statement statement_list
-%type <astnode>  compound_statement
-%type <astnode>  expression_statement
+%type <astnode>  expression expression_list
+%type <astnode>  compound_expression
+%type <astnode>  expression_unit
+/* 宣言 */
+%type <astnode>  declaration
+%type <astnode>  primary_type_list primary_type
+%type <astnode>  pure_expression_list
 /* 式 */
-%type <astnode>  expression
+%type <astnode>  pure_expression
 %type <astnode>  assignment_expression
 %type <astnode>  constant_expression
 %type <astnode>  logical_OR_expression logical_AND_expression
@@ -121,53 +127,103 @@ ast_root
 /* 翻訳単位 */
 /* 一文のみ */
 translation_unit
-    : statement
+    : expression
         { $$ = new AstUnit($1); }
-    ;
-
-
-/********* 文 ***********/
-statement
-    : expression_statement
-        { $$ = std::move($1); }
-    | compound_statement
-        { $$ = std::move($1); }
-    ;
-
-statement_list
-    : statement
-        { $$ = new AstStatementList($1); }
-    | statement_list statement
+    | translation_unit expression
         {
-          ((AstStatementList *)$1)->add($2);
+          ((AstUnit *)$1)->add($2);
           $$ = std::move($1);
         }
     ;
 
-compound_statement
-    : '{' statement_list '}'
+
+/********** 式 **********/
+expression
+    : expression_unit
+        { $$ = std::move($1); }
+    | compound_expression
+        { $$ = std::move($1); }
+    ;
+
+expression_list
+    : expression
+        { $$ = new AstList($1); }
+    | expression_list expression
+        {
+          ((AstList *)$1)->add($2);
+          $$ = std::move($1);
+        }
+    ;
+
+compound_expression
+    : '{' expression_list '}'
         { $$ = std::move($2); }
     | '{' '}'
         { $$ = nullptr; }
     ;
 
-expression_statement
-    : expression ';'
-        { $$ = new AstStatement($1); }
+expression_unit
+    : pure_expression ';'
+        { $$ = std::move($1); }
+    | declaration ';'
+        { $$ = std::move($1); }
     | ';'
         { $$ = nullptr; }
     | error
         { $$ = nullptr; }  /* エラー処理 */
     ;
 
+/* 宣言 */
+declaration
+    : RE_DECL identifier OP_ARROW_R primary_type
+        /* 変数 戻り値有 引数有 */
+        { $$ = new AstDeclarationVar($2, $4); }
+    | RE_DECL identifier OP_ARROW_R primary_type '(' primary_type_list ')'
+        /* 関数 戻り値有 引数有 */
+        { $$ = new AstDeclarationFunc($2, $4, $6); }
+    | RE_DECL identifier OP_ARROW_R primary_type '(' ')'
+        /* 関数 戻り値有 引数無 */
+        { $$ = new AstDeclarationFunc($2, $4, new AstList(new AstTypeVoid())); }
+    | RE_DECL identifier OP_ARROW_R  '(' primary_type_list ')'
+        /* 関数 戻り値無 引数有 */
+        { $$ = new AstDeclarationFunc($2, new AstTypeVoid(), $5); }
+    | RE_DECL identifier OP_ARROW_R '(' ')'
+        /* 関数 戻り値無 引数無 */
+        { $$ = new AstDeclarationFunc($2, new AstTypeVoid(), new AstList(new AstTypeVoid())); }
+    ;
 
-/********** 式 **********/
-/* コンマ演算子 */
-expression
+primary_type_list
+    : primary_type
+        { $$ = new AstList($1); }
+    | primary_type_list ',' primary_type
+        {
+          ((AstList *)$1)->add($3);
+          $$ = std::move($1);
+        }
+    ;
+
+primary_type
+    : RE_INT
+        { $$ = new AstTypeInt(); }
+    | RE_VOID
+        { $$ = new AstTypeVoid(); }
+    ;
+
+/* 式のリスト */
+pure_expression_list
+    : pure_expression
+        { $$ = new AstList($1); }
+    | pure_expression_list ',' pure_expression
+        {
+          ((AstList *)$1)->add($3);
+          $$ = std::move($1);
+        }
+    ;
+
+/* 純粋な式 */
+pure_expression
     : assignment_expression
         { $$ = std::move($1); }
-    | expression ',' assignment_expression
-        { $$ = new AstExpressionCOMMA($1, $3); }
     ;
 
 /* 代入式 */
@@ -304,12 +360,14 @@ primary_expression
         { $$ = std::move($1); }
     | '(' expression ')'
         { $$ = std::move($2); }
+    | identifier '(' pure_expression_list ')'
+        { $$ = new AstExpressionFunc($1, $3); }
     ;
 
 /* 定数 */
 constant
     : RE_THROUGH
-        { error(yyla.location, "through"); }
+        { $$ = new AstConstantThrough(); }
     | INTEGER
         { $$ = new AstConstantInt($1); }
     ;

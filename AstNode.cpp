@@ -66,6 +66,9 @@ Value *AstUnit::generate(IRGenInfo &igi)
 	// 子要素の実行
 	auto *v = AstList::generate(igi);
 
+	if(!v)
+		v = builder.getInt32(0);
+
 	builder.CreateRet(v);
 
 	return nullptr;
@@ -74,17 +77,59 @@ Value *AstUnit::generate(IRGenInfo &igi)
 
 /*
  * IR 生成
- * 文
  *
- * 子要素の実行のみ
+ * 関数宣言
  */
-Value *AstStatement::generate(IRGenInfo &igi)
+Value *AstDeclarationFunc::generate(IRGenInfo &igi)
 {
-	// 子要素の実行
-	auto *v = n->generate(igi);
+	auto &c = igi.getContext();
+	auto &m = igi.getModule();
+	//auto &builder = igi.getBuilder();
 
-	return v;
+	// TODO ASTを見て生成
+	auto argTypes = new vector<Type *>();
+	auto retType = Type::getVoidTy(c);
+	auto funcType = FunctionType::get(retType, *argTypes, false);
+
+	auto id = dynamic_cast<AstIdentifier*>(name.get());
+	if (!id) {
+		// TODO エラー処理
+		return nullptr;
+	}
+	auto &name = id->getName();
+
+	//auto func = 
+	Function::Create(
+			funcType,
+			Function::ExternalLinkage, name, &m);
+
+	// TODO 宣言時に返す値
+	return nullptr;
 }
+
+
+/*
+ * IR 生成
+ * 式
+ *
+ * 最初に子のthrough判定をする
+ * その後、子をたどる
+ */
+Value *AstExpression::generate(IRGenInfo &igi)
+{
+	if (is_through_children())
+		return nullptr;
+
+	Value *lv = nullptr;
+	if(l != nullptr)
+		lv = l->generate(igi);
+	Value *rv = nullptr;
+	if(r != nullptr)
+		rv = r->generate(igi);
+
+	return generate_exp(igi, lv, rv);
+}
+
 
 
 /*
@@ -93,6 +138,9 @@ Value *AstStatement::generate(IRGenInfo &igi)
  */
 Value *AstExpressionAS::generate(IRGenInfo &igi)
 {
+	if(is_through_children())
+		return nullptr;
+
 	auto &c = igi.getContext();
 	auto &builder = igi.getBuilder();
 	auto rhs = r->generate(igi);
@@ -118,13 +166,11 @@ Value *AstExpressionAS::generate(IRGenInfo &igi)
  * IR 生成
  * 加算
  */
-Value *AstExpressionADD::generate(IRGenInfo &igi)
+Value *AstExpressionADD::generate_exp(IRGenInfo &igi, Value *lv, Value *rv)
 {
 	auto &builder = igi.getBuilder();
-	auto lhs = l->generate(igi);
-	auto rhs = r->generate(igi);
 
-	return builder.CreateAdd(lhs, rhs, "add_tmp");
+	return builder.CreateAdd(lv, rv, "add_tmp");
 }
 
 
@@ -132,13 +178,11 @@ Value *AstExpressionADD::generate(IRGenInfo &igi)
  * IR 生成
  * 減算
  */
-Value *AstExpressionSUB::generate(IRGenInfo &igi)
+Value *AstExpressionSUB::generate_exp(IRGenInfo &igi, Value *lv, Value *rv)
 {
 	auto &builder = igi.getBuilder();
-	auto lhs = l->generate(igi);
-	auto rhs = r->generate(igi);
 
-	return builder.CreateSub(lhs, rhs, "sub_tmp");
+	return builder.CreateSub(lv, rv, "sub_tmp");
 }
 
 
@@ -146,13 +190,11 @@ Value *AstExpressionSUB::generate(IRGenInfo &igi)
  * IR 生成
  * 乗算
  */
-Value *AstExpressionMUL::generate(IRGenInfo &igi)
+Value *AstExpressionMUL::generate_exp(IRGenInfo &igi, Value *lv, Value *rv)
 {
 	auto &builder = igi.getBuilder();
-	auto lhs = l->generate(igi);
-	auto rhs = r->generate(igi);
 
-	return builder.CreateMul(lhs, rhs, "mul_tmp");
+	return builder.CreateMul(lv, rv, "mul_tmp");
 }
 
 
@@ -160,13 +202,11 @@ Value *AstExpressionMUL::generate(IRGenInfo &igi)
  * IR 生成
  * 除算
  */
-Value *AstExpressionDIV::generate(IRGenInfo &igi)
+Value *AstExpressionDIV::generate_exp(IRGenInfo &igi, Value *lv, Value *rv)
 {
 	auto &builder = igi.getBuilder();
-	auto lhs = l->generate(igi);
-	auto rhs = r->generate(igi);
 
-	return builder.CreateSDiv(lhs, rhs, "div_tmp");
+	return builder.CreateSDiv(lv, rv, "div_tmp");
 }
 
 
@@ -174,13 +214,11 @@ Value *AstExpressionDIV::generate(IRGenInfo &igi)
  * IR 生成
  * 余算
  */
-Value *AstExpressionMOD::generate(IRGenInfo &igi)
+Value *AstExpressionMOD::generate_exp(IRGenInfo &igi, Value *lv, Value *rv)
 {
 	auto &builder = igi.getBuilder();
-	auto lhs = l->generate(igi);
-	auto rhs = r->generate(igi);
 
-	return builder.CreateSRem(lhs, rhs, "mod_tmp");
+	return builder.CreateSRem(lv, rv, "mod_tmp");
 }
 
 

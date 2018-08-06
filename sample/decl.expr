@@ -1,0 +1,17 @@
+# サンプル 宣言関係
+
+# int型 変数宣言
+decl ex_var -> int;
+
+# 戻り値int 引数int2つの関数宣言
+decl func -> int(int, int);
+
+# 戻り値、引数なし関数
+decl f1 -> void();
+
+decl f2 -> (int);
+
+decl f3 -> ();
+
+func(a, b);
+

@@ -26,13 +26,13 @@ namespace expr {
 			return nullptr;
 		}
 
-		bool get_through()
+		bool is_through()
 		{
 			return throughFlag;
 		}
-		void set_through(bool t)
+		void set_through()
 		{
-			throughFlag = throughFlag || t;
+			throughFlag = true;
 		}
 
 		virtual void print_ast(std::ostream &dout, int indent = 0)
@@ -66,7 +66,6 @@ namespace expr {
 		{
 			if (n == nullptr)
 				return;
-			set_through(n->get_through());
 			children.push_back(std::unique_ptr<AstNode>(n));
 		}
 		virtual llvm::Value *generate(IRGenInfo &igi) override;
@@ -90,35 +89,72 @@ namespace expr {
 		virtual llvm::Value *generate(IRGenInfo &igi) override;
 	};
 
-	// 文のリスト
-	class AstStatementList: public AstList
+	class AstDeclaration: public AstNode
 	{
-		public:
-		using AstList::AstList;
-	};
-
-	// 文
-	class AstStatement: public AstNode
-	{
-		std::unique_ptr<AstNode> n;
+		protected:
+		std::unique_ptr<AstNode> name;
+		std::unique_ptr<AstNode> type;
 
 		public:
-		AstStatement(AstNode *n)
+		using AstNode::AstNode;
+		AstDeclaration(AstNode *name, AstNode *type)
 		{
-			if(n != nullptr)
-				set_through(n->get_through());
-			this->n.reset(n);
+			this->name.reset(name);
+			this->type.reset(type);
 		}
-		virtual llvm::Value *generate(IRGenInfo &igi) override;
 
 		virtual void print_ast(std::ostream &dout, int indent = 0) override
 		{
 			AstNode::print_ast(dout, indent);
-			n->print_ast(dout, indent + 1);
+			// 子要素の表示
+			int next_indent = indent + 1;
+			if (name != nullptr)
+				name->print_ast(dout, next_indent);
+			if (type != nullptr)
+				type->print_ast(dout, next_indent);
 		}
 	};
 
+	class AstDeclarationVar: public AstDeclaration
+	{
+		public:
+		using AstDeclaration::AstDeclaration;
+	};
+
+	class AstDeclarationFunc: public AstDeclaration
+	{
+		public:
+		AstDeclarationFunc(AstNode *name, AstNode *retType, AstNode *argTypeList)
+		{
+			AstList *ftype = new AstList(retType);
+			ftype->add(argTypeList);
+			this->name.reset(name);
+			this->type.reset(ftype);
+		}
+		virtual llvm::Value *generate(IRGenInfo &igi) override;
+	};
+
+	class AstType: public AstNode
+	{
+		public:
+		using AstNode::AstNode;
+	};
+
+	class AstTypeInt: public AstType
+	{
+		public:
+		using AstType::AstType;
+	};
+
+	class AstTypeVoid: public AstType
+	{
+		public:
+		using AstType::AstType;
+	};
+
 	// 式
+	//
+	// 子がthrough状態の場合、through状態となる
 	class AstExpression: public AstNode
 	{
 		protected:
@@ -128,12 +164,33 @@ namespace expr {
 		public:
 		AstExpression(AstNode *l, AstNode *r)
 		{
-			if(l != nullptr)
-				set_through(l->get_through());
-			if(r != nullptr)
-				set_through(r->get_through());
+			if (l != nullptr && l->is_through())
+				set_through();
+			if (r != nullptr && r->is_through())
+				set_through();
 			this->l.reset(l);
 			this->r.reset(r);
+		}
+
+		virtual llvm::Value *generate(IRGenInfo &igi) override;
+
+		/*
+		 * 子のthrough判定
+		 */
+		bool is_through_children()
+		{
+			return (l != nullptr && l->is_through()) ||
+				(r != nullptr && r->is_through());
+		}
+
+		/*
+		 * 演算処理
+		 *
+		 * 演算子毎に変更すること
+		 */
+		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv)
+		{
+			return nullptr;
 		}
 
 		virtual void print_ast(std::ostream &dout, int indent = 0) override
@@ -148,19 +205,19 @@ namespace expr {
 		}
 	};
 
+	// 関数呼び出し
+	class AstExpressionFunc: public AstExpression
+	{
+		public:
+		using AstExpression::AstExpression;
+	};
+
 	// 代入演算子
 	class AstExpressionAS: public AstExpression
 	{
 		public:
 		using AstExpression::AstExpression;
 		virtual llvm::Value *generate(IRGenInfo &igi) override;
-	};
-
-	// コンマ演算子
-	class AstExpressionCOMMA: public AstExpression
-	{
-		public:
-		using AstExpression::AstExpression;
 	};
 
 	// 論理演算 OR
@@ -245,7 +302,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
-		virtual llvm::Value *generate(IRGenInfo &igi) override;
+		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 減算
@@ -253,7 +310,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
-		virtual llvm::Value *generate(IRGenInfo &igi) override;
+		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 乗算
@@ -261,7 +318,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
-		virtual llvm::Value *generate(IRGenInfo &igi) override;
+		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 除算
@@ -269,7 +326,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
-		virtual llvm::Value *generate(IRGenInfo &igi) override;
+		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 余算
@@ -277,7 +334,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
-		virtual llvm::Value *generate(IRGenInfo &igi) override;
+		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 単項演算子 正
@@ -308,7 +365,7 @@ namespace expr {
 		AstExpressionBNOT(AstNode *n) : AstExpression(nullptr, n) {}
 	};
 
-	// 値
+	// 定数 整数
 	class AstConstantInt: public AstNode
 	{
 		int num;
@@ -320,6 +377,17 @@ namespace expr {
 			dbg_msg = "(" + std::to_string(num) + ")";
 		}
 		virtual llvm::Value *generate(IRGenInfo &igi) override;
+	};
+
+	// 定数 through
+	class AstConstantThrough: public AstNode
+	{
+		public:
+		AstConstantThrough()
+		{
+			set_through();
+			dbg_msg = "(through)";
+		}
 	};
 
 	// 識別子

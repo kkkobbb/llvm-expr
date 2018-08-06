@@ -41,9 +41,13 @@ distclean: clean
 
 ### ヘッダ依存関係 自動解決 ###
 DEPEND_DIR := _depend
-DEPENDS := $(patsubst %.cpp,$(DEPEND_DIR)/%.d,$(SRC))
+DEPENDS := $(patsubst %.o,$(DEPEND_DIR)/%.d,$(OBJS))
 
 $(DEPEND_DIR)/%.d: %.cpp
+	@install -d $(dir $@)
+	$(CXX) -MM -MG -MF $@ $<
+
+$(DEPEND_DIR)/%.d: %.cc
 	@install -d $(dir $@)
 	$(CXX) -MM -MG -MF $@ $<
 
