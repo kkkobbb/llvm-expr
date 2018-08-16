@@ -29,7 +29,7 @@ bool IRGenerator::genarate(std::unique_ptr<AstNode> ast_root)
 	auto &c = igi.getContext();
 	auto &m = igi.getModule();
 	auto &builder = igi.getBuilder();
-	igi.addGlobalValue(new llvm::GlobalVariable(
+	igi.setValue(new llvm::GlobalVariable(
 			m,
 			llvm::Type::getInt32Ty(c),
 			true,  /* isConstant */
