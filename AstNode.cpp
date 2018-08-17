@@ -1,5 +1,8 @@
 /*
  * 各ノードの処理
+ *
+ * dynamic_castしているところは
+ * 構文解析処理でクラスが確定している部分のみ
  */
 #include <iostream>
 #include <string>
@@ -28,12 +31,12 @@ using namespace expr;
  *
  * 子要素の実行のみ
  */
-llvm::Value *AstList::generate(IRGenInfo &igi)
+llvm::Value *AstList::getValue(IRGenInfo &igi)
 {
 	Value *lastVal = nullptr;
 
 	for (auto itr = children.cbegin(); itr != children.cend(); ++itr)
-		lastVal = (*itr)->generate(igi);
+		lastVal = (*itr)->getValue(igi);
 
 	return lastVal;
 }
@@ -41,9 +44,90 @@ llvm::Value *AstList::generate(IRGenInfo &igi)
 
 /*
  * IR 生成
+ * 定数 整数
+ */
+Value *AstConstantInt::getValue(IRGenInfo &igi)
+{
+	auto &builder = igi.getBuilder();
+
+	return builder.getInt32(num);
+}
+
+
+/*
+ * IR 生成
+ *
+ * 変数の値を返す
+ * 現在の関数のスコープを確認して変数が存在しない場合、
+ * モジュールに登録された変数(global)を確認する
+ *
+ * 値の参照以外の用途(代入先、関数名など)の場合、getName()呼び出しで
+ * 親ノードが処理すること
+ */
+Value *AstIdentifier::getValue(IRGenInfo &igi)
+{
+	auto &m = igi.getModule();
+	auto &builder = igi.getBuilder();
+
+	auto vs_table = igi.curFunc->getValueSymbolTable();
+	auto alloca = vs_table->lookup(*name);
+
+	if (!alloca) {
+		auto &global_vs_table = m.getValueSymbolTable();
+		alloca = global_vs_table.lookup(*name);
+	}
+
+	return builder.CreateLoad(alloca, "var");
+}
+
+
+/*
+ * リスト中の識別子から型を全て取り出す
+ *
+ * 型が設定されていない場合、nullptrが要素となる
+ */
+unique_ptr<vector<Type*>> AstIdentifierList::getTypes(IRGenInfo &igi)
+{
+	auto typelist = new vector<Type*>();
+
+	for (auto itr = children.cbegin(); itr != this->children.cend(); ++itr)
+	{
+		auto child = (*itr).get();
+		auto type = child->getType(igi);
+		typelist->push_back(type);
+	}
+
+	unique_ptr<vector<Type*>> ptr(typelist);
+
+	return move(ptr);
+}
+
+
+/*
+ * リスト中の識別子から識別子名を全て取り出す
+ */
+unique_ptr<vector<string*>> AstIdentifierList::getNames()
+{
+	auto namelist = new vector<string*>();
+
+	for (auto itr = children.cbegin(); itr != this->children.cend(); ++itr)
+	{
+		auto child = (*itr).get();
+		auto name = child->getName();
+		namelist->push_back(&name);
+	}
+
+	unique_ptr<vector<string*>> ptr(namelist);
+
+	return move(ptr);
+}
+
+
+/*
+ * IR 生成
  * 翻訳単位 (1ファイル分)
  */
-Value *AstUnit::generate(IRGenInfo &igi)
+Value *AstUnit::getValue(IRGenInfo &igi)
 {
 	auto &c = igi.getContext();
 	auto &m = igi.getModule();
@@ -64,7 +148,7 @@ Value *AstUnit::generate(IRGenInfo &igi)
 	igi.curFunc = func;
 
 	// 子要素の実行
-	auto *v = AstList::generate(igi);
+	auto *v = AstList::getValue(igi);
 
 	if(!v)
 		v = builder.getInt32(0);
@@ -80,23 +164,17 @@ Value *AstUnit::generate(IRGenInfo &igi)
  *
  * 関数宣言
  */
-Value *AstDeclarationFunc::generate(IRGenInfo &igi)
+Value *AstDefinitionFunc::getValue(IRGenInfo &igi)
 {
-	auto &c = igi.getContext();
+	//auto &c = igi.getContext();
 	auto &m = igi.getModule();
 	//auto &builder = igi.getBuilder();
 
 	// TODO ASTを見て生成
-	auto argTypes = new vector<Type *>();
-	auto retType = Type::getVoidTy(c);
+	auto argTypes = argumentList->getTypes(igi);
+	auto retType = decl->getType(igi);
 	auto funcType = FunctionType::get(retType, *argTypes, false);
-
-	auto id = dynamic_cast<AstIdentifier*>(name.get());
-	if (!id) {
-		// TODO エラー処理
-		return nullptr;
-	}
-	auto &name = id->getName();
+	auto name = decl->getName();
 
 	//auto func = 
 	Function::Create(
@@ -108,49 +186,48 @@ Value *AstDeclarationFunc::generate(IRGenInfo &igi)
 }
 
 
+Type *AstTypeInt::getType(IRGenInfo &igi)
+{
+	auto &c = igi.getContext();
+	return llvm::Type::getInt32Ty(c);
+}
+
+
+Type *AstTypeVoid::getType(IRGenInfo &igi)
+{
+	auto &c = igi.getContext();
+	return llvm::Type::getVoidTy(c);
+}
+
+
 /*
  * IR 生成
  * 式
- *
- * 最初に子のthrough判定をする
- * その後、子をたどる
  */
-Value *AstExpression::generate(IRGenInfo &igi)
+Value *AstExpression::getValue(IRGenInfo &igi)
 {
-	if (is_through_children())
-		return nullptr;
-
 	Value *lv = nullptr;
 	if(l != nullptr)
-		lv = l->generate(igi);
+		lv = l->getValue(igi);
 	Value *rv = nullptr;
 	if(r != nullptr)
-		rv = r->generate(igi);
+		rv = r->getValue(igi);
 
 	return generate_exp(igi, lv, rv);
 }
-
 
 
 /*
  * IR 生成
  * 代入
  */
-Value *AstExpressionAS::generate(IRGenInfo &igi)
+Value *AstExpressionAS::getValue(IRGenInfo &igi)
 {
-	if(is_through_children())
-		return nullptr;
-
 	auto &c = igi.getContext();
 	auto &builder = igi.getBuilder();
-	auto rhs = r->generate(igi);
+	auto rhs = r->getValue(igi);
 
-	auto id = dynamic_cast<AstIdentifier*>(l.get());
-	if (!id) {
-		// TODO エラー処理
-		return nullptr;
-	}
-	auto &name = id->getName();
+	auto &name = this->identifier->getName();
 
 	IRBuilder<> fBuilder(&igi.curFunc->getEntryBlock(),
 			igi.curFunc->getEntryBlock().begin());
@@ -219,44 +296,5 @@ Value *AstExpressionMOD::generate_exp(IRGenInfo &igi, Value *lv, Value *rv)
 	auto &builder = igi.getBuilder();
 
 	return builder.CreateSRem(lv, rv, "mod_tmp");
-}
-
-
-/*
- * IR 生成
- * 定数 整数
- */
-Value *AstConstantInt::generate(IRGenInfo &igi)
-{
-	auto &builder = igi.getBuilder();
-
-	return builder.getInt32(num);
-}
-
-
-/*
- * IR 生成
- *
- * 変数の値を返す
- * 現在の関数のスコープを確認して変数が存在しない場合、
- * モジュールに登録された変数(global)を確認する
- *
- * 値の参照以外の用途(代入先、関数名など)の場合、getName()呼び出しで
- * 親ノードが処理すること
- */
-Value *AstIdentifier::generate(IRGenInfo &igi)
-{
-	auto &m = igi.getModule();
-	auto &builder = igi.getBuilder();
-
-	auto vs_table = igi.curFunc->getValueSymbolTable();
-	auto alloca = vs_table->lookup(*name);
-
-	if(!alloca) {
-		auto &global_vs_table = m.getValueSymbolTable();
-		alloca = global_vs_table.lookup(*name);
-	}
-
-	return builder.CreateLoad(alloca, "var");
 }
 

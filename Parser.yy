@@ -68,7 +68,6 @@ static int parse_err_num = 0;
 %token <sval>    IDENTIFIER STRING
 
 /* 予約語 */
-%token           RE_THROUGH
 %token           RE_RETURN
 %token           RE_VOID RE_INT
 %token           RE_IF RE_ELSE RE_WHILE
@@ -96,12 +95,13 @@ static int parse_err_num = 0;
 %type <astnode>  compound_expression
 %type <astnode>  expression_unit
 /* 宣言 */
-%type <astnode>  declaration
-%type <astnode>  primary_type_list primary_type
+%type <astnode>  definition
+%type <astnode>  identifier_type identifier_type_list
+%type <astnode>  primary_type
 %type <astnode>  pure_expression_list
 /* 式 */
 %type <astnode>  pure_expression
-%type <astnode>  assignment_expression
+%type <astnode>  assignment_expression_l assignment_expression_r
 %type <astnode>  constant_expression
 %type <astnode>  logical_OR_expression logical_AND_expression
 %type <astnode>  AND_expression exclusive_OR_expression inclusive_OR_expression
@@ -125,7 +125,6 @@ ast_root
     ;
 
 /* 翻訳単位 */
-/* 一文のみ */
 translation_unit
     : expression
         { $$ = new AstUnit($1); }
@@ -165,7 +164,7 @@ compound_expression
 expression_unit
     : pure_expression ';'
         { $$ = std::move($1); }
-    | declaration ';'
+    | definition ';'
         { $$ = std::move($1); }
     | ';'
         { $$ = nullptr; }
@@ -173,31 +172,22 @@ expression_unit
         { $$ = nullptr; }  /* エラー処理 */
     ;
 
-/* 宣言 */
-declaration
-    : RE_DECL identifier OP_ARROW_R primary_type
-        /* 変数 戻り値有 引数有 */
-        { $$ = new AstDeclarationVar($2, $4); }
-    | RE_DECL identifier OP_ARROW_R primary_type '(' primary_type_list ')'
-        /* 関数 戻り値有 引数有 */
-        { $$ = new AstDeclarationFunc($2, $4, $6); }
-    | RE_DECL identifier OP_ARROW_R primary_type '(' ')'
-        /* 関数 戻り値有 引数無 */
-        { $$ = new AstDeclarationFunc($2, $4, new AstList(new AstTypeVoid())); }
-    | RE_DECL identifier OP_ARROW_R  '(' primary_type_list ')'
-        /* 関数 戻り値無 引数有 */
-        { $$ = new AstDeclarationFunc($2, new AstTypeVoid(), $5); }
-    | RE_DECL identifier OP_ARROW_R '(' ')'
-        /* 関数 戻り値無 引数無 */
-        { $$ = new AstDeclarationFunc($2, new AstTypeVoid(), new AstList(new AstTypeVoid())); }
+/* 定義 */
+definition
+    : RE_VAR identifier_type
+        { $$ = new AstDefinitionVar($2, nullptr); }
+    | RE_FNC identifier_type '(' ')' expression
+        { $$ = new AstDefinitionFunc((AstIdentifier *)$2, nullptr, $5);}
+    | RE_FNC identifier_type '(' identifier_type_list ')' expression
+        { $$ = new AstDefinitionFunc((AstIdentifier *)$2, (AstIdentifierList *)$4, $6);}
     ;
 
-primary_type_list
-    : primary_type
-        { $$ = new AstList($1); }
-    | primary_type_list ',' primary_type
+identifier_type_list
+    : identifier_type
+       { $$ = new AstIdentifierList((AstIdentifier *)$1); }
+    | identifier_type_list ',' identifier_type
         {
-          ((AstList *)$1)->add($3);
+          ((AstIdentifierList *)$1)->add((AstIdentifier *)$3);
           $$ = std::move($1);
         }
     ;
@@ -222,16 +212,24 @@ pure_expression_list
 
 /* 純粋な式 */
 pure_expression
-    : assignment_expression
+    : assignment_expression_r
         { $$ = std::move($1); }
     ;
 
-/* 代入式 */
-assignment_expression
+/* 代入式右 */
+assignment_expression_r
+    : assignment_expression_l
+        { $$ = std::move($1); }
+    | assignment_expression_r OP_ARROW_R identifier
+        { $$ = new AstExpressionAS((AstIdentifier *)$3, $1); }
+    ;
+
+/* 代入式左 */
+assignment_expression_l
     : constant_expression
         { $$ = std::move($1); }
-    | identifier OP_ARROW_L assignment_expression
-        { $$ = new AstExpressionAS($1, $3); }
+    | identifier OP_ARROW_L assignment_expression_l
+        { $$ = new AstExpressionAS((AstIdentifier *)$1, $3); }
     ;
 
 /* 定数式 */
@@ -366,15 +364,19 @@ primary_expression
 
 /* 定数 */
 constant
-    : RE_THROUGH
-        { $$ = new AstConstantThrough(); }
-    | INTEGER
+    : INTEGER
         { $$ = new AstConstantInt($1); }
     ;
 
 identifier
     : IDENTIFIER
-        { $$ = new AstIdentifier($1); }
+        { $$ = new AstIdentifier($1, nullptr); }
+    ;
+
+/* 型付き識別子 */
+identifier_type
+    : IDENTIFIER ':' primary_type
+        { $$ = new AstIdentifier($1, $3); }
     ;
 
 %%

@@ -39,7 +39,7 @@ bool IRGenerator::genarate(std::unique_ptr<AstNode> ast_root)
 			));
 
 	// IR生成
-	ast_root->generate(igi);
+	ast_root->getValue(igi);
 	TheModule = igi.moveModule();
 
 	return !igi.errorFlag;

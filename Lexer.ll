@@ -46,7 +46,6 @@ Space   [ \t]
 
 
  /* 予約語 */
-"through"  { return token_type::RE_THROUGH; }
 "return"   { return token_type::RE_RETURN; }
 "void"     { return token_type::RE_VOID; }
 "int"      { return token_type::RE_INT; }
@@ -55,7 +54,6 @@ Space   [ \t]
 "while"    { return token_type::RE_WHILE; }
 "var"      { return token_type::RE_VAR; }
 "fnc"      { return token_type::RE_FNC; }
-"decl"     { return token_type::RE_DECL; }
 
  /* 識別子 */
 {Letter}({Letter}|{Digit})*  { val->sval = new std::string(yytext, yyleng); return token_type::IDENTIFIER; }
