@@ -93,13 +93,17 @@ namespace expr {
 	// 識別子
 	class AstIdentifier: public AstNode
 	{
+		// TODO shared_ptrにする？
 		std::unique_ptr<std::string> name;
 		std::unique_ptr<AstNode> type;
 
 		public:
 		AstIdentifier(std::string *name, AstNode *type)
 		{
-			this->name.reset(name);
+			if(name == nullptr)
+				this->name.reset(new std::string(""));
+			else
+				this->name.reset(name);
 			dbg_msg = "\"" + *this->name + "\"";
 			this->type.reset(type);
 		}
@@ -113,9 +117,9 @@ namespace expr {
 				type->print_ast(dout, next_indent);
 		}
 
-		const std::string &getName()
+		const std::string *getName()
 		{
-			return *name;
+			return name.get();
 		}
 		virtual llvm::Type *getType(IRGenInfo &igi) override
 		{
@@ -154,7 +158,7 @@ namespace expr {
 		}
 
 		std::unique_ptr<std::vector<llvm::Type*>> getTypes(IRGenInfo &igi);
-		std::unique_ptr<std::vector<std::string*>> getNames();
+		std::unique_ptr<std::vector<const std::string*>> getNames();
 	};
 
 	// 翻訳単位
@@ -168,11 +172,11 @@ namespace expr {
 	class AstDefinitionVar: public AstNode
 	{
 		protected:
-		std::unique_ptr<AstNode> decl;
+		std::unique_ptr<AstIdentifier> decl;
 		std::unique_ptr<AstNode> init;
 
 		public:
-		AstDefinitionVar(AstNode *decl, AstNode *init)
+		AstDefinitionVar(AstIdentifier *decl, AstNode *init)
 		{
 			this->decl.reset(decl);
 			this->init.reset(init);
@@ -188,7 +192,7 @@ namespace expr {
 			if (init != nullptr)
 				init->print_ast(dout, next_indent);
 		}
-		//virtual llvm::Value *getValue(IRGenInfo &igi) override;
+		virtual llvm::Value *getValue(IRGenInfo &igi) override;
 	};
 
 	class AstDefinitionFunc: public AstNode
@@ -196,14 +200,14 @@ namespace expr {
 		protected:
 		std::unique_ptr<AstIdentifier> decl;
 		std::unique_ptr<AstIdentifierList> argumentList;
-		std::unique_ptr<AstNode> proc;
+		std::unique_ptr<AstNode> body;
 
 		public:
-		AstDefinitionFunc(AstIdentifier *decl, AstIdentifierList *argumentList, AstNode *proc)
+		AstDefinitionFunc(AstIdentifier *decl, AstIdentifierList *argumentList, AstNode *body)
 		{
 			this->decl.reset(decl);
 			this->argumentList.reset(argumentList);
-			this->proc.reset(proc);
+			this->body.reset(body);
 		}
 
 		virtual void print_ast(std::ostream &dout, int indent = 0) override
@@ -215,8 +219,8 @@ namespace expr {
 				decl->print_ast(dout, next_indent);
 			if (argumentList != nullptr)
 				argumentList->print_ast(dout, next_indent);
-			if (proc != nullptr)
-				proc->print_ast(dout, next_indent);
+			if (body != nullptr)
+				body->print_ast(dout, next_indent);
 		}
 		virtual llvm::Value *getValue(IRGenInfo &igi) override;
 	};

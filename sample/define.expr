@@ -3,13 +3,14 @@
 var aaa:int;
 
 fnc func:int (a:int, b:int) {
-	a + b;
+	a <- b + 1;
+	a;
 };
 
 
 aaa <- 12;
 12 -> bbb;
 
-aaa <- 12 -> bbb;
+aaa <- 123 -> bbb;
 
 

@@ -60,6 +60,8 @@ int main(int argc, char *argv[])
 	if (PrintAst) {
 		ast->print_ast(cout);
 		cout << endl;
+		if (!PrintLlvm)
+			return 0;
 	}
 
 	// IR生成

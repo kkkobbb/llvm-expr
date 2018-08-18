@@ -175,7 +175,7 @@ expression_unit
 /* 定義 */
 definition
     : RE_VAR identifier_type
-        { $$ = new AstDefinitionVar($2, nullptr); }
+        { $$ = new AstDefinitionVar((AstIdentifier *)$2, nullptr); }
     | RE_FNC identifier_type '(' ')' expression
         { $$ = new AstDefinitionFunc((AstIdentifier *)$2, nullptr, $5);}
     | RE_FNC identifier_type '(' identifier_type_list ')' expression

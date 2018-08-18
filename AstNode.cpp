@@ -12,6 +12,7 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/Function.h>
+#include <llvm/IR/Verifier.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
 
@@ -23,6 +24,20 @@ using namespace std;
 using namespace llvm;
 using namespace expr;
 
+
+
+Value *createLocalVar(IRGenInfo &igi, Type *type, const string &name, Value *value)
+{
+	auto &builder = igi.getBuilder();
+
+	IRBuilder<> fBuilder(&igi.curFunc->getEntryBlock(),
+			igi.curFunc->getEntryBlock().begin());
+	auto alloca = fBuilder.CreateAlloca(type, 0, name);
+
+	builder.CreateStore(value, alloca);
+
+	return alloca;
+}
 
 
 /*
@@ -58,8 +73,9 @@ Value *AstConstantInt::getValue(IRGenInfo &igi)
  * IR 生成
  *
  * 変数の値を返す
- * 現在の関数のスコープを確認して変数が存在しない場合、
- * モジュールに登録された変数(global)を確認する
+ * 1. 引数に対象の変数があるか
+ * 2. 現在の関数のスコープに対象の変数があるか
+ * 3. グローバルに対象の変数があるか
  *
  * 値の参照以外の用途(代入先、関数名など)の場合、getName()呼び出しで
  * 親ノードが処理すること
@@ -69,8 +85,18 @@ Value *AstIdentifier::getValue(IRGenInfo &igi)
 	auto &m = igi.getModule();
 	auto &builder = igi.getBuilder();
 
-	auto vs_table = igi.curFunc->getValueSymbolTable();
-	auto alloca = vs_table->lookup(*name);
+	for (auto ai = igi.curFunc->arg_begin(); ai != igi.curFunc->arg_end(); ++ai) {
+		if (ai->getName().str() != *name)
+			continue;
+		return ai;
+	}
+
+	Value *alloca = nullptr;
+
+	if (!alloca) {
+		auto vs_table = igi.curFunc->getValueSymbolTable();
+		alloca = vs_table->lookup(*name);
+	}
 
 	if (!alloca) {
 		auto &global_vs_table = m.getValueSymbolTable();
@@ -85,6 +111,7 @@ Value *AstIdentifier::getValue(IRGenInfo &igi)
  * リスト中の識別子から型を全て取り出す
  *
  * 型が設定されていない場合、nullptrが要素となる
+ * Type自体のメモリはLLVMで管理されているためunique_ptrにしない
  */
 unique_ptr<vector<Type*>> AstIdentifierList::getTypes(IRGenInfo &igi)
 {
@@ -105,19 +132,21 @@ unique_ptr<vector<Type*>> AstIdentifierList::getTypes(IRGenInfo &igi)
 
 /*
  * リスト中の識別子から識別子名を全て取り出す
+ *
+ * 識別子名はAstIdentifierで管理されているためunique_ptrにしない
  */
-unique_ptr<vector<string*>> AstIdentifierList::getNames()
+unique_ptr<vector<const string*>> AstIdentifierList::getNames()
 {
-	auto namelist = new vector<string*>();
+	auto namelist = new vector<const string*>();
 
 	for (auto itr = children.cbegin(); itr != this->children.cend(); ++itr)
 	{
 		auto child = (*itr).get();
 		auto name = child->getName();
-		namelist->push_back(&name);
+		namelist->push_back(name);
 	}
 
-	unique_ptr<vector<string*>> ptr(namelist);
+	unique_ptr<vector<const string*>> ptr(namelist);
 
 	return move(ptr);
 }
@@ -162,26 +191,76 @@ Value *AstUnit::getValue(IRGenInfo &igi)
 /*
  * IR 生成
  *
- * 関数宣言
+ * 変数定義
+ *
+ * TODO エラー処理
+ */
+Value *AstDefinitionVar::getValue(IRGenInfo &igi)
+{
+	auto &c = igi.getContext();
+	auto &builder = igi.getBuilder();
+
+	auto name = decl->getName();
+	auto alloca = builder.CreateAlloca(Type::getInt32Ty(c), 0, *name);
+
+	Value *value;
+	if(this->init.get() != nullptr)
+		value = init->getValue(igi);
+	else
+		value = builder.getInt32(0);  // TODO 型ごとの初期値
+
+	builder.CreateStore(value, alloca);
+
+	return alloca;
+}
+
+
+/*
+ * IR 生成
+ *
+ * 関数定義
+ *
+ * TODO エラー処理
  */
 Value *AstDefinitionFunc::getValue(IRGenInfo &igi)
 {
-	//auto &c = igi.getContext();
+	auto &c = igi.getContext();
 	auto &m = igi.getModule();
-	//auto &builder = igi.getBuilder();
+	auto &builder = igi.getBuilder();
 
-	// TODO ASTを見て生成
 	auto argTypes = argumentList->getTypes(igi);
+	auto argNames = argumentList->getNames();
 	auto retType = decl->getType(igi);
 	auto funcType = FunctionType::get(retType, *argTypes, false);
 	auto name = decl->getName();
 
-	//auto func = 
-	Function::Create(
-			funcType,
-			Function::ExternalLinkage, name, &m);
+	auto func = Function::Create(funcType, Function::ExternalLinkage, *name, &m);
 
-	// TODO 宣言時に返す値
+	// 現在の関数を更新
+	auto oldFunc = igi.curFunc;
+	igi.curFunc = func;
+
+	// 命令挿入位置の更新
+	BasicBlock *bb = BasicBlock::Create(c, "entry", func);
+	auto oldBb = builder.GetInsertBlock();
+	builder.SetInsertPoint(bb);
+
+	auto ni = argNames->cbegin();
+	for(auto ai = func->arg_begin(); ai != func->arg_end(); ++ai, ++ni)
+		ai->setName(**ni);
+
+	auto bodyValue = this->body->getValue(igi);
+	if(bodyValue == nullptr)
+		return nullptr;
+	builder.CreateRet(bodyValue);
+
+	// 命令挿入位置を戻す
+	builder.SetInsertPoint(oldBb);
+	// 現在の関数を戻す
+	igi.curFunc = oldFunc;
+
+	verifyFunction(*func, &errs());
+
 	return nullptr;
 }
 
@@ -220,22 +299,19 @@ Value *AstExpression::getValue(IRGenInfo &igi)
 /*
  * IR 生成
  * 代入
+ *
+ * メモリの生成も行う
  */
 Value *AstExpressionAS::getValue(IRGenInfo &igi)
 {
 	auto &c = igi.getContext();
-	auto &builder = igi.getBuilder();
 	auto rhs = r->getValue(igi);
 
-	auto &name = this->identifier->getName();
+	auto name = this->identifier->getName();
 
-	IRBuilder<> fBuilder(&igi.curFunc->getEntryBlock(),
-			igi.curFunc->getEntryBlock().begin());
-	auto alloca = fBuilder.CreateAlloca(Type::getInt32Ty(c), 0, name);
+	createLocalVar(igi, Type::getInt32Ty(c), *name, rhs);
 
-	builder.CreateStore(rhs, alloca);
-
-	return alloca;
+	return rhs;
 }
 
 
