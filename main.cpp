@@ -12,6 +12,7 @@
 #include "AstNode.h"
 #include "AstGenerator.h"
 #include "IRGenerator.h"
+#include "CodeGenerator.h"
 
 using namespace std;
 using namespace expr;
@@ -82,16 +83,11 @@ int main(int argc, char *argv[])
 		return 0;
 
 	// 目的ファイル生成
-	if (Force) {
-		llvm::WriteBitcodeToFile(m.get(), llvm::outs());
-	} else {
-		error_code errorInfo;
-		llvm::raw_fd_ostream outfile(
-				OutputFilename,
-				errorInfo,
-				llvm::sys::fs::OpenFlags::F_None);
-		llvm::WriteBitcodeToFile(m.get(), outfile);
-	}
+	CodeGenerator cGen;
+	string *fname = &OutputFilename;
+	if (Force)
+		fname = nullptr;
+	cGen.genarate(m.get(), fname);
 
 	return 0;
 }
