@@ -74,6 +74,11 @@ namespace expr {
 			for (auto itr = children.cbegin(); itr != children.cend(); ++itr)
 				(*itr)->print_ast(dout, next_indent);
 		}
+
+		std::vector<std::unique_ptr<AstNode>> *getList()
+		{
+			return &children;
+		}
 	};
 
 	// 定数 整数
@@ -286,8 +291,17 @@ namespace expr {
 	// 関数呼び出し
 	class AstExpressionFunc: public AstExpression
 	{
+		protected:
+		AstIdentifier *identifier;
+		AstList *argumentList;
+
 		public:
-		using AstExpression::AstExpression;
+		AstExpressionFunc(AstIdentifier *identifier, AstList *argumentList)
+			: AstExpression(identifier, argumentList) {
+			this->identifier = identifier;
+			this->argumentList = argumentList;
+		}
+		virtual llvm::Value *getValue(IRGenInfo &igi) override;
 	};
 
 	// 代入演算子

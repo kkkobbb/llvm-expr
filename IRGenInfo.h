@@ -2,6 +2,7 @@
 #define IRGENINFO_H
 
 #include <memory>
+#include <vector>
 
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
@@ -10,14 +11,14 @@
 
 namespace expr {
 	class IRGenInfo {
+		protected:
+		std::vector<llvm::Function*> funcStack;
+
 		public:
 		bool errorFlag = false;
-		llvm::Function *curFunc = nullptr;
 
 		IRGenInfo()
 		{
-			//builder = llvm::make_unique<llvm::IRBuilder<>>(TheContext);
-			//TheModule = llvm::make_unique<llvm::Module>("code", TheContext);
 			builder.reset(new llvm::IRBuilder<>(TheContext));
 			TheModule.reset(new llvm::Module("code", TheContext));
 		}
@@ -46,6 +47,18 @@ namespace expr {
 		llvm::Value *getValue(int num)
 		{
 			return ValueList[num];
+		}
+		llvm::Function *getCurFunc()
+		{
+			return funcStack.back();
+		}
+		void pushCurFunc(llvm::Function *func)
+		{
+			funcStack.push_back(func);
+		}
+		void popCurFunc()
+		{
+			funcStack.pop_back();
 		}
 
 		private:

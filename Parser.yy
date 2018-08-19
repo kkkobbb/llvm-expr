@@ -359,7 +359,7 @@ primary_expression
     | '(' expression ')'
         { $$ = std::move($2); }
     | identifier '(' pure_expression_list ')'
-        { $$ = new AstExpressionFunc($1, $3); }
+        { $$ = new AstExpressionFunc((AstIdentifier *)$1, (AstList *)$3); }
     ;
 
 /* 定数 */
