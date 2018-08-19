@@ -1,5 +1,4 @@
-
-
+# 変数定義、関数定義
 var aaa:int;
 
 fnc func:int (a:int, b:int) {
@@ -7,12 +6,10 @@ fnc func:int (a:int, b:int) {
 	a;
 };
 
-
 aaa <- 12;
 12 -> bbb;
 
 aaa <- 123 -> bbb;
 
 func(1, 2);
-
 
