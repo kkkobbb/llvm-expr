@@ -6,8 +6,6 @@
 #include <llvm/IR/Module.h>
 #include <llvm/Support/CommandLine.h>
 #include <llvm/Support/raw_ostream.h>
-#include <llvm/Support/FileSystem.h>
-#include <llvm/Bitcode/BitcodeWriter.h>
 
 #include "AstNode.h"
 #include "AstGenerator.h"
@@ -75,14 +73,13 @@ int main(int argc, char *argv[])
 	if (PrintLlvm) {
 		m->print(llvm::outs(), nullptr);
 		llvm::outs() << "\n";
+		return 0;
 	}
 
-	// 表示系のオプションが指定されていた場合、
-	// ファイル出力は行わない
-	if (PrintAst || PrintLlvm)
-		return 0;
+	// 中間表現表示系のオプションが指定されていた場合、
+	// 以降のコード生成は実行されない
 
-	// 目的ファイル生成
+	// 目的コード生成
 	CodeGenerator cGen;
 	string *fname = &OutputFilename;
 	if (Force)
