@@ -110,8 +110,7 @@ unique_ptr<vector<Type*>> AstIdentifierList::getTypes(IRGenInfo &igi)
 {
 	auto typelist = new vector<Type*>();
 
-	for (auto itr = children.cbegin(); itr != this->children.cend(); ++itr)
-	{
+	for (auto itr = children.cbegin(); itr != this->children.cend(); ++itr) {
 		auto child = (*itr).get();
 		auto type = child->getType(igi);
 		typelist->push_back(type);
@@ -132,8 +131,7 @@ unique_ptr<vector<const string*>> AstIdentifierList::getNames()
 {
 	auto namelist = new vector<const string*>();
 
-	for (auto itr = children.cbegin(); itr != this->children.cend(); ++itr)
-	{
+	for (auto itr = children.cbegin(); itr != this->children.cend(); ++itr) {
 		auto child = (*itr).get();
 		auto name = child->getName();
 		namelist->push_back(name);
@@ -238,16 +236,16 @@ Value *AstDefinitionFunc::getValue(IRGenInfo &igi)
 	// 各引数の名前、値の変数を作成
 	auto ni = argNames->cbegin();
 	auto ti = argTypes->cbegin();
-	for(auto ai = func->arg_begin(); ai != func->arg_end(); ++ai, ++ni) {
+	for (auto ai = func->arg_begin(); ai != func->arg_end(); ++ai, ++ni) {
 		auto alloca = builder.CreateAlloca(*ti, 0, **ni);
 		builder.CreateStore(ai, alloca);
 	}
 
 	auto bodyValue = this->body->getValue(igi);
-	if(bodyValue == nullptr)
+	if (bodyValue == nullptr)
 		return nullptr;
 
-	if(retType == Type::getVoidTy(c))
+	if (retType == Type::getVoidTy(c))
 		builder.CreateRetVoid();
 	else
 		builder.CreateRet(bodyValue);
@@ -284,10 +282,10 @@ Type *AstTypeVoid::getType(IRGenInfo &igi)
 Value *AstExpression::getValue(IRGenInfo &igi)
 {
 	Value *lv = nullptr;
-	if(l != nullptr)
+	if (l != nullptr)
 		lv = l->getValue(igi);
 	Value *rv = nullptr;
-	if(r != nullptr)
+	if (r != nullptr)
 		rv = r->getValue(igi);
 
 	return generate_exp(igi, lv, rv);
@@ -307,11 +305,11 @@ Value *AstExpressionFunc::getValue(IRGenInfo &igi)
 	auto argList = this->argumentList->getList();
 
 	auto callee = m.getFunction(*name);
-	if(callee->arg_size() > argList->size())
+	if (callee->arg_size() > argList->size())
 		return nullptr;  // TODO エラー処理 引数が少ない
 
 	vector<Value*> args;
-	for(auto itr = argList->cbegin(); itr != argList->cend(); ++itr)
+	for (auto itr = argList->cbegin(); itr != argList->cend(); ++itr)
 		args.push_back((*itr)->getValue(igi));
 
 	return builder.CreateCall(callee, args);
@@ -333,7 +331,7 @@ Value *AstExpressionAS::getValue(IRGenInfo &igi)
 	auto alloca = getVariable(igi, name);
 	// FIXME 変数がない場合、領域を確保している
 	//       ない場合はエラーにする？
-	if(!alloca)
+	if (!alloca)
 		alloca = builder.CreateAlloca(Type::getInt32Ty(c), 0, *name);
 
 	builder.CreateStore(rhs, alloca);
