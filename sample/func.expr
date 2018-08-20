@@ -1,4 +1,4 @@
-# 変数定義、関数定義
+# 関数定義
 
 fnc func:int (a:int, b:int) {
 	a <- b + 1;

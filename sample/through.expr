@@ -1,7 +1,0 @@
-# サンプル through
-
-var <- 5;
-var <- var + 1 + through;
-
-var;
-
