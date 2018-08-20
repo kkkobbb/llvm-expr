@@ -1,15 +1,12 @@
 # 変数定義、関数定義
-var aaa:int;
 
 fnc func:int (a:int, b:int) {
 	a <- b + 1;
 	a;
 };
 
-aaa <- 12;
-12 -> bbb;
+func(1, 2) -> b;
+func(2, 3) -> c;
 
-aaa <- 123 -> bbb;
-
-func(1, 2);
+b + c;
 
