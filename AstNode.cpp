@@ -246,7 +246,11 @@ Value *AstDefinitionFunc::getValue(IRGenInfo &igi)
 	auto bodyValue = this->body->getValue(igi);
 	if(bodyValue == nullptr)
 		return nullptr;
-	builder.CreateRet(bodyValue);
+
+	if(retType == Type::getVoidTy(c))
+		builder.CreateRetVoid();
+	else
+		builder.CreateRet(bodyValue);
 
 	// 命令挿入位置を戻す
 	builder.SetInsertPoint(oldBb);
@@ -262,14 +266,14 @@ Value *AstDefinitionFunc::getValue(IRGenInfo &igi)
 Type *AstTypeInt::getType(IRGenInfo &igi)
 {
 	auto &c = igi.getContext();
-	return llvm::Type::getInt32Ty(c);
+	return Type::getInt32Ty(c);
 }
 
 
 Type *AstTypeVoid::getType(IRGenInfo &igi)
 {
 	auto &c = igi.getContext();
-	return llvm::Type::getVoidTy(c);
+	return Type::getVoidTy(c);
 }
 
 
@@ -310,7 +314,7 @@ Value *AstExpressionFunc::getValue(IRGenInfo &igi)
 	for(auto itr = argList->cbegin(); itr != argList->cend(); ++itr)
 		args.push_back((*itr)->getValue(igi));
 
-	return builder.CreateCall(callee, args, "call_tmp");
+	return builder.CreateCall(callee, args);
 }
 
 
