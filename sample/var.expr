@@ -1,10 +1,12 @@
 # 変数定義
+# 6
 
 var aaa:int;
-var b:int;
+var bbb:int;
 
-aaa;
+aaa <- 2;
+bbb <- 4;
 
-aaa + b;
+aaa + bbb;
 
 
