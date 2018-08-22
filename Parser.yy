@@ -194,13 +194,13 @@ control
 
 /* TODO 文法 */
 if_expression
-    : RE_IF expression_unit '{' expression_unit '?' expression_unit '}'
+    : RE_IF expression_unit ':' expression RE_ELSE expression '.'
         {}
     ;
 
 /* TODO 文法 */
 while_expression
-    : RE_WHILE expression_unit '{' expression_unit '}'
+    : RE_WHILE expression_unit ':' expression '.'
         {}
     ;
 
