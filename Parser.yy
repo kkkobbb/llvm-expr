@@ -208,9 +208,9 @@ while_expression
 definition
     : RE_VAR identifier_type
         { $$ = new AstDefinitionVar((AstIdentifier *)$2, nullptr); }
-    | RE_FNC identifier_type '(' ')' expression
+    | RE_FNC identifier_type '(' ')' expression_unit
         { $$ = new AstDefinitionFunc((AstIdentifier *)$2, nullptr, $5);}
-    | RE_FNC identifier_type '(' identifier_type_list ')' expression
+    | RE_FNC identifier_type '(' identifier_type_list ')' expression_unit
         { $$ = new AstDefinitionFunc((AstIdentifier *)$2, (AstIdentifierList *)$4, $6);}
     ;
 
@@ -388,7 +388,7 @@ primary_expression
         { $$ = std::move($1); }
     | constant
         { $$ = std::move($1); }
-    | '(' expression ')'
+    | '(' expression_unit ')'
         { $$ = std::move($2); }
     | identifier '(' pure_expression_list ')'
         { $$ = new AstExpressionFunc((AstIdentifier *)$1, (AstList *)$3); }
