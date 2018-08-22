@@ -5,7 +5,9 @@ CXXFLAGS := -g `$(LLVM-CONFIG) --cxxflags`
 LDLIBS := `$(LLVM-CONFIG) --ldflags --system-libs --libs core`
 
 DEST := exprc
-SRC  := main.cpp AstNode.cpp \
+SRC  := main.cpp \
+        AstNodeBase.cpp AstNodeConstant.cpp AstNodeType.cpp \
+        AstNodeExpression.cpp AstNodeDefinition.cpp \
         AstGenerator.cpp IRGenerator.cpp CodeGenerator.cpp
 
 OBJS := $(patsubst %.cpp,%.o,$(SRC)) Lexer.o Parser.o

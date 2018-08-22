@@ -13,6 +13,9 @@
 
 namespace expr {
 	class IRGenInfo;
+
+	llvm::Value *getVariable(IRGenInfo &igi, const std::string *name);
+
 	// ノード
 	class AstNode
 	{
@@ -20,29 +23,9 @@ namespace expr {
 		std::string dbg_msg;
 
 		public:
-		virtual llvm::Value *getValue(IRGenInfo &igi)
-		{
-			return nullptr;
-		}
-
-		virtual llvm::Type *getType(IRGenInfo &igi)
-		{
-			return nullptr;
-		}
-
-		virtual void print_ast(std::ostream &dout, int indent = 0)
-		{
-			// インデント
-			for (int i = 0; i < indent; ++i)
-				dout << "  ";
-
-			// クラス名かメッセージ表示
-			if (!dbg_msg.empty())
-				dout << dbg_msg << " ";
-			else
-				dout << typeid(*this).name();
-			dout << std::endl;
-		}
+		virtual llvm::Value *getValue(IRGenInfo &igi);
+		virtual llvm::Type *getType(IRGenInfo &igi);
+		virtual void print_ast(std::ostream &dout, int indent = 0);
 	};
 
 	// ノードの一覧を持つ
@@ -52,33 +35,19 @@ namespace expr {
 		std::vector<std::unique_ptr<AstNode>> children;
 
 		public:
-		AstList(AstNode *n)
-		{
-			add(n);
-		}
-
-		void add(AstNode *n)
-		{
-			if (n == nullptr)
-				return;
-			children.push_back(std::unique_ptr<AstNode>(n));
-		}
+		AstList(AstNode *n);
+		void add(AstNode *n);
 		virtual llvm::Value *getValue(IRGenInfo &igi) override;
+		virtual void print_ast(std::ostream &dout, int indent = 0) override;
+		std::vector<std::unique_ptr<AstNode>> *getList();
+	};
 
-		virtual void print_ast(std::ostream &dout, int indent = 0) override
-		{
-			AstNode::print_ast(dout, indent);
-
-			// 子要素の表示
-			int next_indent = indent + 1;
-			for (auto itr = children.cbegin(); itr != children.cend(); ++itr)
-				(*itr)->print_ast(dout, next_indent);
-		}
-
-		std::vector<std::unique_ptr<AstNode>> *getList()
-		{
-			return &children;
-		}
+	// 翻訳単位
+	class AstUnit: public AstList
+	{
+		public:
+		using AstList::AstList;
+		virtual llvm::Value *getValue(IRGenInfo &igi) override;
 	};
 
 	// 定数 整数
@@ -87,11 +56,7 @@ namespace expr {
 		int num;
 
 		public:
-		AstConstantInt(int num)
-		{
-			this->num = num;
-			dbg_msg = "(" + std::to_string(num) + ")";
-		}
+		AstConstantInt(int num);
 		virtual llvm::Value *getValue(IRGenInfo &igi) override;
 	};
 
@@ -103,33 +68,10 @@ namespace expr {
 		std::unique_ptr<AstNode> type;
 
 		public:
-		AstIdentifier(std::string *name, AstNode *type)
-		{
-			if(name == nullptr)
-				this->name.reset(new std::string(""));
-			else
-				this->name.reset(name);
-			dbg_msg = "\"" + *this->name + "\"";
-			this->type.reset(type);
-		}
-
-		virtual void print_ast(std::ostream &dout, int indent = 0) override
-		{
-			AstNode::print_ast(dout, indent);
-			// 子要素の表示
-			int next_indent = indent + 1;
-			if (type != nullptr)
-				type->print_ast(dout, next_indent);
-		}
-
-		const std::string *getName()
-		{
-			return name.get();
-		}
-		virtual llvm::Type *getType(IRGenInfo &igi) override
-		{
-			return this->type->getType(igi);
-		}
+		AstIdentifier(std::string *name, AstNode *type);
+		virtual void print_ast(std::ostream &dout, int indent = 0) override;
+		const std::string *getName();
+		virtual llvm::Type *getType(IRGenInfo &igi) override;
 		virtual llvm::Value *getValue(IRGenInfo &igi) override;
 	};
 
@@ -140,38 +82,11 @@ namespace expr {
 		std::vector<std::unique_ptr<AstIdentifier>> children;
 
 		public:
-		AstIdentifierList(AstIdentifier *n)
-		{
-			add(n);
-		}
-
-		void add(AstIdentifier *n)
-		{
-			if (n == nullptr)
-				return;
-			children.push_back(std::unique_ptr<AstIdentifier>(n));
-		}
-
-		virtual void print_ast(std::ostream &dout, int indent = 0) override
-		{
-			AstNode::print_ast(dout, indent);
-
-			// 子要素の表示
-			int next_indent = indent + 1;
-			for (auto itr = children.cbegin(); itr != children.cend(); ++itr)
-				(*itr)->print_ast(dout, next_indent);
-		}
-
+		AstIdentifierList(AstIdentifier *n);
+		void add(AstIdentifier *n);
+		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 		std::unique_ptr<std::vector<llvm::Type*>> getTypes(IRGenInfo &igi);
 		std::unique_ptr<std::vector<const std::string*>> getNames();
-	};
-
-	// 翻訳単位
-	class AstUnit: public AstList
-	{
-		public:
-		using AstList::AstList;
-		virtual llvm::Value *getValue(IRGenInfo &igi) override;
 	};
 
 	class AstDefinitionVar: public AstNode
@@ -181,22 +96,8 @@ namespace expr {
 		std::unique_ptr<AstNode> init;
 
 		public:
-		AstDefinitionVar(AstIdentifier *decl, AstNode *init)
-		{
-			this->decl.reset(decl);
-			this->init.reset(init);
-		}
-
-		virtual void print_ast(std::ostream &dout, int indent = 0) override
-		{
-			AstNode::print_ast(dout, indent);
-			// 子要素の表示
-			int next_indent = indent + 1;
-			if (decl != nullptr)
-				decl->print_ast(dout, next_indent);
-			if (init != nullptr)
-				init->print_ast(dout, next_indent);
-		}
+		AstDefinitionVar(AstIdentifier *decl, AstNode *init);
+		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 		virtual llvm::Value *getValue(IRGenInfo &igi) override;
 	};
 
@@ -208,25 +109,8 @@ namespace expr {
 		std::unique_ptr<AstNode> body;
 
 		public:
-		AstDefinitionFunc(AstIdentifier *decl, AstIdentifierList *argumentList, AstNode *body)
-		{
-			this->decl.reset(decl);
-			this->argumentList.reset(argumentList);
-			this->body.reset(body);
-		}
-
-		virtual void print_ast(std::ostream &dout, int indent = 0) override
-		{
-			AstNode::print_ast(dout, indent);
-			// 子要素の表示
-			int next_indent = indent + 1;
-			if (decl != nullptr)
-				decl->print_ast(dout, next_indent);
-			if (argumentList != nullptr)
-				argumentList->print_ast(dout, next_indent);
-			if (body != nullptr)
-				body->print_ast(dout, next_indent);
-		}
+		AstDefinitionFunc(AstIdentifier *decl, AstIdentifierList *argumentList, AstNode *body);
+		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 		virtual llvm::Value *getValue(IRGenInfo &igi) override;
 	};
 
@@ -258,34 +142,10 @@ namespace expr {
 		std::unique_ptr<AstNode> r;  // 右辺
 
 		public:
-		AstExpression(AstNode *l, AstNode *r)
-		{
-			this->l.reset(l);
-			this->r.reset(r);
-		}
-
+		AstExpression(AstNode *l, AstNode *r);
 		virtual llvm::Value *getValue(IRGenInfo &igi) override;
-
-		/*
-		 * 演算処理
-		 *
-		 * 演算子毎に変更すること
-		 */
-		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv)
-		{
-			return nullptr;
-		}
-
-		virtual void print_ast(std::ostream &dout, int indent = 0) override
-		{
-			AstNode::print_ast(dout, indent);
-			// 子要素の表示
-			int next_indent = indent + 1;
-			if (l != nullptr)
-				l->print_ast(dout, next_indent);
-			if (r != nullptr)
-				r->print_ast(dout, next_indent);
-		}
+		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv);
+		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 	};
 
 	// 関数呼び出し
@@ -296,11 +156,7 @@ namespace expr {
 		AstList *argumentList;
 
 		public:
-		AstExpressionFunc(AstIdentifier *identifier, AstList *argumentList)
-			: AstExpression(identifier, argumentList) {
-			this->identifier = identifier;
-			this->argumentList = argumentList;
-		}
+		AstExpressionFunc(AstIdentifier *identifier, AstList *argumentList);
 		virtual llvm::Value *getValue(IRGenInfo &igi) override;
 	};
 
@@ -311,10 +167,7 @@ namespace expr {
 		AstIdentifier *identifier;
 
 		public:
-		AstExpressionAS(AstIdentifier *identifier, AstNode *value)
-			: AstExpression(identifier, value) {
-			this->identifier = identifier;
-		}
+		AstExpressionAS(AstIdentifier *identifier, AstNode *value);
 		virtual llvm::Value *getValue(IRGenInfo &igi) override;
 	};
 
