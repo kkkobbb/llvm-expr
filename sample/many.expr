@@ -11,5 +11,5 @@
   var_c <- 1;
   var_d <- var_c;
   var_b;
-}
+};
 

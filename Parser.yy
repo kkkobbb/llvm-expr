@@ -92,11 +92,16 @@ static int parse_err_num = 0;
 %type <astnode>  translation_unit
 /* 文 */
 %type <astnode>  expression expression_list
-%type <astnode>  compound_expression
 %type <astnode>  expression_unit
+%type <astnode>  compound_expression
+%type <astnode>  extended_expression
+/* 制御文 */
+%type <astnode>  control
+%type <astnode>  if_expression
+%type <astnode>  while_expression
 /* 宣言 */
 %type <astnode>  definition
-%type <astnode>  identifier_type identifier_type_list
+%type <astnode>  identifier_type_list
 %type <astnode>  primary_type
 %type <astnode>  pure_expression_list
 /* 式 */
@@ -114,6 +119,7 @@ static int parse_err_num = 0;
 %type <astnode>  primary_expression
 %type <astnode>  constant
 %type <astnode>  identifier
+%type <astnode>  identifier_type
 
 
 %%
@@ -138,9 +144,7 @@ translation_unit
 
 /********** 式 **********/
 expression
-    : expression_unit
-        { $$ = std::move($1); }
-    | compound_expression
+    : expression_unit ';'
         { $$ = std::move($1); }
     ;
 
@@ -154,6 +158,13 @@ expression_list
         }
     ;
 
+expression_unit
+    : extended_expression
+        { $$ = std::move($1); }
+    | compound_expression
+        { $$ = std::move($1); }
+    ;
+
 compound_expression
     : '{' expression_list '}'
         { $$ = std::move($2); }
@@ -161,18 +172,39 @@ compound_expression
         { $$ = nullptr; }
     ;
 
-expression_unit
-    : pure_expression ';'
+/* 拡張された式 */
+extended_expression
+    : pure_expression
         { $$ = std::move($1); }
-    | definition ';'
+    | control
         { $$ = std::move($1); }
-    | ';'
-        { $$ = nullptr; }
+    | definition
+        { $$ = std::move($1); }
     | error
         { $$ = nullptr; }  /* エラー処理 */
     ;
 
-/* 定義 */
+/* 制御文 */
+control
+    : if_expression
+        { $$ = std::move($1); }
+    | while_expression
+        { $$ = std::move($1); }
+    ;
+
+/* TODO 文法 */
+if_expression
+    : RE_IF expression_unit '{' expression_unit '?' expression_unit '}'
+        {}
+    ;
+
+/* TODO 文法 */
+while_expression
+    : RE_WHILE expression_unit '{' expression_unit '}'
+        {}
+    ;
+
+/* 定義文 */
 definition
     : RE_VAR identifier_type
         { $$ = new AstDefinitionVar((AstIdentifier *)$2, nullptr); }
