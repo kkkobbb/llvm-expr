@@ -196,6 +196,10 @@ control
 if_expression
     : RE_IF expression_unit ':' expression RE_ELSE expression '.'
         {}
+    | RE_IF expression_unit ':' expression '.'
+        {}
+    | RE_IF expression_unit ':' RE_ELSE expression '.'
+        {}
     ;
 
 /* TODO 文法 */
