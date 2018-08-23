@@ -107,8 +107,8 @@ Value *AstList::getValue(IRGenInfo &igi)
 {
 	Value *lastVal = nullptr;
 
-	for (auto itr = children.cbegin(); itr != children.cend(); ++itr)
-		lastVal = (*itr)->getValue(igi);
+	for (auto &child : children)
+		lastVal = child->getValue(igi);
 
 	return lastVal;
 }
@@ -120,8 +120,8 @@ void AstList::print_ast(std::ostream &dout, int indent)
 
 	// 子要素の表示
 	int next_indent = indent + 1;
-	for (auto itr = children.cbegin(); itr != children.cend(); ++itr)
-		(*itr)->print_ast(dout, next_indent);
+	for (auto &child : children)
+		child->print_ast(dout, next_indent);
 }
 
 

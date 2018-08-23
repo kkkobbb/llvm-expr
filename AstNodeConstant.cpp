@@ -121,8 +121,8 @@ void AstIdentifierList::print_ast(ostream &dout, int indent)
 
 	// 子要素の表示
 	int next_indent = indent + 1;
-	for (auto itr = children.cbegin(); itr != children.cend(); ++itr)
-		(*itr)->print_ast(dout, next_indent);
+	for (auto &child : children)
+		child->print_ast(dout, next_indent);
 }
 
 
@@ -136,11 +136,8 @@ unique_ptr<vector<Type*>> AstIdentifierList::getTypes(IRGenInfo &igi)
 {
 	auto typelist = new vector<Type*>();
 
-	for (auto itr = children.cbegin(); itr != this->children.cend(); ++itr) {
-		auto child = (*itr).get();
-		auto type = child->getType(igi);
-		typelist->push_back(type);
-	}
+	for (auto &child : children)
+		typelist->push_back(child->getType(igi));
 
 	unique_ptr<vector<Type*>> ptr(typelist);
 
@@ -157,11 +154,8 @@ unique_ptr<vector<const string*>> AstIdentifierList::getNames()
 {
 	auto namelist = new vector<const string*>();
 
-	for (auto itr = children.cbegin(); itr != this->children.cend(); ++itr) {
-		auto child = (*itr).get();
-		auto name = child->getName();
-		namelist->push_back(name);
-	}
+	for (auto &child : children)
+		namelist->push_back(child->getName());
 
 	unique_ptr<vector<const string*>> ptr(namelist);
 

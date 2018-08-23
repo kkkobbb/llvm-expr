@@ -100,8 +100,8 @@ Value *AstExpressionFunc::getValue(IRGenInfo &igi)
 		return nullptr;  // TODO エラー処理 引数が少ない
 
 	vector<Value*> args;
-	for (auto itr = argList->cbegin(); itr != argList->cend(); ++itr)
-		args.push_back((*itr)->getValue(igi));
+	for (auto &arg : *argList)
+		args.push_back(arg->getValue(igi));
 
 	return builder.CreateCall(callee, args);
 }

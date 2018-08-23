@@ -127,7 +127,7 @@ Value *AstDefinitionFunc::getValue(IRGenInfo &igi)
 	// 各引数の名前、値の変数を作成
 	auto ni = argNames->cbegin();
 	auto ti = argTypes->cbegin();
-	for (auto ai = func->arg_begin(); ai != func->arg_end(); ++ai, ++ni) {
+	for (auto ai = func->arg_begin(); ai != func->arg_end(); ++ai, ++ni, ++ti) {
 		auto alloca = builder.CreateAlloca(*ti, 0, **ni);
 		builder.CreateStore(ai, alloca);
 	}
