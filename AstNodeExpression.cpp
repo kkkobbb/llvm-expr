@@ -127,7 +127,7 @@ Value *AstExpressionAS::getValue(IRGenInfo &igi)
 
 	auto name = this->identifier->getName();
 
-	auto alloca = getVariable(igi, name);
+	auto alloca = igi.getVariable(name);
 	// FIXME 変数がない場合、領域を確保している
 	//       ない場合はエラーにする？
 	if (!alloca)

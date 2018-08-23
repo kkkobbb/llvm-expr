@@ -14,8 +14,6 @@
 namespace expr {
 	class IRGenInfo;
 
-	llvm::Value *getVariable(IRGenInfo &igi, const std::string *name);
-
 	// ノード
 	class AstNode
 	{

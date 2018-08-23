@@ -25,33 +25,6 @@ using namespace expr;
 
 
 
-/*
- * nameという変数の領域を探して返す
- *
- * retval = getVariable(igi);
- * if (retval) {} で偽の場合、変数がなかった
- *
- * 1. 引数に対象の変数があるか
- * 2. 現在の関数のスコープに対象の変数があるか
- * 3. グローバルに対象の変数があるか
- */
-Value *expr::getVariable(IRGenInfo &igi, const string *name)
-{
-	auto &m = igi.getModule();
-	auto curFunc = igi.getCurFunc();
-
-	auto vs_table = curFunc->getValueSymbolTable();
-	auto alloca = vs_table->lookup(*name);
-
-	if (!alloca) {
-		auto &global_vs_table = m.getValueSymbolTable();
-		alloca = global_vs_table.lookup(*name);
-	}
-
-	return alloca;
-}
-
-
 // AstNode
 
 Value *AstNode::getValue(IRGenInfo &igi)

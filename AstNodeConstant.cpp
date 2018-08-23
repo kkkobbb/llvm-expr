@@ -93,7 +93,7 @@ Value *AstIdentifier::getValue(IRGenInfo &igi)
 {
 	auto &builder = igi.getBuilder();
 	auto name = getName();
-	auto alloca = getVariable(igi, name);
+	auto alloca = igi.getVariable(name);
 
 	return builder.CreateLoad(alloca, "var");
 }

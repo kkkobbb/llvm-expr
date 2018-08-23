@@ -6,6 +6,7 @@
 
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/ValueSymbolTable.h>
 
 
 
@@ -59,6 +60,29 @@ namespace expr {
 		void popCurFunc()
 		{
 			funcStack.pop_back();
+		}
+
+		/*
+		 * nameという変数の領域を探して返す
+		 *
+		 * 見つからなかった場合、偽となる値を返す
+		 *
+		 * 1. 現在の関数のスコープに対象の変数があるか
+		 * 2. グローバルに対象の変数があるか
+		 */
+		llvm::Value *getVariable(const std::string *name)
+		{
+			auto curFunc = this->getCurFunc();
+
+			auto vs_table = curFunc->getValueSymbolTable();
+			auto alloca = vs_table->lookup(*name);
+
+			if (!alloca) {
+				auto &global_vs_table = TheModule->getValueSymbolTable();
+				alloca = global_vs_table.lookup(*name);
+			}
+
+			return alloca;
 		}
 
 		private:
