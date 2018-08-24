@@ -194,18 +194,20 @@ control
 
 /* TODO 文法 */
 if_expression
-    : RE_IF expression_unit ':' expression RE_ELSE expression '.'
-        {}
-    | RE_IF expression_unit ':' expression '.'
-        {}
-    | RE_IF expression_unit ':' RE_ELSE expression '.'
-        {}
+    : RE_IF expression_unit ':' expression_list RE_ELSE expression_list '.'
+        { $$ = new AstControlIf($2, $4, $6); }
+    | RE_IF expression_unit ':' expression_list '.'
+        { $$ = new AstControlIf($2, $4, nullptr); }
+    | RE_IF expression_unit ':' RE_ELSE expression_list '.'
+        { $$ = new AstControlIf($2, nullptr, $5); }
     ;
 
 /* TODO 文法 */
 while_expression
-    : RE_WHILE expression_unit ':' expression '.'
-        {}
+    : RE_WHILE expression_unit ':' expression_list '.'
+        { $$ = new AstControlWhile($2, $4); }
+    | RE_WHILE expression_unit ':' '.'
+        { $$ = new AstControlWhile($2, nullptr); }
     ;
 
 /* 定義文 */
@@ -229,10 +231,10 @@ identifier_type_list
     ;
 
 primary_type
-    : RE_INT
-        { $$ = new AstTypeInt(); }
-    | RE_VOID
+    : RE_VOID
         { $$ = new AstTypeVoid(); }
+    | RE_INT
+        { $$ = new AstTypeInt(); }
     ;
 
 /* 式のリスト */

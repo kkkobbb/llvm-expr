@@ -7,7 +7,7 @@ LDLIBS := `$(LLVM-CONFIG) --ldflags --system-libs --libs core`
 DEST := exprc
 SRC  := main.cpp \
         AstNodeBase.cpp AstNodeConstant.cpp AstNodeType.cpp \
-        AstNodeExpression.cpp AstNodeDefinition.cpp \
+        AstNodeExpression.cpp AstNodeDefinition.cpp AstNodeControl.cpp \
         AstGenerator.cpp IRGenerator.cpp CodeGenerator.cpp
 
 OBJS := $(patsubst %.cpp,%.o,$(SRC)) Lexer.o Parser.o
