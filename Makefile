@@ -8,7 +8,7 @@ DEST := exprc
 SRC  := main.cpp \
         AstNodeBase.cpp AstNodeConstant.cpp AstNodeType.cpp \
         AstNodeExpression.cpp AstNodeDefinition.cpp AstNodeControl.cpp \
-        AstGenerator.cpp IRGenerator.cpp CodeGenerator.cpp
+        AstGenerator.cpp IRGenerator.cpp IRState.cpp CodeGenerator.cpp
 
 OBJS := $(patsubst %.cpp,%.o,$(SRC)) Lexer.o Parser.o
 

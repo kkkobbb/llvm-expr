@@ -6,7 +6,6 @@
 
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
-#include <llvm/IR/ValueSymbolTable.h>
 
 
 
@@ -18,72 +17,17 @@ namespace expr {
 		public:
 		bool errorFlag = false;
 
-		IRState()
-		{
-			builder.reset(new llvm::IRBuilder<>(TheContext));
-			TheModule.reset(new llvm::Module("code", TheContext));
-		}
-		llvm::LLVMContext &getContext()
-		{
-			return TheContext;
-		}
-		llvm::Module &getModule()
-		{
-			return *TheModule;
-		}
-		std::unique_ptr<llvm::Module> moveModule()
-		{
-			return move(TheModule);
-		}
-		llvm::IRBuilder<> &getBuilder()
-		{
-			return *builder;
-		}
-		std::size_t setValue(llvm::Value *val)
-		{
-			ValueList.push_back(val);
-
-			return ValueList.size() - 1;
-		}
-		llvm::Value *getValue(int num)
-		{
-			return ValueList[num];
-		}
-		llvm::Function *getCurFunc()
-		{
-			return funcStack.back();
-		}
-		void pushCurFunc(llvm::Function *func)
-		{
-			funcStack.push_back(func);
-		}
-		void popCurFunc()
-		{
-			funcStack.pop_back();
-		}
-
-		/*
-		 * nameという変数の領域を探して返す
-		 *
-		 * 見つからなかった場合、偽となる値を返す
-		 *
-		 * 1. 現在の関数のスコープに対象の変数があるか
-		 * 2. グローバルに対象の変数があるか
-		 */
-		llvm::Value *getVariable(const std::string *name)
-		{
-			auto curFunc = this->getCurFunc();
-
-			auto vs_table = curFunc->getValueSymbolTable();
-			auto alloca = vs_table->lookup(*name);
-
-			if (!alloca) {
-				auto &global_vs_table = TheModule->getValueSymbolTable();
-				alloca = global_vs_table.lookup(*name);
-			}
-
-			return alloca;
-		}
+		IRState();
+		llvm::LLVMContext &getContext();
+		llvm::Module &getModule();
+		std::unique_ptr<llvm::Module> moveModule();
+		llvm::IRBuilder<> &getBuilder();
+		std::size_t setValue(llvm::Value *val);
+		llvm::Value *getValue(int num);
+		llvm::Function *getCurFunc();
+		void pushCurFunc(llvm::Function *func);
+		void popCurFunc();
+		llvm::Value *getVariable(const std::string *name);
 
 		private:
 		llvm::LLVMContext TheContext;
