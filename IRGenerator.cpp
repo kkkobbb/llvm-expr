@@ -10,7 +10,7 @@
 
 #include "AstNode.h"
 #include "IRGenerator.h"
-#include "IRGenInfo.h"
+#include "IRState.h"
 
 
 using namespace std;
@@ -26,10 +26,10 @@ using namespace expr;
 bool IRGenerator::genarate(std::unique_ptr<AstNode> ast_root)
 {
 	// グローバル変数(定数)を生成する
-	auto &c = igi.getContext();
-	auto &m = igi.getModule();
-	auto &builder = igi.getBuilder();
-	igi.setValue(new llvm::GlobalVariable(
+	auto &c = irs.getContext();
+	auto &m = irs.getModule();
+	auto &builder = irs.getBuilder();
+	irs.setValue(new llvm::GlobalVariable(
 			m,
 			llvm::Type::getInt32Ty(c),
 			true,  /* isConstant */
@@ -39,10 +39,10 @@ bool IRGenerator::genarate(std::unique_ptr<AstNode> ast_root)
 			));
 
 	// IR生成
-	ast_root->getValue(igi);
-	TheModule = igi.moveModule();
+	ast_root->getValue(irs);
+	TheModule = irs.moveModule();
 
-	return !igi.errorFlag;
+	return !irs.errorFlag;
 }
 
 

@@ -12,7 +12,7 @@
 
 
 namespace expr {
-	class IRGenInfo;
+	class IRState;
 
 	// ノード
 	class AstNode
@@ -21,8 +21,8 @@ namespace expr {
 		std::string dbg_msg;
 
 		public:
-		virtual llvm::Value *getValue(IRGenInfo &igi);
-		virtual llvm::Type *getType(IRGenInfo &igi);
+		virtual llvm::Value *getValue(IRState &irs);
+		virtual llvm::Type *getType(IRState &irs);
 		virtual void print_ast(std::ostream &dout, int indent = 0);
 	};
 
@@ -35,7 +35,7 @@ namespace expr {
 		public:
 		AstList(AstNode *n);
 		void add(AstNode *n);
-		virtual llvm::Value *getValue(IRGenInfo &igi) override;
+		virtual llvm::Value *getValue(IRState &irs) override;
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 		std::vector<std::unique_ptr<AstNode>> *getList();
 	};
@@ -45,7 +45,7 @@ namespace expr {
 	{
 		public:
 		using AstList::AstList;
-		virtual llvm::Value *getValue(IRGenInfo &igi) override;
+		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 
 	// 定数 整数
@@ -55,7 +55,7 @@ namespace expr {
 
 		public:
 		AstConstantInt(int num);
-		virtual llvm::Value *getValue(IRGenInfo &igi) override;
+		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 
 	// 識別子
@@ -69,8 +69,8 @@ namespace expr {
 		AstIdentifier(std::string *name, AstNode *type);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 		const std::string *getName();
-		virtual llvm::Type *getType(IRGenInfo &igi) override;
-		virtual llvm::Value *getValue(IRGenInfo &igi) override;
+		virtual llvm::Type *getType(IRState &irs) override;
+		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 
 	// 識別子の一覧を持つ
@@ -83,7 +83,7 @@ namespace expr {
 		AstIdentifierList(AstIdentifier *n);
 		void add(AstIdentifier *n);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
-		std::unique_ptr<std::vector<llvm::Type*>> getTypes(IRGenInfo &igi);
+		std::unique_ptr<std::vector<llvm::Type*>> getTypes(IRState &irs);
 		std::unique_ptr<std::vector<const std::string*>> getNames();
 	};
 
@@ -97,7 +97,7 @@ namespace expr {
 		public:
 		AstControlIf(AstNode *cond, AstNode *proc, AstNode *elseProc);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
-		virtual llvm::Value *getValue(IRGenInfo &igi) override;
+		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 
 	class AstControlWhile: public AstNode
@@ -109,7 +109,7 @@ namespace expr {
 		public:
 		AstControlWhile(AstNode *cond, AstNode *proc);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
-		virtual llvm::Value *getValue(IRGenInfo &igi) override;
+		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 
 	class AstDefinitionVar: public AstNode
@@ -121,7 +121,7 @@ namespace expr {
 		public:
 		AstDefinitionVar(AstIdentifier *decl, AstNode *init);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
-		virtual llvm::Value *getValue(IRGenInfo &igi) override;
+		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 
 	class AstDefinitionFunc: public AstNode
@@ -134,7 +134,7 @@ namespace expr {
 		public:
 		AstDefinitionFunc(AstIdentifier *decl, AstIdentifierList *argumentList, AstNode *body);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
-		virtual llvm::Value *getValue(IRGenInfo &igi) override;
+		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 
 	class AstType: public AstNode
@@ -147,21 +147,21 @@ namespace expr {
 	{
 		public:
 		using AstType::AstType;
-		virtual llvm::Type *getType(IRGenInfo &igi) override;
+		virtual llvm::Type *getType(IRState &irs) override;
 	};
 
 	class AstTypeInt: public AstType
 	{
 		public:
 		using AstType::AstType;
-		virtual llvm::Type *getType(IRGenInfo &igi) override;
+		virtual llvm::Type *getType(IRState &irs) override;
 	};
 
 	class AstTypeString: public AstType
 	{
 		public:
 		using AstType::AstType;
-		virtual llvm::Type *getType(IRGenInfo &igi) override;
+		virtual llvm::Type *getType(IRState &irs) override;
 	};
 
 	// 式
@@ -173,8 +173,8 @@ namespace expr {
 
 		public:
 		AstExpression(AstNode *l, AstNode *r);
-		virtual llvm::Value *getValue(IRGenInfo &igi) override;
-		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv);
+		virtual llvm::Value *getValue(IRState &irs) override;
+		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 	};
 
@@ -187,7 +187,7 @@ namespace expr {
 
 		public:
 		AstExpressionFunc(AstIdentifier *identifier, AstList *argumentList);
-		virtual llvm::Value *getValue(IRGenInfo &igi) override;
+		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 
 	// 代入演算子
@@ -198,7 +198,7 @@ namespace expr {
 
 		public:
 		AstExpressionAS(AstIdentifier *identifier, AstNode *value);
-		virtual llvm::Value *getValue(IRGenInfo &igi) override;
+		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 
 	// 論理演算 OR
@@ -283,7 +283,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
-		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv) override;
+		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 減算
@@ -291,7 +291,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
-		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv) override;
+		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 乗算
@@ -299,7 +299,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
-		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv) override;
+		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 除算
@@ -307,7 +307,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
-		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv) override;
+		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 余算
@@ -315,7 +315,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
-		virtual llvm::Value *generate_exp(IRGenInfo &igi, llvm::Value *lv, llvm::Value *rv) override;
+		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 単項演算子 正

@@ -16,7 +16,7 @@
 #include <llvm/IR/ValueSymbolTable.h>
 
 #include "AstNode.h"
-#include "IRGenInfo.h"
+#include "IRState.h"
 
 
 using namespace std;
@@ -27,13 +27,13 @@ using namespace expr;
 
 // AstNode
 
-Value *AstNode::getValue(IRGenInfo &igi)
+Value *AstNode::getValue(IRState &irs)
 {
 	return nullptr;
 }
 
 
-Type *AstNode::getType(IRGenInfo &igi)
+Type *AstNode::getType(IRState &irs)
 {
 	return nullptr;
 }
@@ -76,12 +76,12 @@ void AstList::add(AstNode *n)
  *
  * 子要素の実行のみ
  */
-Value *AstList::getValue(IRGenInfo &igi)
+Value *AstList::getValue(IRState &irs)
 {
 	Value *lastVal = nullptr;
 
 	for (auto &child : children)
-		lastVal = child->getValue(igi);
+		lastVal = child->getValue(irs);
 
 	return lastVal;
 }
@@ -110,11 +110,11 @@ vector<unique_ptr<AstNode>> *AstList::getList()
  * IR 生成
  * 翻訳単位 (1ファイル分)
  */
-Value *AstUnit::getValue(IRGenInfo &igi)
+Value *AstUnit::getValue(IRState &irs)
 {
-	auto &c = igi.getContext();
-	auto &m = igi.getModule();
-	auto &builder = igi.getBuilder();
+	auto &c = irs.getContext();
+	auto &m = irs.getModule();
+	auto &builder = irs.getBuilder();
 
 	// 文法には関数定義はないが、
 	// LLVM IRでは関数を定義する必要があるため
@@ -128,10 +128,10 @@ Value *AstUnit::getValue(IRGenInfo &igi)
 	auto *bb = BasicBlock::Create(c, "entry", func);
 	builder.SetInsertPoint(bb);
 
-	igi.pushCurFunc(func);
+	irs.pushCurFunc(func);
 
 	// 子要素の実行
-	auto *v = AstList::getValue(igi);
+	auto *v = AstList::getValue(irs);
 
 	if(!v)
 		v = builder.getInt32(0);

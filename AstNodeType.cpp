@@ -16,7 +16,7 @@
 #include <llvm/IR/ValueSymbolTable.h>
 
 #include "AstNode.h"
-#include "IRGenInfo.h"
+#include "IRState.h"
 
 
 using namespace std;
@@ -25,23 +25,23 @@ using namespace expr;
 
 
 
-Type *AstTypeVoid::getType(IRGenInfo &igi)
+Type *AstTypeVoid::getType(IRState &irs)
 {
-	auto &c = igi.getContext();
+	auto &c = irs.getContext();
 	return Type::getVoidTy(c);
 }
 
 
-Type *AstTypeInt::getType(IRGenInfo &igi)
+Type *AstTypeInt::getType(IRState &irs)
 {
-	auto &c = igi.getContext();
+	auto &c = irs.getContext();
 	return Type::getInt32Ty(c);
 }
 
 
-Type *AstTypeString::getType(IRGenInfo &igi)
+Type *AstTypeString::getType(IRState &irs)
 {
-	auto &builder = igi.getBuilder();
+	auto &builder = irs.getBuilder();
 	return builder.getInt8PtrTy();
 }
 

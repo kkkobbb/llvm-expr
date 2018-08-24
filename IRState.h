@@ -11,14 +11,14 @@
 
 
 namespace expr {
-	class IRGenInfo {
+	class IRState {
 		protected:
 		std::vector<llvm::Function*> funcStack;
 
 		public:
 		bool errorFlag = false;
 
-		IRGenInfo()
+		IRState()
 		{
 			builder.reset(new llvm::IRBuilder<>(TheContext));
 			TheModule.reset(new llvm::Module("code", TheContext));

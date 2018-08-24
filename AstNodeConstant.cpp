@@ -16,7 +16,7 @@
 #include <llvm/IR/ValueSymbolTable.h>
 
 #include "AstNode.h"
-#include "IRGenInfo.h"
+#include "IRState.h"
 
 
 using namespace std;
@@ -38,9 +38,9 @@ AstConstantInt::AstConstantInt(int num)
  * IR 生成
  * 定数 整数
  */
-Value *AstConstantInt::getValue(IRGenInfo &igi)
+Value *AstConstantInt::getValue(IRState &irs)
 {
-	auto &builder = igi.getBuilder();
+	auto &builder = irs.getBuilder();
 
 	return builder.getInt32(num);
 }
@@ -75,9 +75,9 @@ const string *AstIdentifier::getName()
 }
 
 
-Type *AstIdentifier::getType(IRGenInfo &igi)
+Type *AstIdentifier::getType(IRState &irs)
 {
-	return this->type->getType(igi);
+	return this->type->getType(irs);
 }
 
 
@@ -89,11 +89,11 @@ Type *AstIdentifier::getType(IRGenInfo &igi)
  * 値の参照以外の用途(代入先、関数名など)の場合、getName()呼び出しで
  * 親ノードが処理すること
  */
-Value *AstIdentifier::getValue(IRGenInfo &igi)
+Value *AstIdentifier::getValue(IRState &irs)
 {
-	auto &builder = igi.getBuilder();
+	auto &builder = irs.getBuilder();
 	auto name = getName();
-	auto alloca = igi.getVariable(name);
+	auto alloca = irs.getVariable(name);
 
 	return builder.CreateLoad(alloca, "var");
 }
@@ -132,12 +132,12 @@ void AstIdentifierList::print_ast(ostream &dout, int indent)
  * 型が設定されていない場合、nullptrが要素となる
  * Type自体のメモリはLLVMで管理されているためunique_ptrにしない
  */
-unique_ptr<vector<Type*>> AstIdentifierList::getTypes(IRGenInfo &igi)
+unique_ptr<vector<Type*>> AstIdentifierList::getTypes(IRState &irs)
 {
 	auto typelist = new vector<Type*>();
 
 	for (auto &child : children)
-		typelist->push_back(child->getType(igi));
+		typelist->push_back(child->getType(irs));
 
 	unique_ptr<vector<Type*>> ptr(typelist);
 

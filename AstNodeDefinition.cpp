@@ -16,7 +16,7 @@
 #include <llvm/IR/ValueSymbolTable.h>
 
 #include "AstNode.h"
-#include "IRGenInfo.h"
+#include "IRState.h"
 
 
 using namespace std;
@@ -53,16 +53,16 @@ void AstDefinitionVar::print_ast(ostream &dout, int indent)
  *
  * TODO エラー処理
  */
-Value *AstDefinitionVar::getValue(IRGenInfo &igi)
+Value *AstDefinitionVar::getValue(IRState &irs)
 {
-	auto &c = igi.getContext();
-	auto &builder = igi.getBuilder();
+	auto &c = irs.getContext();
+	auto &builder = irs.getBuilder();
 
 	auto name = decl->getName();
 	auto alloca = builder.CreateAlloca(Type::getInt32Ty(c), 0, *name);
 
 	if (this->init.get() != nullptr) {
-		auto value = init->getValue(igi);
+		auto value = init->getValue(irs);
 		builder.CreateStore(value, alloca);
 	}
 	// TODO 初期値無しの場合、型ごとの初期値
@@ -102,22 +102,22 @@ void AstDefinitionFunc::print_ast(std::ostream &dout, int indent)
  *
  * TODO エラー処理
  */
-Value *AstDefinitionFunc::getValue(IRGenInfo &igi)
+Value *AstDefinitionFunc::getValue(IRState &irs)
 {
-	auto &c = igi.getContext();
-	auto &m = igi.getModule();
-	auto &builder = igi.getBuilder();
+	auto &c = irs.getContext();
+	auto &m = irs.getModule();
+	auto &builder = irs.getBuilder();
 
-	auto argTypes = argumentList->getTypes(igi);
+	auto argTypes = argumentList->getTypes(irs);
 	auto argNames = argumentList->getNames();
-	auto retType = decl->getType(igi);
+	auto retType = decl->getType(irs);
 	auto funcType = FunctionType::get(retType, *argTypes, false);
 	auto name = decl->getName();
 
 	auto func = Function::Create(funcType, Function::ExternalLinkage, *name, &m);
 
 	// 現在の関数を更新
-	igi.pushCurFunc(func);
+	irs.pushCurFunc(func);
 
 	// 命令挿入位置の更新
 	BasicBlock *bb = BasicBlock::Create(c, "entry", func);
@@ -132,7 +132,7 @@ Value *AstDefinitionFunc::getValue(IRGenInfo &igi)
 		builder.CreateStore(ai, alloca);
 	}
 
-	auto bodyValue = this->body->getValue(igi);
+	auto bodyValue = this->body->getValue(irs);
 	if (bodyValue == nullptr)
 		return nullptr;
 
@@ -144,7 +144,7 @@ Value *AstDefinitionFunc::getValue(IRGenInfo &igi)
 	// 命令挿入位置を戻す
 	builder.SetInsertPoint(oldBb);
 	// 現在の関数を戻す
-	igi.popCurFunc();
+	irs.popCurFunc();
 
 	verifyFunction(*func, &errs());
 

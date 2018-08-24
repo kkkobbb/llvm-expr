@@ -16,7 +16,7 @@
 #include <llvm/IR/ValueSymbolTable.h>
 
 #include "AstNode.h"
-#include "IRGenInfo.h"
+#include "IRState.h"
 
 
 using namespace std;
@@ -38,16 +38,16 @@ AstExpression::AstExpression(AstNode *l, AstNode *r)
  * IR 生成
  * 式
  */
-Value *AstExpression::getValue(IRGenInfo &igi)
+Value *AstExpression::getValue(IRState &irs)
 {
 	Value *lv = nullptr;
 	if (l != nullptr)
-		lv = l->getValue(igi);
+		lv = l->getValue(irs);
 	Value *rv = nullptr;
 	if (r != nullptr)
-		rv = r->getValue(igi);
+		rv = r->getValue(irs);
 
-	return generate_exp(igi, lv, rv);
+	return generate_exp(irs, lv, rv);
 }
 
 
@@ -56,7 +56,7 @@ Value *AstExpression::getValue(IRGenInfo &igi)
  *
  * 演算子毎に変更すること
  */
-Value *AstExpression::generate_exp(IRGenInfo &igi, Value *lv, Value *rv)
+Value *AstExpression::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	return nullptr;
 }
@@ -87,10 +87,10 @@ AstExpressionFunc::AstExpressionFunc(AstIdentifier *identifier, AstList *argumen
  * IR 生成
  * 関数呼び出し
  */
-Value *AstExpressionFunc::getValue(IRGenInfo &igi)
+Value *AstExpressionFunc::getValue(IRState &irs)
 {
-	auto &builder = igi.getBuilder();
-	auto &m = igi.getModule();
+	auto &builder = irs.getBuilder();
+	auto &m = irs.getModule();
 
 	auto name = this->identifier->getName();
 	auto argList = this->argumentList->getList();
@@ -101,7 +101,7 @@ Value *AstExpressionFunc::getValue(IRGenInfo &igi)
 
 	vector<Value*> args;
 	for (auto &arg : *argList)
-		args.push_back(arg->getValue(igi));
+		args.push_back(arg->getValue(irs));
 
 	return builder.CreateCall(callee, args);
 }
@@ -119,15 +119,15 @@ AstExpressionAS::AstExpressionAS(AstIdentifier *identifier, AstNode *value)
  * IR 生成
  * 代入
  */
-Value *AstExpressionAS::getValue(IRGenInfo &igi)
+Value *AstExpressionAS::getValue(IRState &irs)
 {
-	auto &c = igi.getContext();
-	auto &builder = igi.getBuilder();
-	auto rhs = r->getValue(igi);
+	auto &c = irs.getContext();
+	auto &builder = irs.getBuilder();
+	auto rhs = r->getValue(irs);
 
 	auto name = this->identifier->getName();
 
-	auto alloca = igi.getVariable(name);
+	auto alloca = irs.getVariable(name);
 	// FIXME 変数がない場合、領域を確保している
 	//       ない場合はエラーにする？
 	if (!alloca)
@@ -148,9 +148,9 @@ Value *AstExpressionAS::getValue(IRGenInfo &igi)
  * IR 生成
  * 加算
  */
-Value *AstExpressionADD::generate_exp(IRGenInfo &igi, Value *lv, Value *rv)
+Value *AstExpressionADD::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
-	auto &builder = igi.getBuilder();
+	auto &builder = irs.getBuilder();
 
 	return builder.CreateAdd(lv, rv, "add_tmp");
 }
@@ -160,9 +160,9 @@ Value *AstExpressionADD::generate_exp(IRGenInfo &igi, Value *lv, Value *rv)
  * IR 生成
  * 減算
  */
-Value *AstExpressionSUB::generate_exp(IRGenInfo &igi, Value *lv, Value *rv)
+Value *AstExpressionSUB::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
-	auto &builder = igi.getBuilder();
+	auto &builder = irs.getBuilder();
 
 	return builder.CreateSub(lv, rv, "sub_tmp");
 }
@@ -172,9 +172,9 @@ Value *AstExpressionSUB::generate_exp(IRGenInfo &igi, Value *lv, Value *rv)
  * IR 生成
  * 乗算
  */
-Value *AstExpressionMUL::generate_exp(IRGenInfo &igi, Value *lv, Value *rv)
+Value *AstExpressionMUL::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
-	auto &builder = igi.getBuilder();
+	auto &builder = irs.getBuilder();
 
 	return builder.CreateMul(lv, rv, "mul_tmp");
 }
@@ -184,9 +184,9 @@ Value *AstExpressionMUL::generate_exp(IRGenInfo &igi, Value *lv, Value *rv)
  * IR 生成
  * 除算
  */
-Value *AstExpressionDIV::generate_exp(IRGenInfo &igi, Value *lv, Value *rv)
+Value *AstExpressionDIV::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
-	auto &builder = igi.getBuilder();
+	auto &builder = irs.getBuilder();
 
 	return builder.CreateSDiv(lv, rv, "div_tmp");
 }
@@ -196,9 +196,9 @@ Value *AstExpressionDIV::generate_exp(IRGenInfo &igi, Value *lv, Value *rv)
  * IR 生成
  * 余算
  */
-Value *AstExpressionMOD::generate_exp(IRGenInfo &igi, Value *lv, Value *rv)
+Value *AstExpressionMOD::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
-	auto &builder = igi.getBuilder();
+	auto &builder = irs.getBuilder();
 
 	return builder.CreateSRem(lv, rv, "mod_tmp");
 }

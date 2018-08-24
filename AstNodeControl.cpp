@@ -16,7 +16,7 @@
 #include <llvm/IR/ValueSymbolTable.h>
 
 #include "AstNode.h"
-#include "IRGenInfo.h"
+#include "IRState.h"
 
 
 using namespace std;
@@ -58,12 +58,12 @@ void AstControlIf::print_ast(ostream &dout, int indent)
  *
  * TODO エラー処理
  */
-Value *AstControlIf::getValue(IRGenInfo &igi)
+Value *AstControlIf::getValue(IRState &irs)
 {
-	auto &c = igi.getContext();
-	auto &builder = igi.getBuilder();
+	auto &c = irs.getContext();
+	auto &builder = irs.getBuilder();
 
-	auto cond = this->cond->getValue(igi);
+	auto cond = this->cond->getValue(irs);
 	auto constZero = builder.getInt32(0);
 	auto cmp = builder.CreateICmpNE(cond, constZero);
 
@@ -77,7 +77,7 @@ Value *AstControlIf::getValue(IRGenInfo &igi)
 	builder.SetInsertPoint(thenBB);
 
 	// then
-	auto thenV = this->proc->getValue(igi);
+	auto thenV = this->proc->getValue(irs);
 	builder.CreateBr(retBB);  // 分岐終了地点へジャンプ
 	// 現在のblockを更新
 	thenBB = builder.GetInsertBlock();
@@ -85,7 +85,7 @@ Value *AstControlIf::getValue(IRGenInfo &igi)
 	// else
 	curFunc->getBasicBlockList().push_back(elseBB);
 	builder.SetInsertPoint(elseBB);
-	auto elseV = this->elseProc->getValue(igi);
+	auto elseV = this->elseProc->getValue(irs);
 	builder.CreateBr(retBB);  // 分岐終了地点へジャンプ
 	// 現在のblockを更新
 	elseBB = builder.GetInsertBlock();
@@ -134,10 +134,10 @@ void AstControlWhile::print_ast(ostream &dout, int indent)
  *
  * TODO エラー処理
  */
-Value *AstControlWhile::getValue(IRGenInfo &igi)
+Value *AstControlWhile::getValue(IRState &irs)
 {
-	auto &c = igi.getContext();
-	auto &builder = igi.getBuilder();
+	auto &c = irs.getContext();
+	auto &builder = irs.getBuilder();
 
 
 
