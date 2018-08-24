@@ -25,6 +25,13 @@ using namespace expr;
 
 
 
+Type *AstTypeVoid::getType(IRGenInfo &igi)
+{
+	auto &c = igi.getContext();
+	return Type::getVoidTy(c);
+}
+
+
 Type *AstTypeInt::getType(IRGenInfo &igi)
 {
 	auto &c = igi.getContext();
@@ -32,10 +39,10 @@ Type *AstTypeInt::getType(IRGenInfo &igi)
 }
 
 
-Type *AstTypeVoid::getType(IRGenInfo &igi)
+Type *AstTypeString::getType(IRGenInfo &igi)
 {
-	auto &c = igi.getContext();
-	return Type::getVoidTy(c);
+	auto &builder = igi.getBuilder();
+	return builder.getInt8PtrTy();
 }
 
 

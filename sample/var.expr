@@ -3,6 +3,7 @@
 
 var aaa:int;
 var bbb:int;
+var ccc:string;
 
 aaa <- 2;
 bbb <- 4;

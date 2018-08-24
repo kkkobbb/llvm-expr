@@ -69,7 +69,7 @@ static int parse_err_num = 0;
 
 /* 予約語 */
 %token           RE_RETURN
-%token           RE_VOID RE_INT
+%token           RE_VOID RE_INT RE_STRING
 %token           RE_IF RE_ELSE RE_WHILE
 %token           RE_VAR RE_FNC
 %token           RE_DECL
@@ -235,6 +235,8 @@ primary_type
         { $$ = new AstTypeVoid(); }
     | RE_INT
         { $$ = new AstTypeInt(); }
+    | RE_STRING
+        { $$ = new AstTypeString(); }
     ;
 
 /* 式のリスト */

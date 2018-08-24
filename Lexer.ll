@@ -49,6 +49,7 @@ Space   [ \t]
 "return"   { return token_type::RE_RETURN; }
 "void"     { return token_type::RE_VOID; }
 "int"      { return token_type::RE_INT; }
+"string"   { return token_type::RE_STRING; }
 "if"       { return token_type::RE_IF; }
 "else"     { return token_type::RE_ELSE; }
 "while"    { return token_type::RE_WHILE; }

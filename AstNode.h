@@ -143,6 +143,13 @@ namespace expr {
 		using AstNode::AstNode;
 	};
 
+	class AstTypeVoid: public AstType
+	{
+		public:
+		using AstType::AstType;
+		virtual llvm::Type *getType(IRGenInfo &igi) override;
+	};
+
 	class AstTypeInt: public AstType
 	{
 		public:
@@ -150,7 +157,7 @@ namespace expr {
 		virtual llvm::Type *getType(IRGenInfo &igi) override;
 	};
 
-	class AstTypeVoid: public AstType
+	class AstTypeString: public AstType
 	{
 		public:
 		using AstType::AstType;
