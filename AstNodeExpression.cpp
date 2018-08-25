@@ -155,7 +155,7 @@ Value *AstExpressionLT::generate_exp(IRState &irs, Value *lv, Value *rv)
 	auto cmp = builder.CreateICmpSLT(lv, rv, "lt_tmp");
 
 	// signed i32へ型変換
-	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), true);
+	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), false);
 }
 
 
