@@ -52,6 +52,7 @@ Space   [ \t]
 "if"        { return token_type::RE_IF; }
 "else"      { return token_type::RE_ELSE; }
 "while"     { return token_type::RE_WHILE; }
+"decl"      { return token_type::RE_DECL; }
 "var"       { return token_type::RE_VAR; }
 "fnc"       { return token_type::RE_FNC; }
 "return"    { return token_type::RE_RETURN; }
