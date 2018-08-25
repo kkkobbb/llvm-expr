@@ -1,5 +1,5 @@
 # 戻り値voidの関数
-# 1
+##return 1
 
 
 fnc func:void(a:int)
