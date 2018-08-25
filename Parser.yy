@@ -217,7 +217,6 @@ if_expression
         { $$ = new AstControlIf($2, nullptr, $5); }
     ;
 
-/* TODO 文法 */
 while_expression
     : RE_WHILE expression_unit ':' expression_list '.'
         { $$ = new AstControlWhile($2, $4); }

@@ -49,17 +49,20 @@ void AstJumpReturn::print_ast(ostream &dout, int indent)
  * IR 生成
  *
  * return文
- *
- * TODO エラー処理
  */
 Value *AstJumpReturn::getValue(IRState &irs)
 {
-	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
 
-	// TODO IR生成処理
+	Value *retV = nullptr;
+	if(this->ret == nullptr) {
+		retV = builder.CreateRetVoid();
+	} else {
+		auto retval = this->ret->getValue(irs);
+		retV = builder.CreateRet(retval);
+	}
 
-	return nullptr;
+	return retV;
 }
 
 

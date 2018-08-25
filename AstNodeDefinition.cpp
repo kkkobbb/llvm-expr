@@ -134,12 +134,13 @@ Value *AstDefinitionFunc::getValue(IRState &irs)
 
 	auto bodyValue = this->body->getValue(irs);
 
-	// TODO body内でreturn していた場合、ここでreturnを追加しない
-
-	if ((bodyValue == nullptr) || (retType == Type::getVoidTy(c)))
-		builder.CreateRetVoid();
-	else
-		builder.CreateRet(bodyValue);
+	// body内でreturn していた場合、ここでreturnを追加しない
+	if(!isa<ReturnInst>(bodyValue)) {
+		if ((bodyValue == nullptr) || (retType == Type::getVoidTy(c)))
+			builder.CreateRetVoid();
+		else
+			builder.CreateRet(bodyValue);
+	}
 
 	// 命令挿入位置を戻す
 	builder.SetInsertPoint(oldBb);

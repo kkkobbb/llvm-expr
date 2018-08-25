@@ -142,10 +142,10 @@ Value *AstUnit::getValue(IRState &irs)
 	// 子要素の実行
 	auto *v = AstList::getValue(irs);
 
-	if(!v)
+	// 値を返していない場合、0を返す
+	if (!v)
 		v = builder.getInt32(0);
 
-	// TODO 明示的なreturnがない場合、0を返す
 	builder.CreateRet(v);
 
 	return nullptr;
