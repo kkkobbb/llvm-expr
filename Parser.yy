@@ -95,6 +95,8 @@ static int parse_err_num = 0;
 %type <astnode>  expression_unit
 %type <astnode>  compound_expression
 %type <astnode>  extended_expression
+/* ジャンプ文 */
+%type <astnode>  jump
 /* 制御文 */
 %type <astnode>  control
 %type <astnode>  if_expression
@@ -176,12 +178,22 @@ compound_expression
 extended_expression
     : pure_expression
         { $$ = std::move($1); }
+    | jump
+        { $$ = std::move($1); }
     | control
         { $$ = std::move($1); }
     | definition
         { $$ = std::move($1); }
     | error
         { $$ = nullptr; }  /* エラー処理 */
+    ;
+
+/* ジャンプ文 */
+jump
+    : RE_RETURN expression_unit
+        { $$ = new AstJumpReturn($2); }
+    | RE_RETURN
+        { $$ = new AstJumpReturn(nullptr); }
     ;
 
 /* 制御文 */
@@ -192,7 +204,6 @@ control
         { $$ = std::move($1); }
     ;
 
-/* TODO 文法 */
 if_expression
     : RE_IF expression_unit ':' expression_list RE_ELSE expression_list '.'
         { $$ = new AstControlIf($2, $4, $6); }

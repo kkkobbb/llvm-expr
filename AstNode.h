@@ -23,6 +23,7 @@ namespace expr {
 		public:
 		virtual llvm::Value *getValue(IRState &irs);
 		virtual llvm::Type *getType(IRState &irs);
+		void print_ast_string(const char *msg, std::ostream &dout, int indent = 0);
 		virtual void print_ast(std::ostream &dout, int indent = 0);
 	};
 
@@ -85,6 +86,17 @@ namespace expr {
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 		std::unique_ptr<std::vector<llvm::Type*>> getTypes(IRState &irs);
 		std::unique_ptr<std::vector<const std::string*>> getNames();
+	};
+
+	class AstJumpReturn: public AstNode
+	{
+		protected:
+		std::unique_ptr<AstNode> ret;
+
+		public:
+		AstJumpReturn(AstNode *ret);
+		virtual void print_ast(std::ostream &dout, int indent = 0) override;
+		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 
 	class AstControlIf: public AstNode

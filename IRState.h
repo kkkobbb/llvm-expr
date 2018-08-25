@@ -11,13 +11,9 @@
 
 namespace expr {
 	class IRState {
-		protected:
-		std::vector<llvm::Function*> funcStack;
-
 		public:
-		bool errorFlag = false;
-
 		IRState();
+		bool isError();
 		llvm::LLVMContext &getContext();
 		llvm::Module &getModule();
 		std::unique_ptr<llvm::Module> moveModule();
@@ -28,12 +24,15 @@ namespace expr {
 		void pushCurFunc(llvm::Function *func);
 		void popCurFunc();
 		llvm::Value *getVariable(const std::string *name);
+		bool isGlobal();
 
 		private:
+		bool errorFlag = false;
 		llvm::LLVMContext TheContext;
 		std::unique_ptr<llvm::Module> TheModule;
 		std::unique_ptr<llvm::IRBuilder<>> builder;
-		// グローバルのValueの保存用
+		std::vector<llvm::Function*> funcStack;
+		// グローバル変数の保存用
 		// llvm::Moduleに登録していれば、deleteされるはず
 		std::vector<llvm::Value *> ValueList;
 	};

@@ -42,7 +42,7 @@ bool IRGenerator::genarate(std::unique_ptr<AstNode> ast_root)
 	ast_root->getValue(irs);
 	TheModule = irs.moveModule();
 
-	return !irs.errorFlag;
+	return !irs.isError();
 }
 
 

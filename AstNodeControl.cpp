@@ -45,7 +45,7 @@ void AstControlIf::print_ast(ostream &dout, int indent)
 	if (proc != nullptr)
 		proc->print_ast(dout, next_indent);
 	else
-		dout << endl;
+		this->print_ast_string("null", dout, next_indent);
 	if (elseProc != nullptr)
 		elseProc->print_ast(dout, next_indent);
 }
@@ -74,12 +74,12 @@ Value *AstControlIf::getValue(IRState &irs)
 
 	// 比較
 	builder.CreateCondBr(cmp, thenBB, elseBB);
-	builder.SetInsertPoint(thenBB);
 
 	// then
+	builder.SetInsertPoint(thenBB);
 	auto thenV = this->proc->getValue(irs);
 	builder.CreateBr(retBB);  // 分岐終了地点へジャンプ
-	// 現在のblockを更新
+	// blockを更新
 	thenBB = builder.GetInsertBlock();
 
 	// else
@@ -87,15 +87,15 @@ Value *AstControlIf::getValue(IRState &irs)
 	builder.SetInsertPoint(elseBB);
 	auto elseV = this->elseProc->getValue(irs);
 	builder.CreateBr(retBB);  // 分岐終了地点へジャンプ
-	// 現在のblockを更新
+	// blockを更新
 	elseBB = builder.GetInsertBlock();
 
 	// 分岐終了地点
 	curFunc->getBasicBlockList().push_back(retBB);
 	builder.SetInsertPoint(retBB);
-	auto type = Type::getInt32Ty(c);
 
 	// phi関数
+	auto type = Type::getInt32Ty(c);
 	auto phi = builder.CreatePHI(type, 2);
 	phi->addIncoming(thenV, thenBB);
 	phi->addIncoming(elseV, elseBB);
@@ -123,7 +123,7 @@ void AstControlWhile::print_ast(ostream &dout, int indent)
 	if (proc != nullptr)
 		proc->print_ast(dout, next_indent);
 	else
-		dout << endl;
+		this->print_ast_string("null", dout, next_indent);
 }
 
 

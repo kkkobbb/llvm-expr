@@ -26,6 +26,15 @@ IRState::IRState()
 }
 
 
+/*
+ * IR生成中にエラーが発生していた場合、真
+ */
+bool IRState::isError()
+{
+	return errorFlag;
+}
+
+
 LLVMContext &IRState::getContext()
 {
 	return TheContext;
@@ -103,6 +112,17 @@ Value *IRState::getVariable(const string *name)
 	}
 
 	return alloca;
+}
+
+
+/*
+ * グローバル(関数内)ではない場合、真を返す
+ *
+ * 内部的に作成するmain関数内の場合、グローバルだとする
+ */
+bool IRState::isGlobal()
+{
+	return funcStack.size() <= 1;
 }
 
 

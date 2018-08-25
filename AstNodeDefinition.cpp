@@ -112,8 +112,8 @@ Value *AstDefinitionFunc::getValue(IRState &irs)
 	auto argNames = argumentList->getNames();
 	auto retType = decl->getType(irs);
 	auto funcType = FunctionType::get(retType, *argTypes, false);
-	auto name = decl->getName();
 
+	auto name = decl->getName();
 	auto func = Function::Create(funcType, Function::ExternalLinkage, *name, &m);
 
 	// 現在の関数を更新
@@ -133,10 +133,10 @@ Value *AstDefinitionFunc::getValue(IRState &irs)
 	}
 
 	auto bodyValue = this->body->getValue(irs);
-	if (bodyValue == nullptr)
-		return nullptr;
 
-	if (retType == Type::getVoidTy(c))
+	// TODO body内でreturn していた場合、ここでreturnを追加しない
+
+	if ((bodyValue == nullptr) || (retType == Type::getVoidTy(c)))
 		builder.CreateRetVoid();
 	else
 		builder.CreateRet(bodyValue);

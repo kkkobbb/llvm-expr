@@ -39,18 +39,27 @@ Type *AstNode::getType(IRState &irs)
 }
 
 
-void AstNode::print_ast(std::ostream &dout, int indent)
+void AstNode::print_ast_string(const char *msg, ostream &dout, int indent)
 {
 	// インデント
 	for (int i = 0; i < indent; ++i)
 		dout << "  ";
 
+	dout << msg << endl;
+}
+
+
+void AstNode::print_ast(ostream &dout, int indent)
+{
+	string msg = "";
+
 	// クラス名かメッセージ表示
 	if (!dbg_msg.empty())
-		dout << dbg_msg << " ";
+		msg.assign(dbg_msg + " ");
 	else
-		dout << typeid(*this).name();
-	dout << std::endl;
+		msg.assign(typeid(*this).name());
+
+	this->print_ast_string(msg.c_str(), dout, indent);
 }
 
 
@@ -136,6 +145,7 @@ Value *AstUnit::getValue(IRState &irs)
 	if(!v)
 		v = builder.getInt32(0);
 
+	// TODO 明示的なreturnがない場合、0を返す
 	builder.CreateRet(v);
 
 	return nullptr;
