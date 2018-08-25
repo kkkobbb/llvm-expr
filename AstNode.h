@@ -267,6 +267,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
+		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 関係演算 >

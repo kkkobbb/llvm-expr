@@ -143,6 +143,21 @@ Value *AstExpressionAS::getValue(IRState &irs)
 // 以降、各演算用ノード
 
 
+/*
+ * IR 生成
+ * <
+ */
+Value *AstExpressionLT::generate_exp(IRState &irs, Value *lv, Value *rv)
+{
+	auto &c = irs.getContext();
+	auto &builder = irs.getBuilder();
+
+	auto cmp = builder.CreateICmpSLT(lv, rv, "lt_tmp");
+
+	// signed i32へ型変換
+	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), true);
+}
+
 
 /*
  * IR 生成

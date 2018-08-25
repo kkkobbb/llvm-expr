@@ -139,9 +139,35 @@ Value *AstControlWhile::getValue(IRState &irs)
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
 
+	auto curFunc = builder.GetInsertBlock()->getParent();
+	auto loopBB = BasicBlock::Create(c, "loop");
+	auto bodyBB = BasicBlock::Create(c, "loopbody");
+	auto endBB = BasicBlock::Create(c, "loopend");
 
+	builder.CreateBr(loopBB);  // ループ始点へジャンプ
 
+	// ループ始点
+	curFunc->getBasicBlockList().push_back(loopBB);
+	builder.SetInsertPoint(loopBB);
 
-	return nullptr;
+	auto condV = cond->getValue(irs);
+	auto constZero = builder.getInt32(0);
+	auto cmp = builder.CreateICmpNE(condV, constZero);
+
+	// 比較
+	builder.CreateCondBr(cmp, bodyBB, endBB);
+
+	// ループ内処理
+	curFunc->getBasicBlockList().push_back(bodyBB);
+	builder.SetInsertPoint(bodyBB);
+	//auto procV = proc->getValue(irs);
+	proc->getValue(irs);
+	builder.CreateBr(loopBB);  // ループ始点へジャンプ
+
+	// ループ終端
+	curFunc->getBasicBlockList().push_back(endBB);
+	builder.SetInsertPoint(endBB);
+
+	return constZero;
 }
 
