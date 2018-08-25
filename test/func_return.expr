@@ -1,0 +1,12 @@
+# 関数定義
+##return 6
+
+fnc func:int (a:int, b:int) {
+	c <- a + b + 1;
+	return c;
+};
+
+d <- func(2, 3);
+
+d;
+
