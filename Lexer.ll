@@ -46,15 +46,17 @@ Space   [ \t]
 
 
  /* 予約語 */
-"return"   { return token_type::RE_RETURN; }
-"void"     { return token_type::RE_VOID; }
-"int"      { return token_type::RE_INT; }
-"string"   { return token_type::RE_STRING; }
-"if"       { return token_type::RE_IF; }
-"else"     { return token_type::RE_ELSE; }
-"while"    { return token_type::RE_WHILE; }
-"var"      { return token_type::RE_VAR; }
-"fnc"      { return token_type::RE_FNC; }
+"void"      { return token_type::RE_VOID; }
+"int"       { return token_type::RE_INT; }
+"string"    { return token_type::RE_STRING; }
+"if"        { return token_type::RE_IF; }
+"else"      { return token_type::RE_ELSE; }
+"while"     { return token_type::RE_WHILE; }
+"var"       { return token_type::RE_VAR; }
+"fnc"       { return token_type::RE_FNC; }
+"return"    { return token_type::RE_RETURN; }
+"break"     { return token_type::RE_BREAK; }
+"continue"  { return token_type::RE_CONTINUE; }
 
  /* 識別子 */
 {Letter}({Letter}|{Digit})*  { val->sval = new std::string(yytext, yyleng); return token_type::IDENTIFIER; }

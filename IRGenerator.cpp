@@ -2,6 +2,7 @@
  * IRGenerator
  * LLVM IRを生成するためのクラス
  */
+#include <fstream>
 #include <memory>
 
 #include <llvm/IR/Module.h>
@@ -25,6 +26,11 @@ using namespace expr;
  */
 bool IRGenerator::genarate(std::unique_ptr<AstNode> ast_root)
 {
+	if(ast_root.get() == nullptr) {
+		cout << "not found AST root" << endl;
+		return false;
+	}
+
 	// グローバル変数(定数)を生成する
 	auto &c = irs.getContext();
 	auto &m = irs.getModule();

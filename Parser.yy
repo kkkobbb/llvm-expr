@@ -68,11 +68,11 @@ static int parse_err_num = 0;
 %token <sval>    IDENTIFIER STRING
 
 /* 予約語 */
-%token           RE_RETURN
 %token           RE_VOID RE_INT RE_STRING
 %token           RE_IF RE_ELSE RE_WHILE
 %token           RE_VAR RE_FNC
 %token           RE_DECL
+%token           RE_RETURN RE_BREAK RE_CONTINUE
 
 /* 1文字の演算子(定義のみ) */
 %token           OP_COMMA
@@ -194,6 +194,10 @@ jump
         { $$ = new AstJumpReturn($2); }
     | RE_RETURN
         { $$ = new AstJumpReturn(nullptr); }
+    | RE_BREAK
+        { error(yyla.location, "Not Implemented: break"); }
+    | RE_CONTINUE
+        { error(yyla.location, "Not Implemented: continue"); }
     ;
 
 /* 制御文 */
