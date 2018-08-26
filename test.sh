@@ -16,12 +16,12 @@ for testcase in ${testcaselist}; do
 	ret=$?
 
 	if [ ${ret} -eq ${expected} ]; then
-		printf "Success:"
+		printf "\e[32mSuccess:\e[m"
 		success_num=$((success_num + 1))
 	else
-		printf "Failure (ret=${ret} exp=${expected}):"
+		printf "\e[31mFailure:  (ret=${ret} exp=${expected})\e[m"
 	fi
-	echo "  ${testcase}"
+	echo "  [${testcase}]"
 done
 
 test_num=$(echo ${testcaselist} | wc -w)
