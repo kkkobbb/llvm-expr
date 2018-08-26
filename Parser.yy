@@ -148,6 +148,8 @@ translation_unit
 expression
     : expression_unit ';'
         { $$ = std::move($1); }
+    | ';'
+        { $$ = nullptr; }
     ;
 
 expression_list

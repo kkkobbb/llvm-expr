@@ -145,6 +145,38 @@ Value *AstExpressionAS::getValue(IRState &irs)
 
 /*
  * IR 生成
+ * ==
+ */
+Value *AstExpressionEQ::generate_exp(IRState &irs, Value *lv, Value *rv)
+{
+	auto &c = irs.getContext();
+	auto &builder = irs.getBuilder();
+
+	auto cmp = builder.CreateICmpEQ(lv, rv, "eq_tmp");
+
+	// signed i32へ型変換
+	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), false);
+}
+
+
+/*
+ * IR 生成
+ * !=
+ */
+Value *AstExpressionNE::generate_exp(IRState &irs, Value *lv, Value *rv)
+{
+	auto &c = irs.getContext();
+	auto &builder = irs.getBuilder();
+
+	auto cmp = builder.CreateICmpNE(lv, rv, "ne_tmp");
+
+	// signed i32へ型変換
+	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), false);
+}
+
+
+/*
+ * IR 生成
  * <
  */
 Value *AstExpressionLT::generate_exp(IRState &irs, Value *lv, Value *rv)
@@ -153,6 +185,54 @@ Value *AstExpressionLT::generate_exp(IRState &irs, Value *lv, Value *rv)
 	auto &builder = irs.getBuilder();
 
 	auto cmp = builder.CreateICmpSLT(lv, rv, "lt_tmp");
+
+	// signed i32へ型変換
+	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), false);
+}
+
+
+/*
+ * IR 生成
+ * >
+ */
+Value *AstExpressionGT::generate_exp(IRState &irs, Value *lv, Value *rv)
+{
+	auto &c = irs.getContext();
+	auto &builder = irs.getBuilder();
+
+	auto cmp = builder.CreateICmpSGT(lv, rv, "gt_tmp");
+
+	// signed i32へ型変換
+	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), false);
+}
+
+
+/*
+ * IR 生成
+ * <=
+ */
+Value *AstExpressionLTE::generate_exp(IRState &irs, Value *lv, Value *rv)
+{
+	auto &c = irs.getContext();
+	auto &builder = irs.getBuilder();
+
+	auto cmp = builder.CreateICmpSLE(lv, rv, "lte_tmp");
+
+	// signed i32へ型変換
+	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), false);
+}
+
+
+/*
+ * IR 生成
+ * >=
+ */
+Value *AstExpressionGTE::generate_exp(IRState &irs, Value *lv, Value *rv)
+{
+	auto &c = irs.getContext();
+	auto &builder = irs.getBuilder();
+
+	auto cmp = builder.CreateICmpSGE(lv, rv, "gte_tmp");
 
 	// signed i32へ型変換
 	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), false);
