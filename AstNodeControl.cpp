@@ -72,12 +72,21 @@ Value *AstControlIf::getValue(IRState &irs)
 	auto elseBB = BasicBlock::Create(c, "else");
 	auto retBB = BasicBlock::Create(c, "ifret");
 
+	// 分岐の数
+	int brnum = 0;
+
+	Value *thenV = nullptr;
+	Value *elseV = nullptr;
+
 	// 比較
 	builder.CreateCondBr(cmp, thenBB, elseBB);
 
 	// then
 	builder.SetInsertPoint(thenBB);
-	auto thenV = this->proc->getValue(irs);
+	if (this->proc) {
+		thenV = this->proc->getValue(irs);
+		++brnum;
+	}
 	builder.CreateBr(retBB);  // 分岐終了地点へジャンプ
 	// blockを更新
 	thenBB = builder.GetInsertBlock();
@@ -85,7 +94,10 @@ Value *AstControlIf::getValue(IRState &irs)
 	// else
 	curFunc->getBasicBlockList().push_back(elseBB);
 	builder.SetInsertPoint(elseBB);
-	auto elseV = this->elseProc->getValue(irs);
+	if (this->elseProc) {
+		elseV = this->elseProc->getValue(irs);
+		++brnum;
+	}
 	builder.CreateBr(retBB);  // 分岐終了地点へジャンプ
 	// blockを更新
 	elseBB = builder.GetInsertBlock();
@@ -95,12 +107,15 @@ Value *AstControlIf::getValue(IRState &irs)
 	builder.SetInsertPoint(retBB);
 
 	// phi関数
-	auto type = Type::getInt32Ty(c);
-	auto phi = builder.CreatePHI(type, 2);
-	phi->addIncoming(thenV, thenBB);
-	phi->addIncoming(elseV, elseBB);
+	if (brnum > 1) {
+		auto type = Type::getInt32Ty(c);
+		auto phi = builder.CreatePHI(type, 2);
+		phi->addIncoming(thenV, thenBB);
+		phi->addIncoming(elseV, elseBB);
+		return phi;
+	}
 
-	return phi;
+	return constZero;
 }
 
 
