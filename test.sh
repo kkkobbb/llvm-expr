@@ -14,7 +14,7 @@ snum=0
 for src in ${testlist}; do
 	expected=$(grep "^##return " ${src} | sed "s/^##return //")
 
-	./${EXEFILE} ${src} -print-llvm | lli
+	./${EXEFILE} ${src} -print-llvm | lli -force-interpreter
 	ret=$?
 
 	if [ ${ret} -eq ${expected} ]; then
