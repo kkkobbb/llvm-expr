@@ -1,31 +1,29 @@
 #!/bin/sh
+# expr言語は現在の言語仕様上、
+# 標準出力に出力する手段がないため、計算結果を戻り値として返している
 
 EXEFILE="exprc"
-if [ ! -f ${EXEFILE} ]; then
-	echo "not found '${EXEFILE}'"
-	exit 1
-fi
-
 TESTDIR="test"
-testlist=$(ls ${TESTDIR}/*.expr)
 
-testnum=$(echo ${testlist} | wc -w)
-snum=0
-for src in ${testlist}; do
-	expected=$(grep "^##return " ${src} | sed "s/^##return //")
+test -f ./${EXEFILE} || { echo "not found './${EXEFILE}'"; exit 1; }
 
-	./${EXEFILE} ${src} -print-llvm | lli -force-interpreter
+testcaselist=$(ls ${TESTDIR}/*.expr)
+success_num=0
+for testcase in ${testcaselist}; do
+	expected=$(grep "^##return " ${testcase} | sed "s/^##return //")
+
+	./${EXEFILE} ${testcase} -print-llvm | lli -force-interpreter
 	ret=$?
 
 	if [ ${ret} -eq ${expected} ]; then
 		printf "Success:"
-		snum=$((snum + 1))
+		success_num=$((success_num + 1))
 	else
 		printf "Failure (ret=${ret} exp=${expected}):"
 	fi
-	echo "  ${src}"
+	echo "  ${testcase}"
 done
 
-echo "${snum} / ${testnum}"
-
+test_num=$(echo ${testcaselist} | wc -w)
+echo "${success_num} / ${test_num}"
 
