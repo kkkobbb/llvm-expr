@@ -73,6 +73,7 @@ static int parse_err_num = 0;
 %token           RE_VAR RE_FNC
 %token           RE_DECL
 %token           RE_RETURN RE_BREAK RE_CONTINUE
+%token           RE_COMPILEERR RE_RUNTIMEERR
 
 /* 1文字の演算子(定義のみ) */
 %token           OP_COMMA
@@ -106,6 +107,8 @@ static int parse_err_num = 0;
 %type <astnode>  identifier_type_list
 %type <astnode>  primary_type
 %type <astnode>  pure_expression_list
+/* 独自のエラー発生 */
+%type <astnode>  myerror myerror_compile myerror_runtime
 /* 式 */
 %type <astnode>  pure_expression
 %type <astnode>  assignment_expression_l assignment_expression_r
@@ -186,6 +189,8 @@ extended_expression
         { $$ = std::move($1); }
     | definition
         { $$ = std::move($1); }
+    | myerror
+        { $$ = std::move($1); }
     | error
         { $$ = nullptr; }  /* エラー処理 */
     ;
@@ -253,6 +258,35 @@ primary_type
         { $$ = new AstTypeInt(); }
     | RE_STRING
         { $$ = new AstTypeString(); }
+    ;
+
+/* 独自のエラー発生 */
+myerror
+    : myerror_compile
+        { $$ = std::move($1); }
+    | myerror_runtime
+        { $$ = std::move($1); }
+    ;
+
+/* コンパイル時にエラーを発生させる */
+myerror_compile
+    : RE_COMPILEERR
+        { error(yyla.location, "Compile Error:"); }
+    | RE_COMPILEERR IDENTIFIER  /* TODO ""の文字列を指定するように */
+        {
+          std::string msg = "Compile Error: ";
+          msg += *($2);
+          error(yyla.location, msg);
+          $$ = nullptr;
+        }
+    ;
+
+/* 実行時にエラーとして強制終了させる */
+myerror_runtime
+    : RE_RUNTIMEERR
+        {}
+    | RE_RUNTIMEERR IDENTIFIER  /* TODO ""の文字列を指定するように */
+        {}
     ;
 
 /* 式のリスト */
