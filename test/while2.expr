@@ -1,0 +1,13 @@
+# while文
+##return 10
+
+b <- 1;
+while b < 10:
+	while b < 5:
+		b <- b + 1;
+	.;
+	b <- b + 1;
+.;
+
+b;
+

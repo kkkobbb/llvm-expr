@@ -46,16 +46,20 @@ Space   [ \t]
 
 
  /* 予約語 */
-"through"  { return token_type::RE_THROUGH; }
-"return"   { return token_type::RE_RETURN; }
-"void"     { return token_type::RE_VOID; }
-"int"      { return token_type::RE_INT; }
-"if"       { return token_type::RE_IF; }
-"else"     { return token_type::RE_ELSE; }
-"while"    { return token_type::RE_WHILE; }
-"var"      { return token_type::RE_VAR; }
-"fnc"      { return token_type::RE_FNC; }
-"decl"     { return token_type::RE_DECL; }
+"void"        { return token_type::RE_VOID; }
+"int"         { return token_type::RE_INT; }
+"string"      { return token_type::RE_STRING; }
+"if"          { return token_type::RE_IF; }
+"else"        { return token_type::RE_ELSE; }
+"while"       { return token_type::RE_WHILE; }
+"decl"        { return token_type::RE_DECL; }
+"var"         { return token_type::RE_VAR; }
+"fnc"         { return token_type::RE_FNC; }
+"return"      { return token_type::RE_RETURN; }
+"break"       { return token_type::RE_BREAK; }
+"continue"    { return token_type::RE_CONTINUE; }
+"compileerr"  { return token_type::RE_COMPILEERR; }
+"runtimeerr"  { return token_type::RE_RUNTIMEERR; }
 
  /* 識別子 */
 {Letter}({Letter}|{Digit})*  { val->sval = new std::string(yytext, yyleng); return token_type::IDENTIFIER; }

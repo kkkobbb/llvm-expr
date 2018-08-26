@@ -68,12 +68,12 @@ static int parse_err_num = 0;
 %token <sval>    IDENTIFIER STRING
 
 /* 予約語 */
-%token           RE_THROUGH
-%token           RE_RETURN
-%token           RE_VOID RE_INT
+%token           RE_VOID RE_INT RE_STRING
 %token           RE_IF RE_ELSE RE_WHILE
 %token           RE_VAR RE_FNC
 %token           RE_DECL
+%token           RE_RETURN RE_BREAK RE_CONTINUE
+%token           RE_COMPILEERR RE_RUNTIMEERR
 
 /* 1文字の演算子(定義のみ) */
 %token           OP_COMMA
@@ -93,15 +93,25 @@ static int parse_err_num = 0;
 %type <astnode>  translation_unit
 /* 文 */
 %type <astnode>  expression expression_list
-%type <astnode>  compound_expression
 %type <astnode>  expression_unit
+%type <astnode>  compound_expression
+%type <astnode>  extended_expression
+/* ジャンプ文 */
+%type <astnode>  jump
+/* 制御文 */
+%type <astnode>  control
+%type <astnode>  if_expression
+%type <astnode>  while_expression
 /* 宣言 */
-%type <astnode>  declaration
-%type <astnode>  primary_type_list primary_type
+%type <astnode>  definition
+%type <astnode>  identifier_type_list
+%type <astnode>  primary_type
 %type <astnode>  pure_expression_list
+/* 独自のエラー発生 */
+%type <astnode>  myerror myerror_compile myerror_runtime
 /* 式 */
 %type <astnode>  pure_expression
-%type <astnode>  assignment_expression
+%type <astnode>  assignment_expression_l assignment_expression_r
 %type <astnode>  constant_expression
 %type <astnode>  logical_OR_expression logical_AND_expression
 %type <astnode>  AND_expression exclusive_OR_expression inclusive_OR_expression
@@ -114,6 +124,7 @@ static int parse_err_num = 0;
 %type <astnode>  primary_expression
 %type <astnode>  constant
 %type <astnode>  identifier
+%type <astnode>  identifier_type
 
 
 %%
@@ -125,7 +136,6 @@ ast_root
     ;
 
 /* 翻訳単位 */
-/* 一文のみ */
 translation_unit
     : expression
         { $$ = new AstUnit($1); }
@@ -139,10 +149,10 @@ translation_unit
 
 /********** 式 **********/
 expression
-    : expression_unit
+    : expression_unit ';'
         { $$ = std::move($1); }
-    | compound_expression
-        { $$ = std::move($1); }
+    | ';'
+        { $$ = nullptr; }
     ;
 
 expression_list
@@ -155,6 +165,13 @@ expression_list
         }
     ;
 
+expression_unit
+    : extended_expression
+        { $$ = std::move($1); }
+    | compound_expression
+        { $$ = std::move($1); }
+    ;
+
 compound_expression
     : '{' expression_list '}'
         { $$ = std::move($2); }
@@ -162,51 +179,114 @@ compound_expression
         { $$ = nullptr; }
     ;
 
-expression_unit
-    : pure_expression ';'
+/* 拡張された式 */
+extended_expression
+    : pure_expression
         { $$ = std::move($1); }
-    | declaration ';'
+    | jump
         { $$ = std::move($1); }
-    | ';'
-        { $$ = nullptr; }
+    | control
+        { $$ = std::move($1); }
+    | definition
+        { $$ = std::move($1); }
+    | myerror
+        { $$ = std::move($1); }
     | error
         { $$ = nullptr; }  /* エラー処理 */
     ;
 
-/* 宣言 */
-declaration
-    : RE_DECL identifier OP_ARROW_R primary_type
-        /* 変数 戻り値有 引数有 */
-        { $$ = new AstDeclarationVar($2, $4); }
-    | RE_DECL identifier OP_ARROW_R primary_type '(' primary_type_list ')'
-        /* 関数 戻り値有 引数有 */
-        { $$ = new AstDeclarationFunc($2, $4, $6); }
-    | RE_DECL identifier OP_ARROW_R primary_type '(' ')'
-        /* 関数 戻り値有 引数無 */
-        { $$ = new AstDeclarationFunc($2, $4, new AstList(new AstTypeVoid())); }
-    | RE_DECL identifier OP_ARROW_R  '(' primary_type_list ')'
-        /* 関数 戻り値無 引数有 */
-        { $$ = new AstDeclarationFunc($2, new AstTypeVoid(), $5); }
-    | RE_DECL identifier OP_ARROW_R '(' ')'
-        /* 関数 戻り値無 引数無 */
-        { $$ = new AstDeclarationFunc($2, new AstTypeVoid(), new AstList(new AstTypeVoid())); }
+/* ジャンプ文 */
+jump
+    : RE_RETURN expression_unit
+        { $$ = new AstJumpReturn($2); }
+    | RE_RETURN
+        { $$ = new AstJumpReturn(nullptr); }
+    | RE_BREAK
+        { error(yyla.location, "Not Implemented: break"); }
+    | RE_CONTINUE
+        { error(yyla.location, "Not Implemented: continue"); }
     ;
 
-primary_type_list
-    : primary_type
-        { $$ = new AstList($1); }
-    | primary_type_list ',' primary_type
+/* 制御文 */
+control
+    : if_expression
+        { $$ = std::move($1); }
+    | while_expression
+        { $$ = std::move($1); }
+    ;
+
+if_expression
+    : RE_IF expression_unit ':' expression_list RE_ELSE expression_list '.'
+        { $$ = new AstControlIf($2, $4, $6); }
+    | RE_IF expression_unit ':' expression_list '.'
+        { $$ = new AstControlIf($2, $4, nullptr); }
+    | RE_IF expression_unit ':' RE_ELSE expression_list '.'
+        { $$ = new AstControlIf($2, nullptr, $5); }
+    ;
+
+while_expression
+    : RE_WHILE expression_unit ':' expression_list '.'
+        { $$ = new AstControlWhile($2, $4); }
+    | RE_WHILE expression_unit ':' '.'
+        { $$ = new AstControlWhile($2, nullptr); }
+    ;
+
+/* 定義文 */
+definition
+    : RE_VAR identifier_type
+        { $$ = new AstDefinitionVar((AstIdentifier *)$2, nullptr); }
+    | RE_FNC identifier_type '(' ')' expression_unit
+        { $$ = new AstDefinitionFunc((AstIdentifier *)$2, nullptr, $5);}
+    | RE_FNC identifier_type '(' identifier_type_list ')' expression_unit
+        { $$ = new AstDefinitionFunc((AstIdentifier *)$2, (AstIdentifierList *)$4, $6);}
+    ;
+
+identifier_type_list
+    : identifier_type
+       { $$ = new AstIdentifierList((AstIdentifier *)$1); }
+    | identifier_type_list ',' identifier_type
         {
-          ((AstList *)$1)->add($3);
+          ((AstIdentifierList *)$1)->add((AstIdentifier *)$3);
           $$ = std::move($1);
         }
     ;
 
 primary_type
-    : RE_INT
-        { $$ = new AstTypeInt(); }
-    | RE_VOID
+    : RE_VOID
         { $$ = new AstTypeVoid(); }
+    | RE_INT
+        { $$ = new AstTypeInt(); }
+    | RE_STRING
+        { $$ = new AstTypeString(); }
+    ;
+
+/* 独自のエラー発生 */
+myerror
+    : myerror_compile
+        { $$ = std::move($1); }
+    | myerror_runtime
+        { $$ = std::move($1); }
+    ;
+
+/* コンパイル時にエラーを発生させる */
+myerror_compile
+    : RE_COMPILEERR
+        { error(yyla.location, "Compile Error:"); }
+    | RE_COMPILEERR IDENTIFIER  /* TODO ""の文字列を指定するように */
+        {
+          std::string msg = "Compile Error: ";
+          msg += *($2);
+          error(yyla.location, msg);
+          $$ = nullptr;
+        }
+    ;
+
+/* 実行時にエラーとして強制終了させる */
+myerror_runtime
+    : RE_RUNTIMEERR
+        {}
+    | RE_RUNTIMEERR IDENTIFIER  /* TODO ""の文字列を指定するように */
+        {}
     ;
 
 /* 式のリスト */
@@ -222,16 +302,24 @@ pure_expression_list
 
 /* 純粋な式 */
 pure_expression
-    : assignment_expression
+    : assignment_expression_r
         { $$ = std::move($1); }
     ;
 
-/* 代入式 */
-assignment_expression
+/* 代入式右 */
+assignment_expression_r
+    : assignment_expression_l
+        { $$ = std::move($1); }
+    | assignment_expression_r OP_ARROW_R identifier
+        { $$ = new AstExpressionAS((AstIdentifier *)$3, $1); }
+    ;
+
+/* 代入式左 */
+assignment_expression_l
     : constant_expression
         { $$ = std::move($1); }
-    | identifier OP_ARROW_L assignment_expression
-        { $$ = new AstExpressionAS($1, $3); }
+    | identifier OP_ARROW_L assignment_expression_l
+        { $$ = new AstExpressionAS((AstIdentifier *)$1, $3); }
     ;
 
 /* 定数式 */
@@ -358,23 +446,27 @@ primary_expression
         { $$ = std::move($1); }
     | constant
         { $$ = std::move($1); }
-    | '(' expression ')'
+    | '(' expression_unit ')'
         { $$ = std::move($2); }
     | identifier '(' pure_expression_list ')'
-        { $$ = new AstExpressionFunc($1, $3); }
+        { $$ = new AstExpressionFunc((AstIdentifier *)$1, (AstList *)$3); }
     ;
 
 /* 定数 */
 constant
-    : RE_THROUGH
-        { $$ = new AstConstantThrough(); }
-    | INTEGER
+    : INTEGER
         { $$ = new AstConstantInt($1); }
     ;
 
 identifier
     : IDENTIFIER
-        { $$ = new AstIdentifier($1); }
+        { $$ = new AstIdentifier($1, nullptr); }
+    ;
+
+/* 型付き識別子 */
+identifier_type
+    : IDENTIFIER ':' primary_type
+        { $$ = new AstIdentifier($1, $3); }
     ;
 
 %%

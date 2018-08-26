@@ -10,7 +10,7 @@
 #include <llvm/IR/GlobalVariable.h>
 
 #include "AstNode.h"
-#include "IRGenInfo.h"
+#include "IRState.h"
 
 
 namespace expr {
@@ -18,9 +18,7 @@ namespace expr {
 	class IRGenerator
 	{
 		std::unique_ptr<llvm::Module> TheModule = nullptr;
-		// グローバル変数保存用
-		// ここから取り出す必要はない
-		IRGenInfo igi;
+		IRState irs;
 
 		public:
 		bool genarate(std::unique_ptr<AstNode> ast_root);

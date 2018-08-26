@@ -1,0 +1,15 @@
+# 戻り値voidの関数
+##return 1
+
+
+fnc func:void(a:int)
+{
+	a;
+};
+
+func(1);
+
+
+1;
+
+

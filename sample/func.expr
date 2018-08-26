@@ -1,14 +1,14 @@
-
-
-var aaa:int;
+# 関数定義
+# 7
 
 fnc func:int (a:int, b:int) {
+	a <- b + 1;
+	a;
+	#return a;
 };
 
+func(1, 2) -> b;
+func(2, 3) -> c;
 
-aaa <- 12;
-12 -> bbb;
-
-aaa <- 12 -> bbb;
-
+b + c;
 

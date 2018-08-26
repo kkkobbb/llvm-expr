@@ -26,6 +26,11 @@
         * `Module(LLVMContext, ...)`なコンストラクタなので、この順番が自然ではある?
 
 
+## LLVM ツール
+
+* `cat a.ll | opt -mem2reg | llvm-dis` で最適化したLLVMコードを出力
+
+
 ## LLVM 3.8
 
 * `llvm-config --system-libs`の内容をビルドオプションに追加する必要がある

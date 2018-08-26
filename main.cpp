@@ -6,12 +6,11 @@
 #include <llvm/IR/Module.h>
 #include <llvm/Support/CommandLine.h>
 #include <llvm/Support/raw_ostream.h>
-#include <llvm/Support/FileSystem.h>
-#include <llvm/Bitcode/BitcodeWriter.h>
 
 #include "AstNode.h"
 #include "AstGenerator.h"
 #include "IRGenerator.h"
+#include "CodeGenerator.h"
 
 using namespace std;
 using namespace expr;
@@ -60,6 +59,8 @@ int main(int argc, char *argv[])
 	if (PrintAst) {
 		ast->print_ast(cout);
 		cout << endl;
+		if (!PrintLlvm)
+			return 0;
 	}
 
 	// IR生成
@@ -72,24 +73,18 @@ int main(int argc, char *argv[])
 	if (PrintLlvm) {
 		m->print(llvm::outs(), nullptr);
 		llvm::outs() << "\n";
-	}
-
-	// 表示系のオプションが指定されていた場合、
-	// ファイル出力は行わない
-	if (PrintAst || PrintLlvm)
 		return 0;
-
-	// 目的ファイル生成
-	if (Force) {
-		llvm::WriteBitcodeToFile(m.get(), llvm::outs());
-	} else {
-		error_code errorInfo;
-		llvm::raw_fd_ostream outfile(
-				OutputFilename,
-				errorInfo,
-				llvm::sys::fs::OpenFlags::F_None);
-		llvm::WriteBitcodeToFile(m.get(), outfile);
 	}
+
+	// 中間表現表示系のオプションが指定されていた場合、
+	// 以降のコード生成は実行されない
+
+	// 目的コード生成
+	CodeGenerator cGen;
+	string *fname = &OutputFilename;
+	if (Force)
+		fname = nullptr;
+	cGen.genarate(m.get(), fname);
 
 	return 0;
 }
