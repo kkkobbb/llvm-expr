@@ -13,18 +13,19 @@
 
 
 using namespace std;
+using namespace llvm;
 using namespace expr;
 
 
 
 /*
- * llvm::Moduleからビットコードを出力する
+ * Moduleからビットコードを出力する
  *
  * fnameがnullptrの場合、標準出力に出力する
  *
  * 生成に成功した場合、真を返す
  */
-bool CodeGenerator::genarate(llvm::Module *module, std::string *fname)
+bool CodeGenerator::generate(Module *module, string *fname)
 {
 	string stdoutfile = "-";
 	if (fname == nullptr)
@@ -32,12 +33,13 @@ bool CodeGenerator::genarate(llvm::Module *module, std::string *fname)
 
 	// 目的ファイル生成
 	error_code errorInfo;
-	llvm::raw_fd_ostream outfile(
+	raw_fd_ostream outfile(
 			*fname,
 			errorInfo,
-			llvm::sys::fs::OpenFlags::F_None);
-	llvm::WriteBitcodeToFile(module, outfile);
+			sys::fs::OpenFlags::F_None);
+	WriteBitcodeToFile(module, outfile);
 
 	return true;
 }
+
 

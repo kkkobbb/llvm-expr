@@ -9,9 +9,9 @@ SRC  := main.cpp \
         AstNodeBase.cpp AstNodeConstant.cpp AstNodeType.cpp \
         AstNodeExpression.cpp AstNodeDefinition.cpp \
         AstNodeControl.cpp AstNodeJump.cpp \
-        AstGenerator.cpp IRGenerator.cpp IRState.cpp CodeGenerator.cpp
+        AstGenerator.cpp IRGenerator.cpp IRState.cpp OptimGenerator.cpp CodeGenerator.cpp
 
-OBJS := $(patsubst %.cpp,%.o,$(SRC)) Lexer.o Parser.o
+OBJS := Lexer.o Parser.o $(patsubst %.cpp,%.o,$(SRC))
 
 
 all: $(DEST)

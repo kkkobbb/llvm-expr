@@ -14,7 +14,7 @@ namespace expr {
 		std::unique_ptr<AstNode> ast_root;
 
 		public:
-		bool genarate(std::ifstream &fin);
+		bool generate(std::ifstream &fin);
 		std::unique_ptr<AstNode> get();
 	};
 }

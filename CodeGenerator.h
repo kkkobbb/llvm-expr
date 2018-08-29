@@ -10,7 +10,7 @@
 namespace expr {
 	class CodeGenerator {
 		public:
-		bool genarate(llvm::Module *module, std::string *fname);
+		bool generate(llvm::Module *module, std::string *fname);
 	};
 }
 

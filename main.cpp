@@ -10,6 +10,7 @@
 #include "AstNode.h"
 #include "AstGenerator.h"
 #include "IRGenerator.h"
+#include "OptimGenerator.h"
 #include "CodeGenerator.h"
 
 using namespace std;
@@ -29,6 +30,9 @@ int main(int argc, char *argv[])
 			llvm::cl::desc("specify output filename"),
 			llvm::cl::value_desc("filename"),
 			llvm::cl::init("a.bc"),
+			llvm::cl::cat(CompilerCategory));
+	llvm::cl::opt<bool> Optim("O",
+			llvm::cl::desc("optimization"),
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<bool> Force("f",
 			llvm::cl::desc("Enable binary output on terminals"),
@@ -52,7 +56,7 @@ int main(int argc, char *argv[])
 
 	// AST生成
 	AstGenerator astGen;
-	if (!astGen.genarate(fin))
+	if (!astGen.generate(fin))
 		return 1;
 	auto ast = astGen.get();
 
@@ -65,10 +69,18 @@ int main(int argc, char *argv[])
 
 	// IR生成
 	IRGenerator irGen;
-	if (!irGen.genarate(move(ast)))
+	if (!irGen.generate(move(ast)))
 		return 1;
 	auto m = irGen.get();
 	m->setSourceFileName(InputFilename);
+
+	if (Optim) {
+		// 最適化
+		OptimGenerator opGen;
+		if (!opGen.generate(move(m)))
+			return 1;
+		m = opGen.get();
+	}
 
 	if (PrintLlvm) {
 		m->print(llvm::outs(), nullptr);
@@ -84,7 +96,7 @@ int main(int argc, char *argv[])
 	string *fname = &OutputFilename;
 	if (Force)
 		fname = nullptr;
-	cGen.genarate(m.get(), fname);
+	cGen.generate(m.get(), fname);
 
 	return 0;
 }
