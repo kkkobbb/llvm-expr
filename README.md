@@ -1,5 +1,10 @@
-# expr
+# expr(仮)
 簡易言語
+
+* 言語名 候補
+    * arrow
+    * ral (right and left)
+    * rigft (RIGht leFT)
 
 * コンパイラ名 `exprc`
 * LLVM 確認用
@@ -32,8 +37,13 @@
 
 ## 文法
 * 式 関数
-* 演算子(抜粋) `<-` `->` `+` `-` `*` `/` `%` `if` `else` `while`
-* 宣言 `fnc` `var`
-* エラー強制発生 `compileerr` `runtimeerr`
+    * 代入 `<-` `->`
+    * 比較 `==` `!=` `<` `>` `<=` `>=`
+    * 加減乗除余 `+` `-` `*` `/` `%`
+    * 分岐 `if` `else`
+    * 繰り返し `while`
+    * 関数定義 `fnc`
+    * 変数定義 `var`
+    * エラー強制発生 `compileerr` `runtimeerr`
 
 
