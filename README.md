@@ -1,14 +1,15 @@
 # expr(仮)
 簡易言語
-
-* 言語名 候補
-    * arrow
-    * ral (right and left)
-    * rigft (RIGht leFT)
-
-* コンパイラ名 `exprc`
 * LLVM 確認用
 * c++でのflex bison 確認用
+
+* 言語名 候補
+    * expra (expression with arrow)
+    * arrow
+    * exprAllow
+    * ral (right and left)
+    * rigft (RIGht leFT)
+* コンパイラ名(仮) `exprc`
 
 
 ## コマンド使い方
