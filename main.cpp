@@ -27,21 +27,21 @@ int main(int argc, char *argv[])
 			llvm::cl::Required,
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<string> OutputFilename("o",
-			llvm::cl::desc("specify output filename"),
+			llvm::cl::desc("Specify output filename"),
 			llvm::cl::value_desc("filename"),
 			llvm::cl::init("a.bc"),
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<bool> Optim("O",
-			llvm::cl::desc("optimization"),
+			llvm::cl::desc("Enable optimization"),
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<bool> Force("f",
 			llvm::cl::desc("Enable binary output on terminals"),
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<bool> PrintAst("print-ast",
-			llvm::cl::desc("print AST"),
+			llvm::cl::desc("Print AST"),
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<bool> PrintLlvm("print-llvm",
-			llvm::cl::desc("print llvm IR"),
+			llvm::cl::desc("Print llvm IR"),
 			llvm::cl::cat(CompilerCategory));
 	// CompilerCategory以外は非表示
 	llvm::cl::HideUnrelatedOptions({&CompilerCategory});
