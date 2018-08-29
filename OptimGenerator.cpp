@@ -24,11 +24,11 @@ using namespace expr;
  */
 bool OptimGenerator::generate(unique_ptr<Module> module)
 {
-	legacy::PassManager fpm;
+	legacy::PassManager pm;
 
 	// opt -mem2reg 相当
-	fpm.add(createPromoteMemoryToRegisterPass());
-	fpm.run(*module);
+	pm.add(createPromoteMemoryToRegisterPass());
+	pm.run(*module);
 
 	TheModule = move(module);
 
