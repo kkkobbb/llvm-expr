@@ -257,9 +257,9 @@ while_expression
 /* 宣言文 */
 declarator
     : RE_DECL RE_FNC identifier_type '(' ')'
-        {}
+        { $$ = new AstDeclarationFunc((AstIdentifier *)$3, nullptr); }
     | RE_DECL RE_FNC identifier_type '(' identifier_type_list ')'
-        {}
+        { $$ = new AstDeclarationFunc((AstIdentifier *)$3, (AstIdentifierList *)$5); }
     ;
 
 /* 定義文 */
@@ -490,6 +490,8 @@ identifier
 identifier_type
     : IDENTIFIER ':' primary_type
         { $$ = new AstIdentifier($1, $3); }
+    | ':' primary_type  /* 型付き無名識別子 */
+        { $$ = new AstIdentifier(nullptr, $2); }
     ;
 
 %%

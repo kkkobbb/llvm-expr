@@ -71,10 +71,12 @@ EscSq     ({EscSq1}|{EscSqX})
 {Letter}({Letter}|{Digit})*  { val->sval = new std::string(yytext); return token_type::IDENTIFIER; }
  /* 10進数の整数定数 */
 {Digit}+                     { val->ival = atoi(yytext); return token_type::INTEGER; }
+ /* 16進数の整数定数 */
+0[xX]{HexDigit}+             { val->ival = std::stoi(&yytext[2], nullptr, 16); return token_type::INTEGER; }
  /* 文字定数 */
 '(\\.|[^\\'\n])+'            { val->ival = yytext[1]; return token_type::INTEGER; }
  /* 文字列定数 */
-\"({EscSq}|[^\\"\n]*)*\"       { val->sval = get_string(yytext); return token_type::STRING; }
+\"({EscSq}|[^\\"\n]*)*\"     { val->sval = get_string(yytext); return token_type::STRING; }
 
  /* 2文字 */
 "<="  { return token_type::OP_LTE; }

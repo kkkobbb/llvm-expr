@@ -1,6 +1,14 @@
 
 
-decl fnc getval:int(index:int);
+decl fnc getval:int(:int, :string);
+decl fnc puts:int(:string);
+decl fnc putchar:int(:int);
+
+a <- 1 + 2;
+
+putchar(0x42);
+
+a;
 
 
 
