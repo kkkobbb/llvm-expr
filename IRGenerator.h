@@ -9,7 +9,7 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/GlobalVariable.h>
 
-#include "AstNode.h"
+#include "Node/AstNode.h"
 #include "IRState.h"
 
 

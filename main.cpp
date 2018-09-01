@@ -7,7 +7,7 @@
 #include <llvm/Support/CommandLine.h>
 #include <llvm/Support/raw_ostream.h>
 
-#include "AstNode.h"
+#include "Node/AstNode.h"
 #include "AstGenerator.h"
 #include "IRGenerator.h"
 #include "OptimGenerator.h"

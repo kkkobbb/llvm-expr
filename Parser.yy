@@ -14,7 +14,7 @@
 %code requires
 {
 /* .hhに追加するコード */
-#include "AstNode.h"
+#include "Node/AstNode.h"
 #define MY_NAMESPACE expr
 namespace MY_NAMESPACE {
 	bool is_parse_err();
