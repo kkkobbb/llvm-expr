@@ -146,7 +146,8 @@ Value *AstUnit::getValue(IRState &irs)
 	if (!v)
 		v = builder.getInt32(0);
 
-	builder.CreateRet(v);
+	if (!isa<ReturnInst>(v))
+		builder.CreateRet(v);
 
 	return nullptr;
 }
