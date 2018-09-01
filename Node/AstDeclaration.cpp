@@ -57,6 +57,7 @@ void AstDeclarationFunc::print_ast(std::ostream &dout, int indent)
 Value *AstDeclarationFunc::getValue(IRState &irs)
 {
 	auto &m = irs.getModule();
+	auto &builder = irs.getBuilder();
 
 	auto argTypes = argumentList->getTypes(irs);
 	auto argNames = argumentList->getNames();
@@ -68,7 +69,7 @@ Value *AstDeclarationFunc::getValue(IRState &irs)
 
 	verifyFunction(*func, &errs());
 
-	return func;
+	return builder.getInt32(0);
 }
 
 

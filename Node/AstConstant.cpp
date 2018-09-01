@@ -71,11 +71,9 @@ Value *AstConstantString::getValue(IRState &irs)
 
 	// グローバル変数のポインタの取得
 	auto constZero = builder.getInt32(0);
-	vector<Constant *> constants;
-	constants.push_back(constZero);
-	constants.push_back(constZero);
+	vector<Constant *> index(2, constZero);
 	auto strType = gstr->getInitializer()->getType();
-	auto strPtr = ConstantExpr::getGetElementPtr(strType, gstr, constants);
+	auto strPtr = ConstantExpr::getGetElementPtr(strType, gstr, index);
 
 	return strPtr;
 }

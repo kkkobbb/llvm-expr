@@ -110,6 +110,7 @@ GlobalVariable *IRState::createGlobalString(const char *str)
 			GlobalValue::PrivateLinkage,
 			strValue,
 			".str");
+	gvar->setAlignment(1);
 
 	return gvar;
 }
