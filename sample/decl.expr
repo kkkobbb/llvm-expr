@@ -1,0 +1,6 @@
+
+
+decl fnc getval:int(index:int);
+
+
+

@@ -105,6 +105,7 @@ static int parse_err_num = 0;
 %type <astnode>  if_expression
 %type <astnode>  while_expression
 /* 宣言 */
+%type <astnode>  declarator
 %type <astnode>  definition
 %type <astnode>  identifier_type_list
 %type <astnode>  primary_type
@@ -186,6 +187,8 @@ extended_expression
         { $$ = std::move($1); }
     | jump
         { $$ = std::move($1); }
+    | declarator
+        { $$ = std::move($1); }
     | definition
         { $$ = std::move($1); }
     | myerror
@@ -249,6 +252,14 @@ while_expression
         { $$ = new AstControlWhile($2, $4); }
     | RE_WHILE expression_unit ':' '.'
         { $$ = new AstControlWhile($2, nullptr); }
+    ;
+
+/* 宣言文 */
+declarator
+    : RE_DECL RE_FNC identifier_type '(' ')'
+        {}
+    | RE_DECL RE_FNC identifier_type '(' identifier_type_list ')'
+        {}
     ;
 
 /* 定義文 */
