@@ -8,7 +8,7 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/ValueSymbolTable.h>
-
+#include <llvm/IR/GlobalVariable.h>
 
 #include "IRState.h"
 
@@ -59,17 +59,59 @@ IRBuilder<> &IRState::getBuilder()
 }
 
 
-size_t IRState::setValue(Value *val)
+/*
+ * 文字列のグローバル変数を作成して返す
+ *
+ * 既に同じ文字列が生成されていた場合、それを返す
+ */
+GlobalVariable *IRState::getGlobalString(const char *str)
 {
-	ValueList.push_back(val);
+	// 今まで同じ文字列のグローバル変数を作成したか確認する
+	string newStr = str;
+	newStr.append(1, 0);  // ConstantDataArray::getString()で末尾に追加があるため
+	GlobalVariable *gStr = nullptr;
+	for (auto gval : GlobalStrList) {
+		if (!isa<GlobalVariable>(*gval))
+			continue;
+		auto glo = (GlobalVariable *)gval;
+		auto val = glo->getInitializer();
+		if (!isa<ConstantDataArray>(*val))
+			continue;
+		auto arrayData = (ConstantDataArray *)val;
+		if (!arrayData->isString())
+			continue;
+		auto existStr = arrayData->getAsString();
+		if (newStr == existStr.str()) {
+			gStr = glo;
+			break;
+		}
+	}
 
-	return ValueList.size() - 1;
+	if (gStr == nullptr) {
+		gStr = this->createGlobalString(str);
+		GlobalStrList.push_back(gStr);
+	}
+
+	return gStr;
 }
 
 
-Value *IRState::getValue(int num)
+/*
+ * 文字列のグローバル変数を作成する
+ */
+GlobalVariable *IRState::createGlobalString(const char *str)
 {
-	return ValueList[num];
+	auto strValue = ConstantDataArray::getString(TheContext, str);
+	auto strType = strValue->getType();
+	auto gvar = new GlobalVariable(
+			*TheModule,
+			strType,
+			true,
+			GlobalValue::PrivateLinkage,
+			strValue,
+			".str");
+
+	return gvar;
 }
 
 

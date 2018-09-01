@@ -74,6 +74,7 @@ static int parse_err_num = 0;
 %token           RE_DECL
 %token           RE_RETURN RE_BREAK RE_CONTINUE
 %token           RE_COMPILEERR RE_RUNTIMEERR
+%token           RE_VARARG
 
 /* 1文字の演算子(定義のみ) */
 %token           OP_COMMA
@@ -260,6 +261,8 @@ declarator
         { $$ = new AstDeclarationFunc((AstIdentifier *)$3, nullptr); }
     | RE_DECL RE_FNC identifier_type '(' identifier_type_list ')'
         { $$ = new AstDeclarationFunc((AstIdentifier *)$3, (AstIdentifierList *)$5); }
+    | RE_DECL RE_FNC identifier_type '(' identifier_type_list ',' RE_VARARG ')'
+        { $$ = new AstDeclarationFunc((AstIdentifier *)$3, (AstIdentifierList *)$5, true); }
     ;
 
 /* 定義文 */

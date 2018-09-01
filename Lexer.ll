@@ -66,6 +66,7 @@ EscSq     ({EscSq1}|{EscSqX})
 "continue"    { return token_type::RE_CONTINUE; }
 "compileerr"  { return token_type::RE_COMPILEERR; }
 "runtimeerr"  { return token_type::RE_RUNTIMEERR; }
+"..."         { return token_type::RE_VARARG; }
 
  /* 識別子 */
 {Letter}({Letter}|{Digit})*  { val->sval = new std::string(yytext); return token_type::IDENTIFIER; }

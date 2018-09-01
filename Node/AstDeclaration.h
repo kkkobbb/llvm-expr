@@ -22,9 +22,10 @@ namespace expr {
 		protected:
 		std::unique_ptr<AstIdentifier> decl;
 		std::unique_ptr<AstIdentifierList> argumentList;
+		bool vararg;
 
 		public:
-		AstDeclarationFunc(AstIdentifier *decl, AstIdentifierList *argumentList);
+		AstDeclarationFunc(AstIdentifier *decl, AstIdentifierList *argumentList, bool vararg=false);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 		virtual llvm::Value *getValue(IRState &irs) override;
 	};

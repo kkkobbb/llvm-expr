@@ -27,10 +27,11 @@ using namespace expr;
 
 // AstDeclarationFunc
 
-AstDeclarationFunc::AstDeclarationFunc(AstIdentifier *decl, AstIdentifierList *argumentList)
+AstDeclarationFunc::AstDeclarationFunc(AstIdentifier *decl, AstIdentifierList *argumentList, bool vararg)
 {
 	this->decl.reset(decl);
 	this->argumentList.reset(argumentList);
+	this->vararg = vararg;
 }
 
 
@@ -60,7 +61,7 @@ Value *AstDeclarationFunc::getValue(IRState &irs)
 	auto argTypes = argumentList->getTypes(irs);
 	auto argNames = argumentList->getNames();
 	auto retType = decl->getType(irs);
-	auto funcType = FunctionType::get(retType, *argTypes, false);
+	auto funcType = FunctionType::get(retType, *argTypes, vararg);
 
 	auto name = decl->getName();
 	auto func = Function::Create(funcType, Function::ExternalLinkage, *name, &m);

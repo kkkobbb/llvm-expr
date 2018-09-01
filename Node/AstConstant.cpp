@@ -65,11 +65,19 @@ AstConstantString::AstConstantString(string *str)
  */
 Value *AstConstantString::getValue(IRState &irs)
 {
-	//auto &builder = irs.getBuilder();
+	auto &builder = irs.getBuilder();
 
-	// TODO
+	auto gstr = irs.getGlobalString(this->str->c_str());
 
-	return nullptr;
+	// グローバル変数のポインタの取得
+	auto constZero = builder.getInt32(0);
+	vector<Constant *> constants;
+	constants.push_back(constZero);
+	constants.push_back(constZero);
+	auto strType = gstr->getInitializer()->getType();
+	auto strPtr = ConstantExpr::getGetElementPtr(strType, gstr, constants);
+
+	return strPtr;
 }
 
 

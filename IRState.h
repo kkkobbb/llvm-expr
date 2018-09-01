@@ -18,8 +18,8 @@ namespace expr {
 		llvm::Module &getModule();
 		std::unique_ptr<llvm::Module> moveModule();
 		llvm::IRBuilder<> &getBuilder();
-		std::size_t setValue(llvm::Value *val);
-		llvm::Value *getValue(int num);
+		llvm::GlobalVariable *getGlobalString(const char *str);
+		llvm::GlobalVariable *createGlobalString(const char *str);
 		llvm::Function *getCurFunc();
 		void pushCurFunc(llvm::Function *func);
 		void popCurFunc();
@@ -32,9 +32,8 @@ namespace expr {
 		std::unique_ptr<llvm::Module> TheModule;
 		std::unique_ptr<llvm::IRBuilder<>> builder;
 		std::vector<llvm::Function*> funcStack;
-		// グローバル変数の保存用
-		// llvm::Moduleに登録していれば、deleteされるはず
-		std::vector<llvm::Value *> ValueList;
+		// 文字列のグローバル変数の保存用
+		std::vector<llvm::Value *> GlobalStrList;
 	};
 }
 

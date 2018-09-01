@@ -36,14 +36,14 @@ bool IRGenerator::generate(unique_ptr<AstNode> ast_root)
 	auto &c = irs.getContext();
 	auto &m = irs.getModule();
 	auto &builder = irs.getBuilder();
-	irs.setValue(new GlobalVariable(
+	new GlobalVariable(
 			m,
 			Type::getInt32Ty(c),
 			true,  /* isConstant */
 			GlobalValue::PrivateLinkage,
 			builder.getInt32(20),  /* Initializer */
 			"test_const_20"  /* name */
-			));
+			);
 
 	// IR生成
 	ast_root->getValue(irs);
