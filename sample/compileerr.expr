@@ -3,6 +3,6 @@
 1 + 2;
 
 #compileerr;
-compileerr aaa;
+compileerr "string test\tstring";
 
 

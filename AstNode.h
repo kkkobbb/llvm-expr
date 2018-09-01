@@ -59,6 +59,16 @@ namespace expr {
 		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 
+	// 定数 文字列
+	class AstConstantString: public AstNode
+	{
+		std::unique_ptr<std::string> str;
+
+		public:
+		AstConstantString(std::string *str);
+		virtual llvm::Value *getValue(IRState &irs) override;
+	};
+
 	// 識別子
 	class AstIdentifier: public AstNode
 	{

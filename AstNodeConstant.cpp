@@ -46,6 +46,33 @@ Value *AstConstantInt::getValue(IRState &irs)
 }
 
 
+// AstConstantString
+
+AstConstantString::AstConstantString(string *str)
+{
+	if (str == nullptr)
+		this->str.reset(new string(""));
+	else
+		this->str.reset(str);
+
+	dbg_msg = "\"" + *str + "\"";
+}
+
+
+/*
+ * IR 生成
+ * 定数 文字列
+ */
+Value *AstConstantString::getValue(IRState &irs)
+{
+	//auto &builder = irs.getBuilder();
+
+	// TODO
+
+	return nullptr;
+}
+
+
 // AstIdentifier
 
 AstIdentifier::AstIdentifier(std::string *name, AstNode *type)

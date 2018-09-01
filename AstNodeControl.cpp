@@ -183,6 +183,7 @@ Value *AstControlWhile::getValue(IRState &irs)
 	curFunc->getBasicBlockList().push_back(endBB);
 	builder.SetInsertPoint(endBB);
 
+	// TODO ループ内の値を返す
 	return constZero;
 }
 
