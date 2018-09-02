@@ -1,19 +1,22 @@
 #!/bin/sh
-# expr言語は現在の言語仕様上、
-# 標準出力に出力する手段がないため、計算結果を戻り値として返している
-# *出力可能になったため、順次標準出力の確認に変更する*
+# 動作確認用
+#
+# $TESTDIR以下で拡張子が${TESTEXT}のファイルがテストケースとなる
 #
 # TESTOPT="-O" ./test.sh とかでテスト時の追加のオプションを指定可能
 #
-# `##return 0`   戻り値の期待値
-# `##printn aaa` 標準出力への出力の期待値(改行付き) エスケープシーケンスは使えない
+# 期待値の指定方法
+# テストケースとなるファイルに以下のコメントを付ける
+#     * `##return 0`   戻り値の期待値
+#     * `##printn aaa` 標準出力への出力の期待値(改行付き) (エスケープシーケンスは使えない)
 
 EXEFILE="exparrc"
 TESTDIR="test"
+TESTEXT="ea"
 
 test -f ./${EXEFILE} || { echo "not found './${EXEFILE}'"; exit 1; }
 
-testcaselist=$(ls ${TESTDIR}/*.ea)
+testcaselist=$(ls ${TESTDIR}/*.${TESTEXT})
 test_num=0
 success_num=0
 for testcase in ${testcaselist}; do
