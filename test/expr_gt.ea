@@ -1,7 +1,10 @@
 # 比較 >
 ##return 0
 
-a <- 1;
+decl fnc printf:int(:string, ...);
 
-a > 2;
+##printn 0
+printf("%d\n", 1 > 2);
+
+0;
 

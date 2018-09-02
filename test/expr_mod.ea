@@ -1,5 +1,10 @@
 # 余算
-##return 2
+##return 0
 
-20 % 6;
+decl fnc printf:int(:string, ...);
+
+##printn 2
+printf("%d\n", 20 % 6);
+
+0;
 
