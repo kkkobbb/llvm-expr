@@ -116,6 +116,8 @@ GlobalVariable *IRState::createGlobalString(const char *str)
 }
 
 
+[[deprecated("please use llvm::IRBuilder<>::GetInsertBlock()->getParent()")]]
+// TODO 削除? funcStackはIRStateでしか使用しない？
 Function *IRState::getCurFunc()
 {
 	return funcStack.back();
@@ -144,7 +146,7 @@ void IRState::popCurFunc()
  */
 Value *IRState::getVariable(const string *name)
 {
-	auto curFunc = this->getCurFunc();
+	auto curFunc = builder->GetInsertBlock()->getParent();
 
 	auto vs_table = curFunc->getValueSymbolTable();
 	auto alloca = vs_table->lookup(*name);
