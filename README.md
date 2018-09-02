@@ -5,10 +5,9 @@
 
 * 言語名 候補
     * expra (expression with arrow)
+    * expar (expression with arrow)
     * arrow
     * exprAllow
-    * ral (right and left)
-    * rigft (RIGht leFT)
 * コンパイラ名(仮) `exprc`
 
 
@@ -17,13 +16,14 @@
 * `./exprc srcfile.expr` で`a.bc`ファイルが生成される
     * 中身はLLVM IRのビットコード
 
-### JIT
+### インタプリタ
 * `lli a.bc` で実行可能
     * 出力はしないので、`echo $?` とかで戻り値を確認する
 
 ### アセンブリ出力 -> コンパイル
-* `llc a.bc` で `a.s` が生成される
+* `llc -relocation-model=pic a.bc` で `a.s` が生成される
     * 中身はネイティブのアセンブリコード
+    * picじゃないとgccでエラーになる(clangではエラーにならない)
 * `gcc a.s` とかで実行ファイル生成して実行可能
 
 
