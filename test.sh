@@ -5,12 +5,12 @@
 #
 # TESTOPT="-O" ./test.sh とかでテスト時の追加のオプションを指定可能
 
-EXEFILE="exprc"
+EXEFILE="exparrc"
 TESTDIR="test"
 
 test -f ./${EXEFILE} || { echo "not found './${EXEFILE}'"; exit 1; }
 
-testcaselist=$(ls ${TESTDIR}/*.expr)
+testcaselist=$(ls ${TESTDIR}/*.ea)
 success_num=0
 for testcase in ${testcaselist}; do
 	expected=$(grep "^##return " ${testcase} | sed "s/^##return //")
