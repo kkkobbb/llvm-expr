@@ -1,5 +1,5 @@
-#ifndef ASTNODE_H
-#define ASTNODE_H
+#ifndef ASTEXPRESSION_H
+#define ASTEXPRESSION_H
 
 #include <iostream>
 #include <string>
@@ -9,172 +9,13 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
 
+#include "AstBase.h"
+#include "AstConstant.h"
+
 
 
 namespace expr {
 	class IRState;
-
-	// ノード
-	class AstNode
-	{
-		protected:
-		std::string dbg_msg;
-
-		public:
-		virtual llvm::Value *getValue(IRState &irs);
-		virtual llvm::Type *getType(IRState &irs);
-		void print_ast_string(const char *msg, std::ostream &dout, int indent = 0);
-		virtual void print_ast(std::ostream &dout, int indent = 0);
-	};
-
-	// ノードの一覧を持つ
-	class AstList: public AstNode
-	{
-		protected:
-		std::vector<std::unique_ptr<AstNode>> children;
-
-		public:
-		AstList(AstNode *n);
-		void add(AstNode *n);
-		virtual llvm::Value *getValue(IRState &irs) override;
-		virtual void print_ast(std::ostream &dout, int indent = 0) override;
-		std::vector<std::unique_ptr<AstNode>> *getList();
-	};
-
-	// 翻訳単位
-	class AstUnit: public AstList
-	{
-		public:
-		using AstList::AstList;
-		virtual llvm::Value *getValue(IRState &irs) override;
-	};
-
-	// 定数 整数
-	class AstConstantInt: public AstNode
-	{
-		int num;
-
-		public:
-		AstConstantInt(int num);
-		virtual llvm::Value *getValue(IRState &irs) override;
-	};
-
-	// 識別子
-	class AstIdentifier: public AstNode
-	{
-		// TODO shared_ptrにする？
-		std::unique_ptr<std::string> name;
-		std::unique_ptr<AstNode> type;
-
-		public:
-		AstIdentifier(std::string *name, AstNode *type);
-		virtual void print_ast(std::ostream &dout, int indent = 0) override;
-		const std::string *getName();
-		virtual llvm::Type *getType(IRState &irs) override;
-		virtual llvm::Value *getValue(IRState &irs) override;
-	};
-
-	// 識別子の一覧を持つ
-	class AstIdentifierList: public AstNode
-	{
-		protected:
-		std::vector<std::unique_ptr<AstIdentifier>> children;
-
-		public:
-		AstIdentifierList(AstIdentifier *n);
-		void add(AstIdentifier *n);
-		virtual void print_ast(std::ostream &dout, int indent = 0) override;
-		std::unique_ptr<std::vector<llvm::Type*>> getTypes(IRState &irs);
-		std::unique_ptr<std::vector<const std::string*>> getNames();
-	};
-
-	class AstJumpReturn: public AstNode
-	{
-		protected:
-		std::unique_ptr<AstNode> ret;
-
-		public:
-		AstJumpReturn(AstNode *ret);
-		virtual void print_ast(std::ostream &dout, int indent = 0) override;
-		virtual llvm::Value *getValue(IRState &irs) override;
-	};
-
-	class AstControlIf: public AstNode
-	{
-		protected:
-		std::unique_ptr<AstNode> cond;
-		std::unique_ptr<AstNode> proc;
-		std::unique_ptr<AstNode> elseProc;
-
-		public:
-		AstControlIf(AstNode *cond, AstNode *proc, AstNode *elseProc);
-		virtual void print_ast(std::ostream &dout, int indent = 0) override;
-		virtual llvm::Value *getValue(IRState &irs) override;
-	};
-
-	class AstControlWhile: public AstNode
-	{
-		protected:
-		std::unique_ptr<AstNode> cond;
-		std::unique_ptr<AstNode> proc;
-
-		public:
-		AstControlWhile(AstNode *cond, AstNode *proc);
-		virtual void print_ast(std::ostream &dout, int indent = 0) override;
-		virtual llvm::Value *getValue(IRState &irs) override;
-	};
-
-	class AstDefinitionVar: public AstNode
-	{
-		protected:
-		std::unique_ptr<AstIdentifier> decl;
-		std::unique_ptr<AstNode> init;
-
-		public:
-		AstDefinitionVar(AstIdentifier *decl, AstNode *init);
-		virtual void print_ast(std::ostream &dout, int indent = 0) override;
-		virtual llvm::Value *getValue(IRState &irs) override;
-	};
-
-	class AstDefinitionFunc: public AstNode
-	{
-		protected:
-		std::unique_ptr<AstIdentifier> decl;
-		std::unique_ptr<AstIdentifierList> argumentList;
-		std::unique_ptr<AstNode> body;
-
-		public:
-		AstDefinitionFunc(AstIdentifier *decl, AstIdentifierList *argumentList, AstNode *body);
-		virtual void print_ast(std::ostream &dout, int indent = 0) override;
-		virtual llvm::Value *getValue(IRState &irs) override;
-	};
-
-	class AstType: public AstNode
-	{
-		public:
-		using AstNode::AstNode;
-	};
-
-	class AstTypeVoid: public AstType
-	{
-		public:
-		using AstType::AstType;
-		virtual llvm::Type *getType(IRState &irs) override;
-	};
-
-	class AstTypeInt: public AstType
-	{
-		public:
-		using AstType::AstType;
-		virtual llvm::Type *getType(IRState &irs) override;
-	};
-
-	class AstTypeString: public AstType
-	{
-		public:
-		using AstType::AstType;
-		virtual llvm::Type *getType(IRState &irs) override;
-	};
 
 	// 式
 	class AstExpression: public AstNode
@@ -365,5 +206,5 @@ namespace expr {
 	};
 }
 
-#endif  // ASTNODE_H
+#endif  // ASTEXPRESSION_H
 

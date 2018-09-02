@@ -8,7 +8,7 @@
 #include "Lexer.h"
 #include "Parser.hh"
 
-#include "AstNode.h"
+#include "Node/AstNode.h"
 #include "AstGenerator.h"
 
 
@@ -22,7 +22,7 @@ using namespace expr;
  *
  * 生成に成功した場合、真を返す
  */
-bool AstGenerator::genarate(ifstream &fin)
+bool AstGenerator::generate(ifstream &fin)
 {
 	Lexer lexer(&fin);
 	Parser parser(lexer);

@@ -1,17 +1,15 @@
 CXX := g++
 LLVM-CONFIG := llvm-config
-CXXFLAGS := -g `$(LLVM-CONFIG) --cxxflags`
+CXXFLAGS := -g -I. `$(LLVM-CONFIG) --cxxflags`
 #LDLIBS := `$(LLVM-CONFIG) --ldflags --system-libs --libs core` -lfl -ly -Xlinker --allow-shlib-undefined
 LDLIBS := `$(LLVM-CONFIG) --ldflags --system-libs --libs core`
 
 DEST := exprc
 SRC  := main.cpp \
-        AstNodeBase.cpp AstNodeConstant.cpp AstNodeType.cpp \
-        AstNodeExpression.cpp AstNodeDefinition.cpp \
-        AstNodeControl.cpp AstNodeJump.cpp \
-        AstGenerator.cpp IRGenerator.cpp IRState.cpp CodeGenerator.cpp
+        $(wildcard Node/*.cpp) \
+        AstGenerator.cpp IRGenerator.cpp IRState.cpp OptimGenerator.cpp CodeGenerator.cpp
 
-OBJS := $(patsubst %.cpp,%.o,$(SRC)) Lexer.o Parser.o
+OBJS := Lexer.o Parser.o $(patsubst %.cpp,%.o,$(SRC))
 
 
 all: $(DEST)

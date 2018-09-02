@@ -4,7 +4,7 @@
 #include <fstream>
 #include <memory>
 
-#include "AstNode.h"
+#include "Node/AstNode.h"
 
 
 namespace expr {
@@ -14,7 +14,7 @@ namespace expr {
 		std::unique_ptr<AstNode> ast_root;
 
 		public:
-		bool genarate(std::ifstream &fin);
+		bool generate(std::ifstream &fin);
 		std::unique_ptr<AstNode> get();
 	};
 }

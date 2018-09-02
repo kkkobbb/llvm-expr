@@ -15,7 +15,7 @@
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
 
-#include "AstNode.h"
+#include "AstConstant.h"
 #include "IRState.h"
 
 
@@ -43,6 +43,39 @@ Value *AstConstantInt::getValue(IRState &irs)
 	auto &builder = irs.getBuilder();
 
 	return builder.getInt32(num);
+}
+
+
+// AstConstantString
+
+AstConstantString::AstConstantString(string *str)
+{
+	if (str == nullptr)
+		this->str.reset(new string(""));
+	else
+		this->str.reset(str);
+
+	dbg_msg = "\"" + *str + "\"";
+}
+
+
+/*
+ * IR 生成
+ * 定数 文字列
+ */
+Value *AstConstantString::getValue(IRState &irs)
+{
+	auto &builder = irs.getBuilder();
+
+	auto gstr = irs.getGlobalString(this->str->c_str());
+
+	// グローバル変数のポインタの取得
+	auto constZero = builder.getInt32(0);
+	vector<Constant *> index(2, constZero);
+	auto strType = gstr->getInitializer()->getType();
+	auto strPtr = ConstantExpr::getGetElementPtr(strType, gstr, index);
+
+	return strPtr;
 }
 
 

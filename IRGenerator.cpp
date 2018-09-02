@@ -9,12 +9,13 @@
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/GlobalVariable.h>
 
-#include "AstNode.h"
+#include "Node/AstNode.h"
 #include "IRGenerator.h"
 #include "IRState.h"
 
 
 using namespace std;
+using namespace llvm;
 using namespace expr;
 
 
@@ -24,7 +25,7 @@ using namespace expr;
  *
  * 生成に成功した場合、真を返す
  */
-bool IRGenerator::genarate(std::unique_ptr<AstNode> ast_root)
+bool IRGenerator::generate(unique_ptr<AstNode> ast_root)
 {
 	if(ast_root.get() == nullptr) {
 		cout << "not found AST root" << endl;
@@ -35,14 +36,14 @@ bool IRGenerator::genarate(std::unique_ptr<AstNode> ast_root)
 	auto &c = irs.getContext();
 	auto &m = irs.getModule();
 	auto &builder = irs.getBuilder();
-	irs.setValue(new llvm::GlobalVariable(
+	new GlobalVariable(
 			m,
-			llvm::Type::getInt32Ty(c),
+			Type::getInt32Ty(c),
 			true,  /* isConstant */
-			llvm::GlobalValue::PrivateLinkage,
+			GlobalValue::PrivateLinkage,
 			builder.getInt32(20),  /* Initializer */
 			"test_const_20"  /* name */
-			));
+			);
 
 	// IR生成
 	ast_root->getValue(irs);
@@ -55,7 +56,7 @@ bool IRGenerator::genarate(std::unique_ptr<AstNode> ast_root)
 /*
  * 生成したModuleを返す
  */
-unique_ptr<llvm::Module> IRGenerator::get()
+unique_ptr<Module> IRGenerator::get()
 {
 	return move(TheModule);
 }

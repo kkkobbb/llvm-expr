@@ -15,7 +15,7 @@
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
 
-#include "AstNode.h"
+#include "AstControl.h"
 #include "IRState.h"
 
 
@@ -183,6 +183,7 @@ Value *AstControlWhile::getValue(IRState &irs)
 	curFunc->getBasicBlockList().push_back(endBB);
 	builder.SetInsertPoint(endBB);
 
+	// TODO ループ内の値を返す
 	return constZero;
 }
 

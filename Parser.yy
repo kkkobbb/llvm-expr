@@ -14,7 +14,7 @@
 %code requires
 {
 /* .hhに追加するコード */
-#include "AstNode.h"
+#include "Node/AstNode.h"
 #define MY_NAMESPACE expr
 namespace MY_NAMESPACE {
 	bool is_parse_err();
@@ -74,6 +74,7 @@ static int parse_err_num = 0;
 %token           RE_DECL
 %token           RE_RETURN RE_BREAK RE_CONTINUE
 %token           RE_COMPILEERR RE_RUNTIMEERR
+%token           RE_VARARG
 
 /* 1文字の演算子(定義のみ) */
 %token           OP_COMMA
@@ -96,6 +97,8 @@ static int parse_err_num = 0;
 %type <astnode>  expression_unit
 %type <astnode>  compound_expression
 %type <astnode>  extended_expression
+%type <astnode>  mixed_expression_list
+%type <astnode>  mixed_expression
 /* ジャンプ文 */
 %type <astnode>  jump
 /* 制御文 */
@@ -103,10 +106,10 @@ static int parse_err_num = 0;
 %type <astnode>  if_expression
 %type <astnode>  while_expression
 /* 宣言 */
+%type <astnode>  declarator
 %type <astnode>  definition
 %type <astnode>  identifier_type_list
 %type <astnode>  primary_type
-%type <astnode>  pure_expression_list
 /* 独自のエラー発生 */
 %type <astnode>  myerror myerror_compile myerror_runtime
 /* 式 */
@@ -122,7 +125,7 @@ static int parse_err_num = 0;
 %type <astnode>  unary_expression
 %type <astnode>  postfix_expression
 %type <astnode>  primary_expression
-%type <astnode>  constant
+%type <astnode>  constant_int constant_str
 %type <astnode>  identifier
 %type <astnode>  identifier_type
 
@@ -179,13 +182,13 @@ compound_expression
         { $$ = nullptr; }
     ;
 
-/* 拡張された式 */
+/* 拡張された式 (値を持つが、その値に意味がない式(jumpなど)を含む) */
 extended_expression
-    : pure_expression
+    : mixed_expression
         { $$ = std::move($1); }
     | jump
         { $$ = std::move($1); }
-    | control
+    | declarator
         { $$ = std::move($1); }
     | definition
         { $$ = std::move($1); }
@@ -193,6 +196,27 @@ extended_expression
         { $$ = std::move($1); }
     | error
         { $$ = nullptr; }  /* エラー処理 */
+    ;
+
+/* 色々な式のリスト */
+mixed_expression_list
+    : mixed_expression
+        { $$ = new AstList($1); }
+    | mixed_expression_list ',' mixed_expression
+        {
+          ((AstList *)$1)->add($3);
+          $$ = std::move($1);
+        }
+    ;
+
+/* 色々な式 */
+mixed_expression
+    : pure_expression
+        { $$ = std::move($1); }
+    | constant_str
+        { $$ = std::move($1); }
+    | control
+        { $$ = std::move($1); }
     ;
 
 /* ジャンプ文 */
@@ -229,6 +253,16 @@ while_expression
         { $$ = new AstControlWhile($2, $4); }
     | RE_WHILE expression_unit ':' '.'
         { $$ = new AstControlWhile($2, nullptr); }
+    ;
+
+/* 宣言文 */
+declarator
+    : RE_DECL RE_FNC identifier_type '(' ')'
+        { $$ = new AstDeclarationFunc((AstIdentifier *)$3, nullptr); }
+    | RE_DECL RE_FNC identifier_type '(' identifier_type_list ')'
+        { $$ = new AstDeclarationFunc((AstIdentifier *)$3, (AstIdentifierList *)$5); }
+    | RE_DECL RE_FNC identifier_type '(' identifier_type_list ',' RE_VARARG ')'
+        { $$ = new AstDeclarationFunc((AstIdentifier *)$3, (AstIdentifierList *)$5, true); }
     ;
 
 /* 定義文 */
@@ -272,12 +306,11 @@ myerror
 myerror_compile
     : RE_COMPILEERR
         { error(yyla.location, "Compile Error:"); }
-    | RE_COMPILEERR IDENTIFIER  /* TODO ""の文字列を指定するように */
+    | RE_COMPILEERR STRING
         {
           std::string msg = "Compile Error: ";
-          msg += *($2);
+          msg += *$2;
           error(yyla.location, msg);
-          $$ = nullptr;
         }
     ;
 
@@ -287,17 +320,6 @@ myerror_runtime
         {}
     | RE_RUNTIMEERR IDENTIFIER  /* TODO ""の文字列を指定するように */
         {}
-    ;
-
-/* 式のリスト */
-pure_expression_list
-    : pure_expression
-        { $$ = new AstList($1); }
-    | pure_expression_list ',' pure_expression
-        {
-          ((AstList *)$1)->add($3);
-          $$ = std::move($1);
-        }
     ;
 
 /* 純粋な式 */
@@ -444,18 +466,22 @@ postfix_expression
 primary_expression
     : identifier
         { $$ = std::move($1); }
-    | constant
+    | constant_int
         { $$ = std::move($1); }
     | '(' expression_unit ')'
         { $$ = std::move($2); }
-    | identifier '(' pure_expression_list ')'
+    | identifier '(' mixed_expression_list ')'
         { $$ = new AstExpressionFunc((AstIdentifier *)$1, (AstList *)$3); }
     ;
 
 /* 定数 */
-constant
+constant_int
     : INTEGER
         { $$ = new AstConstantInt($1); }
+
+constant_str
+    : STRING
+        { $$ = new AstConstantString($1); }
     ;
 
 identifier
@@ -467,6 +493,8 @@ identifier
 identifier_type
     : IDENTIFIER ':' primary_type
         { $$ = new AstIdentifier($1, $3); }
+    | ':' primary_type  /* 型付き無名識別子 */
+        { $$ = new AstIdentifier(nullptr, $2); }
     ;
 
 %%

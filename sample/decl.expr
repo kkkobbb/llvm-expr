@@ -1,0 +1,21 @@
+# 関数宣言
+
+# 実体のない宣言のみのダミー関数
+decl fnc getval:int(:int, :string);
+# 以降標準ライブラリの関数
+decl fnc puts:int(:string);
+decl fnc putchar:int(:int);
+decl fnc printf:int(:string, ...);
+
+
+
+putchar(0x42); # B
+putchar(0x0A); # \n
+
+puts("AAA");
+puts("AAA");
+puts("CCCCC");
+printf("printf\n");
+
+0;
+

@@ -1,31 +1,32 @@
 #!/bin/sh
+# expr言語は現在の言語仕様上、
+# 標準出力に出力する手段がないため、計算結果を戻り値として返している
+# *出力可能になったため、順次標準出力の確認に変更する*
+#
+# TESTOPT="-O" ./test.sh とかでテスト時の追加のオプションを指定可能
 
 EXEFILE="exprc"
-if [ ! -f ${EXEFILE} ]; then
-	echo "not found '${EXEFILE}'"
-	exit 1
-fi
-
 TESTDIR="test"
-testlist=$(ls ${TESTDIR}/*.expr)
 
-testnum=$(echo ${testlist} | wc -w)
-snum=0
-for src in ${testlist}; do
-	expected=$(grep "^##return " ${src} | sed "s/^##return //")
+test -f ./${EXEFILE} || { echo "not found './${EXEFILE}'"; exit 1; }
 
-	./${EXEFILE} ${src} -print-llvm | lli
+testcaselist=$(ls ${TESTDIR}/*.expr)
+success_num=0
+for testcase in ${testcaselist}; do
+	expected=$(grep "^##return " ${testcase} | sed "s/^##return //")
+
+	./${EXEFILE} ${testcase} -f ${TESTOPT} | lli -force-interpreter
 	ret=$?
 
 	if [ ${ret} -eq ${expected} ]; then
-		printf "Success:"
-		snum=$((snum + 1))
+		printf "\e[32mSuccess:\e[m"
+		success_num=$((success_num + 1))
 	else
-		printf "Failure (ret=${ret} exp=${expected}):"
+		printf "\e[31mFailure:  (ret=${ret} exp=${expected})\e[m"
 	fi
-	echo "  ${src}"
+	echo "  [${testcase}]"
 done
 
-echo "${snum} / ${testnum}"
-
+test_num=$(echo ${testcaselist} | wc -w)
+echo "${success_num} / ${test_num}"
 

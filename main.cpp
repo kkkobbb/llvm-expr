@@ -7,9 +7,10 @@
 #include <llvm/Support/CommandLine.h>
 #include <llvm/Support/raw_ostream.h>
 
-#include "AstNode.h"
+#include "Node/AstNode.h"
 #include "AstGenerator.h"
 #include "IRGenerator.h"
+#include "OptimGenerator.h"
 #include "CodeGenerator.h"
 
 using namespace std;
@@ -26,18 +27,21 @@ int main(int argc, char *argv[])
 			llvm::cl::Required,
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<string> OutputFilename("o",
-			llvm::cl::desc("specify output filename"),
+			llvm::cl::desc("Specify output filename"),
 			llvm::cl::value_desc("filename"),
 			llvm::cl::init("a.bc"),
+			llvm::cl::cat(CompilerCategory));
+	llvm::cl::opt<bool> Optim("O",
+			llvm::cl::desc("Enable optimization"),
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<bool> Force("f",
 			llvm::cl::desc("Enable binary output on terminals"),
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<bool> PrintAst("print-ast",
-			llvm::cl::desc("print AST"),
+			llvm::cl::desc("Print AST"),
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<bool> PrintLlvm("print-llvm",
-			llvm::cl::desc("print llvm IR"),
+			llvm::cl::desc("Print llvm IR"),
 			llvm::cl::cat(CompilerCategory));
 	// CompilerCategory以外は非表示
 	llvm::cl::HideUnrelatedOptions({&CompilerCategory});
@@ -52,7 +56,7 @@ int main(int argc, char *argv[])
 
 	// AST生成
 	AstGenerator astGen;
-	if (!astGen.genarate(fin))
+	if (!astGen.generate(fin))
 		return 1;
 	auto ast = astGen.get();
 
@@ -65,10 +69,18 @@ int main(int argc, char *argv[])
 
 	// IR生成
 	IRGenerator irGen;
-	if (!irGen.genarate(move(ast)))
+	if (!irGen.generate(move(ast)))
 		return 1;
 	auto m = irGen.get();
 	m->setSourceFileName(InputFilename);
+
+	if (Optim) {
+		// 最適化
+		OptimGenerator opGen;
+		if (!opGen.generate(move(m)))
+			return 1;
+		m = opGen.get();
+	}
 
 	if (PrintLlvm) {
 		m->print(llvm::outs(), nullptr);
@@ -84,7 +96,7 @@ int main(int argc, char *argv[])
 	string *fname = &OutputFilename;
 	if (Force)
 		fname = nullptr;
-	cGen.genarate(m.get(), fname);
+	cGen.generate(m.get(), fname);
 
 	return 0;
 }
