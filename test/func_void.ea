@@ -1,12 +1,15 @@
 # 戻り値voidの関数
 ##return 0
 
+decl fnc printf:int(:string, ...);
+
 fnc func:void(a:int)
 {
-	a;
+	printf("%d\n", a);
 };
 
-func(1);
+##printn 5
+func(5);
 
 0;
 
