@@ -1,6 +1,5 @@
 # 戻り値voidの関数
-##return 1
-
+##return 0
 
 fnc func:void(a:int)
 {
@@ -9,7 +8,5 @@ fnc func:void(a:int)
 
 func(1);
 
-
-1;
-
+0;
 

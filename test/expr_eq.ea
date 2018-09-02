@@ -1,0 +1,10 @@
+# 比較 ==
+##return 0
+
+decl fnc printf:int(:string, ...);
+
+##printn 0
+printf("%d\n", 1 == 2);
+
+0;
+

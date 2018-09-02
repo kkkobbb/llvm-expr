@@ -1,0 +1,15 @@
+# 関数定義
+##return 0
+
+decl fnc printf:int(:string, ...);
+
+fnc func:int(a:int, b:int) {
+	c <- a + b + 1;
+	return c;
+};
+
+##printn 6
+printf("%d\n", func(2, 3));
+
+0;
+

@@ -1,0 +1,13 @@
+# 関数宣言、標準ライブラリの関数呼び出し
+##return 0
+
+decl fnc printf:int(:string, ...);
+
+##printn test test
+printf("test test\n");
+##printn aaa	aaa
+printf("aaa\taaa\n");
+
+
+0;
+

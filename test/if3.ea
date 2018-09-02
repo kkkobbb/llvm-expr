@@ -1,0 +1,17 @@
+# if
+##return 0
+
+decl fnc printf:int(:string, ...);
+
+a <- 0;
+
+if a != 0:
+else
+	a <- 1;
+.;
+
+##printn 1
+printf("%d\n", a);
+
+0;
+

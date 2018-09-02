@@ -1,0 +1,16 @@
+# while文
+##return 0
+
+decl fnc printf:int(:string, ...);
+
+a <- 0;
+while a < 3:
+	a <- a + 1;
+.;
+
+a <- a + 1;
+##printn 4
+printf("%d\n", a);
+
+0;
+

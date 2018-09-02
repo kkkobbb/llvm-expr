@@ -1,0 +1,19 @@
+# if文確認
+##return 0
+
+decl fnc printf:int(:string, ...);
+
+a <- 0;
+
+if a < 2:
+	a <- 1;
+else
+	a <- 2;
+.;
+
+a <- a + 10;
+##printn 11
+printf("%d\n", a);
+
+0;
+

@@ -1,19 +1,14 @@
-# expr(仮)
+# exparr (expression with arrow)
 簡易言語
 * LLVM 確認用
 * c++でのflex bison 確認用
-
-* 言語名 候補
-    * expra (expression with arrow)
-    * expar (expression with arrow)
-    * arrow
-    * exprAllow
-* コンパイラ名(仮) `exprc`
+* コンパイラ名 `exparrc`
+* ソースコード拡張子 `ea` 
 
 
 ## コマンド使い方
 
-* `./exprc srcfile.expr` で`a.bc`ファイルが生成される
+* `./exparrc srcfile.ea` で`a.bc`ファイルが生成される
     * 中身はLLVM IRのビットコード
 
 ### インタプリタ
