@@ -55,7 +55,7 @@ Value *AstJumpReturn::getValue(IRState &irs)
 	auto &builder = irs.getBuilder();
 
 	Value *retV = nullptr;
-	if(this->ret == nullptr) {
+	if (this->ret == nullptr) {
 		retV = builder.CreateRetVoid();
 	} else {
 		auto retval = this->ret->getValue(irs);

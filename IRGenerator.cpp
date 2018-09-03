@@ -27,7 +27,7 @@ using namespace expr;
  */
 bool IRGenerator::generate(unique_ptr<AstNode> ast_root)
 {
-	if(ast_root.get() == nullptr) {
+	if (ast_root.get() == nullptr) {
 		cout << "not found AST root" << endl;
 		return false;
 	}
