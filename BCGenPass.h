@@ -1,5 +1,5 @@
-#ifndef CODEGENERATOR_H
-#define CODEGENERATOR_H
+#ifndef BCGENPASS_H
+#define BCGENPASS_H
 
 #include <string>
 
@@ -8,12 +8,12 @@
 
 
 namespace expr {
-	class CodeGenerator {
+	class BCGenPass {
 		public:
 		bool run(llvm::Module &module, std::string *fname);
 	};
 }
 
 
-#endif  // CODEGENERATOR_H
+#endif  // BCGENPASS_H
 

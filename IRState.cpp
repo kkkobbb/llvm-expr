@@ -1,5 +1,4 @@
 /*
- * IRState
  * IR出力時の状態保持
  */
 #include <memory>

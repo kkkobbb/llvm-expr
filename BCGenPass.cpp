@@ -1,5 +1,4 @@
 /*
- * CodeGenerator
  * ビットコード出力
  */
 #include <memory>
@@ -9,7 +8,7 @@
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Bitcode/BitcodeWriter.h>
 
-#include "CodeGenerator.h"
+#include "BCGenPass.h"
 
 
 using namespace std;
@@ -25,7 +24,7 @@ using namespace expr;
  *
  * 生成に成功した場合、真を返す
  */
-bool CodeGenerator::run(Module &module, string *fname)
+bool BCGenPass::run(Module &module, string *fname)
 {
 	string stdoutfile = "-";
 	if (fname == nullptr)

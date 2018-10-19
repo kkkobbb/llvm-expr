@@ -11,8 +11,8 @@
 #include "Node/AstNode.h"
 #include "AstGenerator.h"
 #include "IRGenerator.h"
-#include "OptimGenerator.h"
-#include "CodeGenerator.h"
+#include "OptimPass.h"
+#include "BCGenPass.h"
 
 using namespace std;
 using namespace expr;
@@ -80,8 +80,8 @@ int main(int argc, char *argv[])
 
 	if (Optim) {
 		// 最適化
-		OptimGenerator opGen;
-		if (!opGen.run(*m.get()))
+		OptimPass opp;
+		if (!opp.run(*m.get()))
 			return 1;
 	}
 
@@ -95,11 +95,11 @@ int main(int argc, char *argv[])
 	// 以降のコード生成は実行されない
 
 	// 目的コード生成
-	CodeGenerator cGen;
+	BCGenPass bcg;
 	string *ofname = &OutputFilename;
 	if (Force)
 		ofname = nullptr;
-	cGen.run(*m.get(), ofname);
+	bcg.run(*m.get(), ofname);
 
 	return 0;
 }

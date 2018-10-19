@@ -7,7 +7,7 @@ LDLIBS := `$(LLVM-CONFIG) --ldflags --system-libs --libs core`
 DEST := exparrc
 SRC  := main.cpp \
         $(wildcard Node/*.cpp) \
-        AstGenerator.cpp IRGenerator.cpp IRState.cpp OptimGenerator.cpp CodeGenerator.cpp
+        AstGenerator.cpp IRGenerator.cpp IRState.cpp OptimPass.cpp BCGenPass.cpp
 
 OBJS := Lexer.o Parser.o $(patsubst %.cpp,%.o,$(SRC))
 

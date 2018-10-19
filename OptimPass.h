@@ -1,17 +1,17 @@
-#ifndef OPTIMGENERATOR_H
-#define OPTIMGENERATOR_H
+#ifndef OPTIMPASS_H
+#define OPTIMPASS_H
 
 #include <llvm/IR/Module.h>
 
 
 
 namespace expr {
-	class OptimGenerator {
+	class OptimPass {
 		public:
 		bool run(llvm::Module &module);
 	};
 }
 
 
-#endif  // OPTIMGENERATOR_H
+#endif  // OPTIMPASS_H
 

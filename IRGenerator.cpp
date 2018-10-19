@@ -1,5 +1,4 @@
 /*
- * IRGenerator
  * LLVM IRを生成するためのクラス
  */
 #include <fstream>
