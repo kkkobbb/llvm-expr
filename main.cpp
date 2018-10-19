@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 			llvm::cl::desc("Enable optimization"),
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<bool> Force("f",
-			llvm::cl::desc("Enable binary output on terminals"),
+			llvm::cl::desc("Enable output on terminals"),
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<bool> PrintAst("print-ast",
 			llvm::cl::desc("Print AST"),

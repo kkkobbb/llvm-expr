@@ -16,6 +16,13 @@ TESTEXT="ea"
 
 test -f ./${EXEFILE} || { echo "not found './${EXEFILE}'"; exit 1; }
 
+
+run_exefile()
+{
+	./${EXEFILE} -f -output-bc $* ${TESTOPT}
+}
+
+
 testcaselist=$(ls ${TESTDIR}/*.${TESTEXT})
 test_num=0
 success_num=0
@@ -23,7 +30,7 @@ for testcase in ${testcaselist}; do
 	expected_r=$(grep "^##return " ${testcase} | sed "s/^##return //")
 	expected_p=$(grep "^##printn " ${testcase} | sed "s/^##printn //")
 
-	result_pn=$(./${EXEFILE} ${testcase} -f ${TESTOPT} | lli -force-interpreter)
+	result_pn=$(run_exefile ${testcase} | lli -force-interpreter)
 	result_ret=$?
 
 	# 戻り値のテスト

@@ -60,6 +60,7 @@ bool NativeGenPass::run(Module &module, string *fname)
 	auto features = "";
 
 	TargetOptions opt;
+	// gccでコンパイルできるようにするため、PIC
 	auto rm = Optional<Reloc::Model>(Reloc::Model::PIC_);
 	auto targetMachine = target->createTargetMachine(targetTriple, cpu, features, opt, rm);
 
