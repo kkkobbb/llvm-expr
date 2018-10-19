@@ -25,13 +25,9 @@ using namespace expr;
  *
  * 生成に成功した場合、真を返す
  */
-bool IRGenerator::generate(unique_ptr<AstNode> ast_root)
+bool IRGenerator::generate(AstNode &ast_root)
 {
-	if (ast_root.get() == nullptr) {
-		cout << "not found AST root" << endl;
-		return false;
-	}
-
+	// デバッグ用
 	// グローバル変数(定数)を生成する
 	auto &c = irs.getContext();
 	auto &m = irs.getModule();
@@ -46,7 +42,7 @@ bool IRGenerator::generate(unique_ptr<AstNode> ast_root)
 			);
 
 	// IR生成
-	ast_root->getValue(irs);
+	ast_root.getValue(irs);
 	TheModule = irs.moveModule();
 
 	return !irs.isError();

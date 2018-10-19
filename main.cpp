@@ -70,18 +70,19 @@ int main(int argc, char *argv[])
 
 	// IR生成
 	IRGenerator irGen;
-	if (!irGen.generate(move(ast)))
+	if (!irGen.generate(*ast.get()))
 		return 1;
 	auto m = irGen.get();
+
+	// ファイル名設定
 	auto ifname = llvm::sys::path::filename(InputFilename);
 	m->setSourceFileName(ifname);
 
 	if (Optim) {
 		// 最適化
 		OptimGenerator opGen;
-		if (!opGen.generate(move(m)))
+		if (!opGen.run(*m.get()))
 			return 1;
-		m = opGen.get();
 	}
 
 	if (PrintLlvm) {
@@ -98,7 +99,7 @@ int main(int argc, char *argv[])
 	string *ofname = &OutputFilename;
 	if (Force)
 		ofname = nullptr;
-	cGen.generate(m.get(), ofname);
+	cGen.run(*m.get(), ofname);
 
 	return 0;
 }

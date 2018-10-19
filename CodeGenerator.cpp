@@ -25,7 +25,7 @@ using namespace expr;
  *
  * 生成に成功した場合、真を返す
  */
-bool CodeGenerator::generate(Module *module, string *fname)
+bool CodeGenerator::run(Module &module, string *fname)
 {
 	string stdoutfile = "-";
 	if (fname == nullptr)
@@ -37,7 +37,7 @@ bool CodeGenerator::generate(Module *module, string *fname)
 			*fname,
 			errorInfo,
 			sys::fs::OpenFlags::F_None);
-	WriteBitcodeToFile(module, outfile);
+	WriteBitcodeToFile(&module, outfile);
 
 	return true;
 }
