@@ -1,0 +1,20 @@
+# 文字列
+##return 0
+
+decl fnc printf:int(:string, ...);
+
+##printn AAA
+printf("AA\x41\n");
+##printn aa"
+printf("aa\"\n");
+##printn aa"
+printf("aa\"\n");
+##printn bb\b
+printf("bb\\b\n");
+##printn cc	c
+printf("cc\tc\n");
+##printn dd\\	d
+printf("dd\\\\\td\n");
+
+0;
+

@@ -135,7 +135,7 @@ Value *AstDefinitionFunc::getValue(IRState &irs)
 	auto bodyValue = this->body->getValue(irs);
 
 	// body内でreturn していた場合、ここでreturnを追加しない
-	if(!isa<ReturnInst>(bodyValue)) {
+	if (!isa<ReturnInst>(bodyValue)) {
 		if ((bodyValue == nullptr) || (retType == Type::getVoidTy(c)))
 			builder.CreateRetVoid();
 		else

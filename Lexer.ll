@@ -130,6 +130,9 @@ std::string *get_string(char *txt)
 			escsq += std::stoi(str->substr(pos + 2, 2), nullptr, 16);
 			replace_size = 4;
 			break;
+		case '\\':
+			pos += 2;
+			continue;
 		default:
 			++pos;
 			continue;

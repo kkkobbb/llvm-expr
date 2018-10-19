@@ -6,6 +6,7 @@
 #include <llvm/IR/Module.h>
 #include <llvm/Support/CommandLine.h>
 #include <llvm/Support/raw_ostream.h>
+#include <llvm/Support/Path.h>
 
 #include "Node/AstNode.h"
 #include "AstGenerator.h"
@@ -72,7 +73,8 @@ int main(int argc, char *argv[])
 	if (!irGen.generate(move(ast)))
 		return 1;
 	auto m = irGen.get();
-	m->setSourceFileName(InputFilename);
+	auto ifname = llvm::sys::path::filename(InputFilename);
+	m->setSourceFileName(ifname);
 
 	if (Optim) {
 		// 最適化
@@ -93,10 +95,10 @@ int main(int argc, char *argv[])
 
 	// 目的コード生成
 	CodeGenerator cGen;
-	string *fname = &OutputFilename;
+	string *ofname = &OutputFilename;
 	if (Force)
-		fname = nullptr;
-	cGen.generate(m.get(), fname);
+		ofname = nullptr;
+	cGen.generate(m.get(), ofname);
 
 	return 0;
 }

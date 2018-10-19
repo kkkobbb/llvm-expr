@@ -83,7 +83,7 @@ Value *AstConstantString::getValue(IRState &irs)
 
 AstIdentifier::AstIdentifier(std::string *name, AstNode *type)
 {
-	if(name == nullptr)
+	if (name == nullptr)
 		this->name.reset(new std::string(""));
 	else
 		this->name.reset(name);
