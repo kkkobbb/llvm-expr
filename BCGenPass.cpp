@@ -10,6 +10,8 @@
 
 #include "BCGenPass.h"
 
+#define DEFAULT_FNAME "a.bc"
+
 
 using namespace std;
 using namespace llvm;
@@ -29,6 +31,8 @@ bool BCGenPass::run(Module &module, string *fname)
 	string stdoutfile = "-";
 	if (fname == nullptr)
 		fname = &stdoutfile;
+	if (fname->empty())
+		fname->assign(DEFAULT_FNAME);
 
 	// 目的ファイル生成
 	error_code errorInfo;
@@ -37,6 +41,7 @@ bool BCGenPass::run(Module &module, string *fname)
 			errorInfo,
 			sys::fs::OpenFlags::F_None);
 	WriteBitcodeToFile(&module, outfile);
+	outfile.flush();
 
 	return true;
 }
