@@ -11,8 +11,9 @@
 #include "Node/AstNode.h"
 #include "AstGenerator.h"
 #include "IRGenerator.h"
-#include "OptimGenerator.h"
-#include "CodeGenerator.h"
+#include "OptimPass.h"
+#include "BCGenPass.h"
+#include "NativeGenPass.h"
 
 using namespace std;
 using namespace expr;
@@ -30,19 +31,22 @@ int main(int argc, char *argv[])
 	llvm::cl::opt<string> OutputFilename("o",
 			llvm::cl::desc("Specify output filename"),
 			llvm::cl::value_desc("filename"),
-			llvm::cl::init("a.bc"),
+			llvm::cl::init(""),
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<bool> Optim("O",
 			llvm::cl::desc("Enable optimization"),
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<bool> Force("f",
-			llvm::cl::desc("Enable binary output on terminals"),
+			llvm::cl::desc("Enable output on terminals"),
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<bool> PrintAst("print-ast",
 			llvm::cl::desc("Print AST"),
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<bool> PrintLlvm("print-llvm",
 			llvm::cl::desc("Print llvm IR"),
+			llvm::cl::cat(CompilerCategory));
+	llvm::cl::opt<bool> OutputBC("output-bc",
+			llvm::cl::desc("output llvm bit code"),
 			llvm::cl::cat(CompilerCategory));
 	// CompilerCategory以外は非表示
 	llvm::cl::HideUnrelatedOptions({&CompilerCategory});
@@ -70,18 +74,19 @@ int main(int argc, char *argv[])
 
 	// IR生成
 	IRGenerator irGen;
-	if (!irGen.generate(move(ast)))
+	if (!irGen.generate(*ast.get()))
 		return 1;
 	auto m = irGen.get();
+
+	// ファイル名設定
 	auto ifname = llvm::sys::path::filename(InputFilename);
 	m->setSourceFileName(ifname);
 
 	if (Optim) {
 		// 最適化
-		OptimGenerator opGen;
-		if (!opGen.generate(move(m)))
+		OptimPass opp;
+		if (!opp.run(*m.get()))
 			return 1;
-		m = opGen.get();
 	}
 
 	if (PrintLlvm) {
@@ -93,12 +98,20 @@ int main(int argc, char *argv[])
 	// 中間表現表示系のオプションが指定されていた場合、
 	// 以降のコード生成は実行されない
 
-	// 目的コード生成
-	CodeGenerator cGen;
 	string *ofname = &OutputFilename;
 	if (Force)
 		ofname = nullptr;
-	cGen.generate(m.get(), ofname);
+
+	if (OutputBC) {
+		// llvm bit code 生成
+		BCGenPass bcgp;
+		bcgp.run(*m.get(), ofname);
+		return 0;
+	}
+
+	// native code 生成
+	NativeGenPass ngp;
+	ngp.run(*m.get(), ofname);
 
 	return 0;
 }

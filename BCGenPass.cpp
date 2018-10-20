@@ -1,5 +1,4 @@
 /*
- * CodeGenerator
  * ビットコード出力
  */
 #include <memory>
@@ -9,7 +8,9 @@
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Bitcode/BitcodeWriter.h>
 
-#include "CodeGenerator.h"
+#include "BCGenPass.h"
+
+#define DEFAULT_FNAME "a.bc"
 
 
 using namespace std;
@@ -25,11 +26,13 @@ using namespace expr;
  *
  * 生成に成功した場合、真を返す
  */
-bool CodeGenerator::generate(Module *module, string *fname)
+bool BCGenPass::run(Module &module, string *fname)
 {
 	string stdoutfile = "-";
 	if (fname == nullptr)
 		fname = &stdoutfile;
+	if (fname->empty())
+		fname->assign(DEFAULT_FNAME);
 
 	// 目的ファイル生成
 	error_code errorInfo;
@@ -37,7 +40,8 @@ bool CodeGenerator::generate(Module *module, string *fname)
 			*fname,
 			errorInfo,
 			sys::fs::OpenFlags::F_None);
-	WriteBitcodeToFile(module, outfile);
+	WriteBitcodeToFile(&module, outfile);
+	outfile.flush();
 
 	return true;
 }

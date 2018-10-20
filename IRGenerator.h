@@ -21,7 +21,7 @@ namespace expr {
 		IRState irs;
 
 		public:
-		bool generate(std::unique_ptr<AstNode> ast_root);
+		bool generate(AstNode &ast_root);
 		std::unique_ptr<llvm::Module> get();
 	};
 }

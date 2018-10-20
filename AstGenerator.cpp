@@ -1,5 +1,4 @@
 /*
- * AstGenerator
  * 構文木を生成するためのクラス
  */
 #include <fstream>
