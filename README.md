@@ -8,8 +8,12 @@
 
 ## コマンド使い方
 
-* `./exparrc srcfile.ea` で`a.bc`ファイルが生成される
-    * 中身はLLVM IRのビットコード
+* `./exparrc srcfile.ea` で`a.s`ファイルが生成される
+    * 中身はアセンブリコード
+    * ubuntu 18.04 ではgcc clangで実行ファイル生成に成功
+
+* `./exparrc -output-bc srcfile.ea`で`a.bc`ファイルが生成される
+    * 中身はllvmビットコード
 
 ### インタプリタ
 * `lli a.bc` で実行可能
