@@ -29,8 +29,8 @@ using namespace expr;
 
 AstDefinitionVar::AstDefinitionVar(AstIdentifier *decl, AstNode *init)
 {
-	this->decl.reset(decl);
-	this->init.reset(init);
+	this->decl = unique_ptr<AstIdentifier>(decl);
+	this->init = unique_ptr<AstNode>(init);
 }
 
 
@@ -75,9 +75,9 @@ Value *AstDefinitionVar::getValue(IRState &irs)
 
 AstDefinitionFunc::AstDefinitionFunc(AstIdentifier *decl, AstIdentifierList *argumentList, AstNode *body)
 {
-	this->decl.reset(decl);
-	this->argumentList.reset(argumentList);
-	this->body.reset(body);
+	this->decl = unique_ptr<AstIdentifier>(decl);
+	this->argumentList = unique_ptr<AstIdentifierList>(argumentList);
+	this->body = unique_ptr<AstNode>(body);
 }
 
 

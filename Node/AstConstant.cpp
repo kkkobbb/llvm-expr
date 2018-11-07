@@ -30,7 +30,7 @@ using namespace expr;
 AstConstantInt::AstConstantInt(int num)
 {
 	this->num = num;
-	dbg_msg = "(" + std::to_string(num) + ")";
+	dbg_msg = "(" + to_string(num) + ")";
 }
 
 
@@ -51,9 +51,9 @@ Value *AstConstantInt::getValue(IRState &irs)
 AstConstantString::AstConstantString(string *str)
 {
 	if (str == nullptr)
-		this->str.reset(new string(""));
+		this->str = llvm::make_unique<string>("");
 	else
-		this->str.reset(str);
+		this->str = unique_ptr<string>(str);
 
 	dbg_msg = "\"" + *str + "\"";
 }
@@ -81,18 +81,18 @@ Value *AstConstantString::getValue(IRState &irs)
 
 // AstIdentifier
 
-AstIdentifier::AstIdentifier(std::string *name, AstNode *type)
+AstIdentifier::AstIdentifier(string *name, AstNode *type)
 {
 	if (name == nullptr)
-		this->name.reset(new std::string(""));
+		this->name = llvm::make_unique<string>("");
 	else
-		this->name.reset(name);
+		this->name = unique_ptr<string>(name);
 	dbg_msg = "\"" + *this->name + "\"";
-	this->type.reset(type);
+	this->type = unique_ptr<AstNode>(type);
 }
 
 
-void AstIdentifier::print_ast(std::ostream &dout, int indent)
+void AstIdentifier::print_ast(ostream &dout, int indent)
 {
 	AstNode::print_ast(dout, indent);
 	// 子要素の表示

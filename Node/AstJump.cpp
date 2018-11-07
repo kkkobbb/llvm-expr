@@ -29,7 +29,7 @@ using namespace expr;
 
 AstJumpReturn::AstJumpReturn(AstNode *ret)
 {
-	this->ret.reset(ret);
+	this->ret = unique_ptr<AstNode>(ret);
 }
 
 

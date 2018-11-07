@@ -519,7 +519,7 @@ bool MY_NAMESPACE::is_parse_err()
  */
 void MY_NAMESPACE::set_ast(AstNode *root)
 {
-	ast_root.reset(root);
+	ast_root = std::unique_ptr<AstNode>(root);
 }
 
 

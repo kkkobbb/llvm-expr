@@ -29,8 +29,8 @@ using namespace expr;
 
 AstExpression::AstExpression(AstNode *l, AstNode *r)
 {
-	this->l.reset(l);
-	this->r.reset(r);
+	this->l = unique_ptr<AstNode>(l);
+	this->r = unique_ptr<AstNode>(r);
 }
 
 

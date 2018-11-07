@@ -20,8 +20,8 @@ using namespace expr;
 
 IRState::IRState()
 {
-	builder.reset(new IRBuilder<>(TheContext));
-	TheModule.reset(new Module("code", TheContext));
+	builder = llvm::make_unique<IRBuilder<> >(TheContext);
+	TheModule = llvm::make_unique<Module>("code", TheContext);
 }
 
 

@@ -29,8 +29,8 @@ using namespace expr;
 
 AstDeclarationFunc::AstDeclarationFunc(AstIdentifier *decl, AstIdentifierList *argumentList, bool vararg)
 {
-	this->decl.reset(decl);
-	this->argumentList.reset(argumentList);
+	this->decl = unique_ptr<AstIdentifier>(decl);
+	this->argumentList = unique_ptr<AstIdentifierList>(argumentList);
 	this->vararg = vararg;
 }
 
