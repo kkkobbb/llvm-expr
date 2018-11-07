@@ -29,9 +29,9 @@ using namespace expr;
 
 AstControlIf::AstControlIf(AstNode *cond, AstNode *proc, AstNode *elseProc)
 {
-	this->cond.reset(cond);
-	this->proc.reset(proc);
-	this->elseProc.reset(elseProc);
+	this->cond = unique_ptr<AstNode>(cond);
+	this->proc = unique_ptr<AstNode>(proc);
+	this->elseProc = unique_ptr<AstNode>(elseProc);
 }
 
 
@@ -123,8 +123,8 @@ Value *AstControlIf::getValue(IRState &irs)
 
 AstControlWhile::AstControlWhile(AstNode *cond, AstNode *proc)
 {
-	this->cond.reset(cond);
-	this->proc.reset(proc);
+	this->cond = unique_ptr<AstNode>(cond);
+	this->proc = unique_ptr<AstNode>(proc);
 }
 
 
