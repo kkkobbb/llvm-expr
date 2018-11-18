@@ -28,10 +28,8 @@ using namespace expr;
 // AstExpression
 
 AstExpression::AstExpression(AstNode *l, AstNode *r)
-{
-	this->l = unique_ptr<AstNode>(l);
-	this->r = unique_ptr<AstNode>(r);
-}
+	: l(l), r(r)
+{}
 
 
 /*
@@ -77,10 +75,8 @@ void AstExpression::print_ast(ostream &dout, int indent)
 // AstExpressionFunc
 
 AstExpressionFunc::AstExpressionFunc(AstIdentifier *identifier, AstList *argumentList)
-	: AstExpression(identifier, argumentList) {
-		this->identifier = identifier;
-		this->argumentList = argumentList;
-}
+	: AstExpression(identifier, argumentList), identifier(identifier), argumentList(argumentList)
+{}
 
 
 /*
@@ -110,9 +106,8 @@ Value *AstExpressionFunc::getValue(IRState &irs)
 // AstExpressionAS
 
 AstExpressionAS::AstExpressionAS(AstIdentifier *identifier, AstNode *value)
-	: AstExpression(identifier, value) {
-		this->identifier = identifier;
-}
+	: AstExpression(identifier, value), identifier(identifier)
+{}
 
 
 /*

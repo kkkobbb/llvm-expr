@@ -28,11 +28,8 @@ using namespace expr;
 // AstDeclarationFunc
 
 AstDeclarationFunc::AstDeclarationFunc(AstIdentifier *decl, AstIdentifierList *argumentList, bool vararg)
-{
-	this->decl = unique_ptr<AstIdentifier>(decl);
-	this->argumentList = unique_ptr<AstIdentifierList>(argumentList);
-	this->vararg = vararg;
-}
+	: decl(decl), argumentList(argumentList), vararg(vararg)
+{}
 
 
 void AstDeclarationFunc::print_ast(std::ostream &dout, int indent)

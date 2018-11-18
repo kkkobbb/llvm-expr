@@ -28,11 +28,8 @@ using namespace expr;
 // AstControlIf
 
 AstControlIf::AstControlIf(AstNode *cond, AstNode *proc, AstNode *elseProc)
-{
-	this->cond = unique_ptr<AstNode>(cond);
-	this->proc = unique_ptr<AstNode>(proc);
-	this->elseProc = unique_ptr<AstNode>(elseProc);
-}
+	: cond(cond), proc(proc), elseProc(elseProc)
+{}
 
 
 void AstControlIf::print_ast(ostream &dout, int indent)
@@ -122,10 +119,8 @@ Value *AstControlIf::getValue(IRState &irs)
 // AstControlWhile
 
 AstControlWhile::AstControlWhile(AstNode *cond, AstNode *proc)
-{
-	this->cond = unique_ptr<AstNode>(cond);
-	this->proc = unique_ptr<AstNode>(proc);
-}
+	: cond(cond), proc(proc)
+{}
 
 
 void AstControlWhile::print_ast(ostream &dout, int indent)

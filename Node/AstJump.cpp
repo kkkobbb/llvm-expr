@@ -28,9 +28,8 @@ using namespace expr;
 // AstJumpReturn
 
 AstJumpReturn::AstJumpReturn(AstNode *ret)
-{
-	this->ret = unique_ptr<AstNode>(ret);
-}
+	: ret(ret)
+{}
 
 
 void AstJumpReturn::print_ast(ostream &dout, int indent)
