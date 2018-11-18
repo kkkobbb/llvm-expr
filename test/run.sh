@@ -1,7 +1,10 @@
 #!/bin/sh
 # 動作確認用
 #
+# ./run.sh [exefile]
+#
 # $TESTDIR以下で拡張子が${TESTEXT}のファイルがテストケースとなる
+# コマンドライン引数でexefileの指定があればその実行ファイルでテストする
 #
 # TESTOPT="-O" ./test.sh とかでテスト時の追加のオプションを指定可能
 #
@@ -9,10 +12,14 @@
 # テストケースとなるファイルに以下のコメントを付ける
 #     * `##return 0`   戻り値の期待値
 #     * `##printn aaa` 標準出力への出力の期待値(改行付き) (エスケープシーケンスは使えない)
+#
 
 EXEFILE="exparrc"
-TESTDIR="test"
+TESTDIR="$(dirname $0)"
 TESTEXT="ea"
+
+# 実行ファイルの指定
+test $# -eq 1 && EXEFILE="$1"
 
 test -f ./${EXEFILE} || { echo "not found './${EXEFILE}'"; exit 1; }
 

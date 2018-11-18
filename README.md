@@ -8,11 +8,22 @@
 
 
 ## 準備
+* 以下のコマンドをビルド時に使用するのでなければインストール
+    * `make`
+    * `g++`
+    * `llvm-config`
+    * `flex`
+    * `bison`
 * Ubuntu 16.04
     * `sudo apt install llvm zlib1g-dev` (llvm 3.8のビルドオプションで`-lz`が指定されるためzlibも必要)
     * `sudo apt install llvm-5.0` (llvm 5.0を使う場合)
 * Ubuntu 18.04
     * `sudo apt install llvm` (llvm 6.0)
+
+
+## ビルド
+* `make`
+* 成功すると`exparrc`が生成される
 
 
 ## コマンド使い方
