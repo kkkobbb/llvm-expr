@@ -28,10 +28,8 @@ using namespace expr;
 // AstDefinitionVar
 
 AstDefinitionVar::AstDefinitionVar(AstIdentifier *decl, AstNode *init)
-{
-	this->decl = unique_ptr<AstIdentifier>(decl);
-	this->init = unique_ptr<AstNode>(init);
-}
+	: decl(decl), init(init)
+{}
 
 
 void AstDefinitionVar::print_ast(ostream &dout, int indent)
@@ -74,11 +72,8 @@ Value *AstDefinitionVar::getValue(IRState &irs)
 // AstDefinitionFunc
 
 AstDefinitionFunc::AstDefinitionFunc(AstIdentifier *decl, AstIdentifierList *argumentList, AstNode *body)
-{
-	this->decl = unique_ptr<AstIdentifier>(decl);
-	this->argumentList = unique_ptr<AstIdentifierList>(argumentList);
-	this->body = unique_ptr<AstNode>(body);
-}
+	: decl(decl), argumentList(argumentList), body(body)
+{}
 
 
 void AstDefinitionFunc::print_ast(std::ostream &dout, int indent)

@@ -28,8 +28,8 @@ using namespace expr;
 // AstConstantInt
 
 AstConstantInt::AstConstantInt(int num)
+	: num(num)
 {
-	this->num = num;
 	dbg_msg = "(" + to_string(num) + ")";
 }
 
