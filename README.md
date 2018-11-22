@@ -11,12 +11,12 @@
 * 以下のコマンドをビルド時に使用するのでなければインストール
     * `make`
     * `g++`
-    * `llvm-config`
     * `flex`
     * `bison`
 * Ubuntu 16.04
-    * `sudo apt install llvm zlib1g-dev` (llvm 3.8のビルドオプションで`-lz`が指定されるためzlibも必要)
-    * `sudo apt install llvm-5.0` (llvm 5.0を使う場合)
+    * llvm 3.8を使う場合 `sudo apt install llvm zlib1g-dev`
+        * (ビルドオプションで`-lz`が指定されるためzlibも必要)
+    * llvm 5.0を使う場合 `sudo apt install llvm-5.0`
 * Ubuntu 18.04
     * `sudo apt install llvm` (llvm 6.0)
 
@@ -29,20 +29,14 @@
 ## コマンド使い方
 * `./exparrc srcfile.ea` で`a.s`ファイルが生成される
     * 中身はアセンブリコード
-    * ubuntu 18.04 ではgcc clangで実行ファイル生成に成功
+    * ubuntu 18.04 では`gcc` `clang`で実行ファイル生成に成功
 
 * `./exparrc -output-bc srcfile.ea`で`a.bc`ファイルが生成される
     * 中身はllvmビットコード
-
-### インタプリタ
-* `lli a.bc` で実行可能
-    * 出力はしないので、`echo $?` とかで戻り値を確認する
-
-### アセンブリ出力 -> コンパイル
-* `llc -relocation-model=pic a.bc` で `a.s` が生成される
-    * 中身はネイティブのアセンブリコード
-    * picじゃないとgccでエラーになる(clangではエラーにならない)
-* `gcc a.s` とかで実行ファイル生成して実行可能
+    * インタプリタ
+        * `lli a.bc` で実行可能
+    * コンパイル (picじゃないとgccでエラーになる)
+        * `llc -relocation-model=pic a.bc` で `a.s` が生成される
 
 
 ## 文法
@@ -52,12 +46,13 @@
     * 加減乗除余 `+` `-` `*` `/` `%`
     * 分岐 `if` `else`
     * 繰り返し `while`
+    * 型 `void` `int` `string`
     * 関数定義 `fnc`
     * 変数定義 `var`
     * エラー強制発生 `compileerr`
 * 外部関数呼び出し
     * `int` `char *` `...`の引数をとる関数なら呼び出し可能
-        * 上は正確には、外部関数を呼び出すための宣言を書ける条件となる
+        * 正確には、この条件でのみ外部関数宣言を書ける
     * 呼び出せる標準ライブラリの関数の例
         * `putchar`
         * `printf`

@@ -1,5 +1,5 @@
 /*
- * LLVM確認用言語 Expr コンパイラ
+ * LLVM確認用言語 Exparr コンパイラ
  */
 #include <fstream>
 
