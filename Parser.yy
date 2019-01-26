@@ -257,7 +257,9 @@ while_expression
 
 /* 宣言文 */
 declarator
-    : RE_DECL RE_FNC identifier_type '(' ')'
+    : RE_DECL RE_VAR identifier_type
+        {}
+    | RE_DECL RE_FNC identifier_type '(' ')'
         { $$ = new AstDeclarationFunc((AstIdentifier *)$3, nullptr); }
     | RE_DECL RE_FNC identifier_type '(' identifier_type_list ')'
         { $$ = new AstDeclarationFunc((AstIdentifier *)$3, (AstIdentifierList *)$5); }
