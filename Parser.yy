@@ -279,7 +279,7 @@ definition
 
 identifier_type_list
     : identifier_type
-       { $$ = new AstIdentifierList((AstIdentifier *)$1); }
+        { $$ = new AstIdentifierList((AstIdentifier *)$1); }
     | identifier_type_list ',' identifier_type
         {
           ((AstIdentifierList *)$1)->add((AstIdentifier *)$3);
@@ -320,7 +320,7 @@ myerror_compile
 myerror_runtime
     : RE_RUNTIMEERR
         {}
-    | RE_RUNTIMEERR IDENTIFIER  /* TODO ""の文字列を指定するように */
+    | RE_RUNTIMEERR STRING
         {}
     ;
 
