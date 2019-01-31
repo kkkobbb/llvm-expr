@@ -15,12 +15,12 @@
 
 #include "NativeOutputPass.h"
 
-#define DEFAULT_FNAME "a.s"
-
 
 using namespace std;
 using namespace llvm;
 using namespace expr;
+
+static const string DEFAULT_FNAME = "a.s";
 
 
 
@@ -60,13 +60,13 @@ bool NativeOutputPass::run(Module &module, string &fname)
 
 	module.setDataLayout(targetMachine->createDataLayout());
 
-	string *outfname = new string(DEFAULT_FNAME);
+	string outfname = DEFAULT_FNAME;
 	if (!fname.empty())
-		outfname = &fname;
+		outfname = fname;
 	// 目的ファイル生成
 	error_code errorInfo;
 	raw_fd_ostream outfile(
-			*outfname,
+			outfname,
 			errorInfo,
 			sys::fs::OpenFlags::F_None);
 

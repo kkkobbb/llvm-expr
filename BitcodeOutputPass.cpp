@@ -10,12 +10,12 @@
 
 #include "BitcodeOutputPass.h"
 
-#define DEFAULT_FNAME "a.bc"
-
 
 using namespace std;
 using namespace llvm;
 using namespace expr;
+
+static const string DEFAULT_FNAME = "a.bc";
 
 
 
@@ -28,14 +28,14 @@ using namespace expr;
  */
 bool BitcodeOutputPass::run(Module &module, string &fname)
 {
-	string *outfname = new string(DEFAULT_FNAME);
+	string outfname = DEFAULT_FNAME;
 	if (!fname.empty())
-		outfname = &fname;
+		outfname = fname;
 
 	// 目的ファイル生成
 	error_code errorInfo;
 	raw_fd_ostream outfile(
-			*outfname,
+			outfname,
 			errorInfo,
 			sys::fs::OpenFlags::F_None);
 	WriteBitcodeToFile(&module, outfile);

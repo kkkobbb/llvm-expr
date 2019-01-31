@@ -5,12 +5,14 @@
 
 #include <llvm/IR/Module.h>
 
+#include "OutputPass.h"
+
 
 
 namespace expr {
-	class NativeOutputPass {
+	class NativeOutputPass: public OutputPass {
 		public:
-		bool run(llvm::Module &module, std::string &fname);
+		bool run(llvm::Module &module, std::string &fname) override;
 	};
 }
 
