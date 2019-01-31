@@ -26,18 +26,16 @@ using namespace expr;
  *
  * 生成に成功した場合、真を返す
  */
-bool BCGenPass::run(Module &module, string *fname)
+bool BCGenPass::run(Module &module, string &fname)
 {
-	string stdoutfile = "-";
-	if (fname == nullptr)
-		fname = &stdoutfile;
-	if (fname->empty())
-		fname->assign(DEFAULT_FNAME);
+	string *outfname = new string(DEFAULT_FNAME);
+	if (!fname.empty())
+		outfname = &fname;
 
 	// 目的ファイル生成
 	error_code errorInfo;
 	raw_fd_ostream outfile(
-			*fname,
+			*outfname,
 			errorInfo,
 			sys::fs::OpenFlags::F_None);
 	WriteBitcodeToFile(&module, outfile);

@@ -10,7 +10,7 @@
 namespace expr {
 	class NativeGenPass {
 		public:
-		bool run(llvm::Module &module, std::string *fname);
+		bool run(llvm::Module &module, std::string &fname);
 	};
 }
 

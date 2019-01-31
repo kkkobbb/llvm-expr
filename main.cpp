@@ -15,6 +15,8 @@
 #include "BCGenPass.h"
 #include "NativeGenPass.h"
 
+#define STDOUT_FNAME "-"
+
 using namespace std;
 using namespace expr;
 
@@ -100,18 +102,18 @@ int main(int argc, char *argv[])
 
 	string *ofname = &OutputFilename;
 	if (Force)
-		ofname = nullptr;
+		ofname = new string(STDOUT_FNAME);
 
 	if (OutputBC) {
 		// llvm bit code 生成
 		BCGenPass bcgp;
-		bcgp.run(*m.get(), ofname);
+		bcgp.run(*m.get(), *ofname);
 		return 0;
 	}
 
 	// native code 生成
 	NativeGenPass ngp;
-	ngp.run(*m.get(), ofname);
+	ngp.run(*m.get(), *ofname);
 
 	return 0;
 }
