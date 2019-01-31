@@ -1,5 +1,5 @@
-#ifndef NATIVEGENPASS_H
-#define NATIVEGENPASS_H
+#ifndef BITCODE_OUPUT_PASS_H
+#define BITCODE_OUPUT_PASS_H
 
 #include <string>
 
@@ -8,12 +8,12 @@
 
 
 namespace expr {
-	class NativeGenPass {
+	class BitcodeOutputPass {
 		public:
 		bool run(llvm::Module &module, std::string &fname);
 	};
 }
 
 
-#endif  // NATIVEGENPASS_H
+#endif  // BITCODE_OUPUT_PASS_H
 

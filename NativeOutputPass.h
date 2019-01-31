@@ -1,5 +1,5 @@
-#ifndef BCGENPASS_H
-#define BCGENPASS_H
+#ifndef NATIVE_OUTPUT_PASS_H
+#define NATIVE_OUTPUT_PASS_H
 
 #include <string>
 
@@ -8,12 +8,12 @@
 
 
 namespace expr {
-	class BCGenPass {
+	class NativeOutputPass {
 		public:
 		bool run(llvm::Module &module, std::string &fname);
 	};
 }
 
 
-#endif  // BCGENPASS_H
+#endif  // NATIVE_OUTPUT_PASS_H
 

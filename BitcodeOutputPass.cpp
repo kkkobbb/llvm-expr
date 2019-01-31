@@ -8,7 +8,7 @@
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Bitcode/BitcodeWriter.h>
 
-#include "BCGenPass.h"
+#include "BitcodeOutputPass.h"
 
 #define DEFAULT_FNAME "a.bc"
 
@@ -26,7 +26,7 @@ using namespace expr;
  *
  * 生成に成功した場合、真を返す
  */
-bool BCGenPass::run(Module &module, string &fname)
+bool BitcodeOutputPass::run(Module &module, string &fname)
 {
 	string *outfname = new string(DEFAULT_FNAME);
 	if (!fname.empty())

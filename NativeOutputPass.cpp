@@ -13,7 +13,7 @@
 #include <llvm/Target/TargetMachine.h>
 #include <llvm/Target/TargetOptions.h>
 
-#include "NativeGenPass.h"
+#include "NativeOutputPass.h"
 
 #define DEFAULT_FNAME "a.s"
 
@@ -31,7 +31,7 @@ using namespace expr;
  *
  * 生成に成功した場合、真を返す
  */
-bool NativeGenPass::run(Module &module, string &fname)
+bool NativeOutputPass::run(Module &module, string &fname)
 {
 	// Initialize the target registry etc.
 	InitializeAllTargetInfos();

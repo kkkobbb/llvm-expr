@@ -12,8 +12,8 @@
 #include "AstGenerator.h"
 #include "IRGenerator.h"
 #include "OptimPass.h"
-#include "BCGenPass.h"
-#include "NativeGenPass.h"
+#include "BitcodeOutputPass.h"
+#include "NativeOutputPass.h"
 
 #define STDOUT_FNAME "-"
 
@@ -106,14 +106,14 @@ int main(int argc, char *argv[])
 
 	if (OutputBC) {
 		// llvm bit code 生成
-		BCGenPass bcgp;
-		bcgp.run(*m.get(), *ofname);
+		BitcodeOutputPass bcop;
+		bcop.run(*m.get(), *ofname);
 		return 0;
 	}
 
 	// native code 生成
-	NativeGenPass ngp;
-	ngp.run(*m.get(), *ofname);
+	NativeOutputPass ncop;
+	ncop.run(*m.get(), *ofname);
 
 	return 0;
 }
