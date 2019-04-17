@@ -1,10 +1,10 @@
 # 加算
-##return 0
 
 decl fnc printf:int(:string, ...);
 
 ##printn 7
 printf("%d\n", 4 + 3);
 
+##return 0
 0;
 

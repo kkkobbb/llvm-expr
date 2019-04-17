@@ -257,7 +257,9 @@ while_expression
 
 /* 宣言文 */
 declarator
-    : RE_DECL RE_FNC identifier_type '(' ')'
+    : RE_DECL RE_VAR identifier_type
+        {}
+    | RE_DECL RE_FNC identifier_type '(' ')'
         { $$ = new AstDeclarationFunc((AstIdentifier *)$3, nullptr); }
     | RE_DECL RE_FNC identifier_type '(' identifier_type_list ')'
         { $$ = new AstDeclarationFunc((AstIdentifier *)$3, (AstIdentifierList *)$5); }
@@ -277,7 +279,7 @@ definition
 
 identifier_type_list
     : identifier_type
-       { $$ = new AstIdentifierList((AstIdentifier *)$1); }
+        { $$ = new AstIdentifierList((AstIdentifier *)$1); }
     | identifier_type_list ',' identifier_type
         {
           ((AstIdentifierList *)$1)->add((AstIdentifier *)$3);
@@ -318,7 +320,7 @@ myerror_compile
 myerror_runtime
     : RE_RUNTIMEERR
         {}
-    | RE_RUNTIMEERR IDENTIFIER  /* TODO ""の文字列を指定するように */
+    | RE_RUNTIMEERR STRING
         {}
     ;
 

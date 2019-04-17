@@ -1,5 +1,4 @@
 # 文字列
-##return 0
 
 decl fnc printf:int(:string, ...);
 
@@ -16,5 +15,6 @@ printf("cc\tc\n");
 ##printn dd\\	d
 printf("dd\\\\\td\n");
 
+##return 0
 0;
 

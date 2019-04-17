@@ -8,14 +8,14 @@
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Bitcode/BitcodeWriter.h>
 
-#include "BCGenPass.h"
-
-#define DEFAULT_FNAME "a.bc"
+#include "BitcodeOutputPass.h"
 
 
 using namespace std;
 using namespace llvm;
 using namespace expr;
+
+static const string DEFAULT_FNAME = "a.bc";
 
 
 
@@ -26,18 +26,16 @@ using namespace expr;
  *
  * 生成に成功した場合、真を返す
  */
-bool BCGenPass::run(Module &module, string *fname)
+bool BitcodeOutputPass::run(Module &module, string &fname)
 {
-	string stdoutfile = "-";
-	if (fname == nullptr)
-		fname = &stdoutfile;
-	if (fname->empty())
-		fname->assign(DEFAULT_FNAME);
+	string outfname = DEFAULT_FNAME;
+	if (!fname.empty())
+		outfname = fname;
 
 	// 目的ファイル生成
 	error_code errorInfo;
 	raw_fd_ostream outfile(
-			*fname,
+			outfname,
 			errorInfo,
 			sys::fs::OpenFlags::F_None);
 	WriteBitcodeToFile(&module, outfile);

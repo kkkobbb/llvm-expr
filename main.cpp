@@ -1,6 +1,7 @@
 /*
  * LLVM確認用言語 Exparr コンパイラ
  */
+#include <memory>
 #include <fstream>
 
 #include <llvm/IR/Module.h>
@@ -12,11 +13,14 @@
 #include "AstGenerator.h"
 #include "IRGenerator.h"
 #include "OptimPass.h"
-#include "BCGenPass.h"
-#include "NativeGenPass.h"
+#include "OutputPass.h"
+#include "OutputPassFactory.h"
+
 
 using namespace std;
 using namespace expr;
+
+static const string STDOUT_FNAME = "-";
 
 
 
@@ -98,20 +102,13 @@ int main(int argc, char *argv[])
 	// 中間表現表示系のオプションが指定されていた場合、
 	// 以降のコード生成は実行されない
 
-	string *ofname = &OutputFilename;
+	string ofname = OutputFilename;
 	if (Force)
-		ofname = nullptr;
+		ofname = STDOUT_FNAME;
 
-	if (OutputBC) {
-		// llvm bit code 生成
-		BCGenPass bcgp;
-		bcgp.run(*m.get(), ofname);
-		return 0;
-	}
-
-	// native code 生成
-	NativeGenPass ngp;
-	ngp.run(*m.get(), ofname);
+	OutputPassFactory opf;
+	auto op = opf.create(OutputBC);
+	op->run(*m.get(), ofname);
 
 	return 0;
 }

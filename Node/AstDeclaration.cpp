@@ -11,7 +11,6 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/Function.h>
-#include <llvm/IR/Verifier.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
 
@@ -62,9 +61,9 @@ Value *AstDeclarationFunc::getValue(IRState &irs)
 	auto funcType = FunctionType::get(retType, *argTypes, vararg);
 
 	auto name = decl->getName();
-	auto func = Function::Create(funcType, Function::ExternalLinkage, *name, &m);
+	Function::Create(funcType, Function::ExternalLinkage, *name, &m);
 
-	verifyFunction(*func, &errs());
+	// 最後にverifyModule()を実行するのでここで関数のチェックをしない
 
 	return builder.getInt32(0);
 }

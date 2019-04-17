@@ -1,10 +1,10 @@
 # 乗算
-##return 0
 
 decl fnc printf:int(:string, ...);
 
 ##printn 18
 printf("%d\n", 3 * 6);
 
+##return 0
 0;
 

@@ -1,5 +1,4 @@
 # if文確認
-##return 0
 
 decl fnc printf:int(:string, ...);
 
@@ -15,5 +14,6 @@ a <- a + 10;
 ##printn 11
 printf("%d\n", a);
 
+##return 0
 0;
 

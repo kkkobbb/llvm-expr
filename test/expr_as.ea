@@ -1,0 +1,13 @@
+# 代入
+
+decl fnc printf:int(:string, ...);
+
+a <- 2;
+3 -> b;
+
+##printn 2 3
+printf("%d %d\n", a, b);
+
+##return 0
+0;
+

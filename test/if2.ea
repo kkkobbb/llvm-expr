@@ -1,5 +1,4 @@
 # if
-##return 0
 
 decl fnc printf:int(:string, ...);
 
@@ -13,5 +12,6 @@ else
 ##printn 0
 printf("%d\n", a);
 
+##return 0
 0;
 

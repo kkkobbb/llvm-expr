@@ -59,7 +59,7 @@ for testcase in ${testcaselist}; do
 			success_num=$((success_num + 1))
 			printf "\e[32mSuccess:  (printn)\e[m"
 		else
-			printf "\e[31mFailure:  (printn ${result_pn}:${expected_p})\e[m"
+			printf "\e[31mFailure:  (printn\n${result_pn}\n:\n${expected_p}\n)\e[m"
 		fi
 		echo "  [${testcase}]"
 	fi

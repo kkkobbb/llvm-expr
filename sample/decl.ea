@@ -6,6 +6,7 @@ decl fnc getval:int(:int, :string);
 decl fnc puts:int(:string);
 decl fnc putchar:int(:int);
 decl fnc printf:int(:string, ...);
+decl fnc atoi:int(:string);
 
 
 
@@ -17,5 +18,5 @@ puts("AAA");
 puts("CCCCC");
 printf("printf\n");
 
-0;
+atoi("2");
 

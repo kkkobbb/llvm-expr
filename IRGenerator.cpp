@@ -6,6 +6,7 @@
 
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/Verifier.h>
 #include <llvm/IR/GlobalVariable.h>
 
 #include "Node/AstNode.h"
@@ -42,6 +43,12 @@ bool IRGenerator::generate(AstNode &ast_root)
 
 	// IR生成
 	ast_root.getValue(irs);
+
+	// エラーがあった場合、終了する
+	bool errored = verifyModule(m, &errs());
+	if (errored)
+		return false;
+
 	TheModule = irs.moveModule();
 
 	return !irs.isError();

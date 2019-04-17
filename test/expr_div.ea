@@ -1,10 +1,10 @@
 # 除算
-##return 0
 
 decl fnc printf:int(:string, ...);
 
 ##printn 4
 printf("%d\n", 12 / 3);
 
+##return 0
 0;
 
