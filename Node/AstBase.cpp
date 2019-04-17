@@ -11,7 +11,6 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/Function.h>
-#include <llvm/IR/Verifier.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
 
@@ -126,7 +125,7 @@ Value *AstUnit::getValue(IRState &irs)
 	auto &builder = irs.getBuilder();
 
 	// 文法には関数定義はないが、
-	// LLVM IRでは関数を定義する必要があるため
+	// LLVM IRではmain関数を定義する必要があるため
 	// 便宜上ここで関数mainを定義する
 	// (全ての処理は関数mainの処理とする)
 
@@ -142,12 +141,15 @@ Value *AstUnit::getValue(IRState &irs)
 	// 子要素の実行
 	auto *v = AstList::getValue(irs);
 
-	// 値を返していない場合、0を返す
-	if (!v)
-		v = builder.getInt32(0);
-
-	if (!isa<ReturnInst>(v))
+	// returnしていない場合、最後の式を戻り値とする
+	if (!isa<ReturnInst>(v)) {
+		// 値がない、またはvoidを返している場合、0を返す
+		if (!v || v->getType() == Type::getVoidTy(c))
+			v = builder.getInt32(0);
 		builder.CreateRet(v);
+	}
+
+	// 最後にverifyModule()を実行するのでここで関数のチェックをしない
 
 	return nullptr;
 }

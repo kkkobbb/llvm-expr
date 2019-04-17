@@ -1,0 +1,15 @@
+# main関数の戻り値 (voidの場合、0を返す)
+
+decl fnc printf:int(:string, ...);
+
+fnc funcv:void (a:int) {
+	printf("%d\n", a);
+};
+
+# ここで文法エラーになるのでコンパイルは中断する
+return funcv(5);
+
+# lliでエラーになるので戻り値は0にならない
+# テスト時エラーの文言が出力される
+##return 255
+

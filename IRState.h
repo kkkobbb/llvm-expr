@@ -14,6 +14,7 @@ namespace expr {
 		public:
 		IRState();
 		bool isError();
+		void setError();
 		llvm::LLVMContext &getContext();
 		llvm::Module &getModule();
 		std::unique_ptr<llvm::Module> moveModule();

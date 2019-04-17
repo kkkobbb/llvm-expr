@@ -34,6 +34,15 @@ bool IRState::isError()
 }
 
 
+/*
+ * エラーフラグを真にする
+ */
+void IRState::setError()
+{
+	errorFlag = true;
+}
+
+
 LLVMContext &IRState::getContext()
 {
 	return TheContext;

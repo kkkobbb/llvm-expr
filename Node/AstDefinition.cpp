@@ -11,7 +11,6 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/Function.h>
-#include <llvm/IR/Verifier.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
 
@@ -142,7 +141,7 @@ Value *AstDefinitionFunc::getValue(IRState &irs)
 	// 現在の関数を戻す
 	irs.popCurFunc();
 
-	verifyFunction(*func, &errs());
+	// 最後にverifyModule()を実行するのでここで関数のチェックをしない
 
 	return nullptr;
 }
