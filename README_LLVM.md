@@ -30,6 +30,7 @@
         * seh... はintel製品の擬似命令っぽい
         * 例外に関する処理っぽい
             * <http://d.hatena.ne.jp/a4lg/20110111/1294720293>
+            * <http://sile.hatenablog.jp/entry/20100206/1265454978>
     * `llc` では`-exception-model=dwarf`を付けると回避できた
         * llvmのライブラリでこれ相当の設定がある？
         * `TargetOptions` クラス
