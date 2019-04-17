@@ -1,5 +1,7 @@
 # 関数定義
-# 7
+
+decl fnc printf:int(:string, ...);
+
 
 fnc func:int (a:int, b:int) {
 	a <- b + 1;
@@ -10,5 +12,15 @@ fnc func:int (a:int, b:int) {
 func(1, 2) -> b;
 func(2, 3) -> c;
 
+# 7
 b + c;
+
+
+fnc funcv:void (a:int, b:int) {
+	printf("%d %d\n", a, b);
+};
+
+funcv(4, 5);
+
+0;
 
