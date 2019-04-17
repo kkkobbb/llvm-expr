@@ -1,0 +1,13 @@
+# main関数の戻り値 (voidの場合、0を返す)
+
+decl fnc printf:int(:string, ...);
+
+fnc funcv:void (a:int) {
+	printf("%d\n", a);
+};
+
+##printn 5
+funcv(5);
+
+##return 0
+

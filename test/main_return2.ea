@@ -1,4 +1,4 @@
-# main関数の戻り値
+# main関数の戻り値 (0以外を返す)
 
 ##return 1
 return 1;
