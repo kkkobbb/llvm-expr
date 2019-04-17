@@ -25,6 +25,21 @@
     * `llvm::LLVMContext` `unique_ptr<llvm::Module>`の順番で宣言するとエラーにならない
         * `Module(LLVMContext, ...)`なコンストラクタなので、この順番が自然ではある?
 
+* cygwinで実行し、生成されたアセンブリをgccでコンパイルすると以下のエラーがでる
+    * `Error: invalid register for .seh_pushreg`
+        * seh... はintel製品の擬似命令っぽい
+        * 例外に関する処理っぽい
+            * <http://d.hatena.ne.jp/a4lg/20110111/1294720293>
+    * `llc` では`-exception-model=dwarf`を付けると回避できた
+        * llvmのライブラリでこれ相当の設定がある？
+        * `TargetOptions` クラス
+            * `llvm/include/llvm/Target/TargetOptions.h`
+        * `ExceptionHandling` enum
+            * `llvm/include/llvm/MC/MCTargetOptions.h`
+
+* 出力するファイルの種類の指定方法をllcに合わせる？
+    * llc では`-filetype=asm`のように指定する
+
 
 ## LLVM ツール
 
