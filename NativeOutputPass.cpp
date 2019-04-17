@@ -54,6 +54,8 @@ bool NativeOutputPass::run(Module &module, string &fname)
 	const auto features = "";
 
 	TargetOptions opt;
+	// cygwinのgccでコンパイルできるようにするため、例外モデルをdwarfにする
+	opt.ExceptionModel = ExceptionHandling::DwarfCFI;
 	// gccでコンパイルできるようにするため、PIC
 	const auto rm = Optional<Reloc::Model>(Reloc::Model::PIC_);
 	const auto targetMachine = target->createTargetMachine(targetTriple, cpu, features, opt, rm);
