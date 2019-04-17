@@ -1,5 +1,4 @@
 # 代入
-##return 0
 
 decl fnc printf:int(:string, ...);
 
@@ -9,5 +8,6 @@ a <- 2;
 ##printn 2 3
 printf("%d %d\n", a, b);
 
+##return 0
 0;
 

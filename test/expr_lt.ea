@@ -1,10 +1,18 @@
 # 比較 <
-##return 0
 
 decl fnc printf:int(:string, ...);
 
 ##printn 1
 printf("%d\n", 1 < 2);
 
+##printn 0
+printf("%d\n", 4 < 4);
+
+a <- 12;
+b <- 3;
+##printn 0
+printf("%d\n", a < b);
+
+##return 0
 0;
 

@@ -1,10 +1,13 @@
 # 余算
-##return 0
 
 decl fnc printf:int(:string, ...);
 
 ##printn 2
 printf("%d\n", 20 % 6);
 
+##printn 0
+printf("%d\n", 123 % 3);
+
+##return 0
 0;
 

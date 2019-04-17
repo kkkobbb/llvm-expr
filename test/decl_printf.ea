@@ -1,5 +1,4 @@
 # 関数宣言、標準ライブラリの関数呼び出し
-##return 0
 
 decl fnc printf:int(:string, ...);
 
@@ -8,6 +7,6 @@ printf("test test\n");
 ##printn aaa	aaa
 printf("aaa\taaa\n");
 
-
+##return 0
 0;
 

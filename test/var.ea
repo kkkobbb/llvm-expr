@@ -1,5 +1,4 @@
 # 変数定義
-##return 0
 
 decl fnc printf:int(:string, ...);
 
@@ -8,11 +7,11 @@ var bbb:int;
 var ccc:string;
 
 aaa <- 2;
-bbb <- 4;
+4 -> bbb;
 
 ##printn 6
 printf("%d\n", aaa + bbb);
 
+##return 0
 0;
-
 

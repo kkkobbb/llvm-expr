@@ -1,5 +1,4 @@
 # while文
-##return 0
 
 decl fnc printf:int(:string, ...);
 
@@ -14,5 +13,6 @@ while b < 10:
 ##printn 10
 printf("%d\n", b);
 
+##return 0
 0;
 

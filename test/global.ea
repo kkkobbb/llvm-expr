@@ -1,5 +1,4 @@
 # システム定義のグローバル変数
-##return 0
 
 decl fnc printf:int(:string, ...);
 
@@ -7,5 +6,6 @@ v <- test_const_20 + 1;
 ##printn 21
 printf("%d\n", v);
 
+##return 0
 0;
 
