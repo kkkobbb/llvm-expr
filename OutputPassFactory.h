@@ -10,14 +10,28 @@
 
 
 namespace expr {
+	enum FileType {
+		asm_, obj, bc,
+	};
+
 	class OutputPassFactory {
 		public:
-		std::unique_ptr<OutputPass> create(bool bitcode) {
-			if (bitcode)  // llvm bitcode 生成
+		std::unique_ptr<OutputPass> create(FileType filetype) {
+			switch (filetype) {
+			case FileType::asm_:
+				// アセンブリ生成用
+				return std::move(std::unique_ptr<NativeOutputPass>(new NativeOutputPass()));
+			case FileType::obj:
+				// オブジェクトファイル生成用
+				// TODO 未実装
+				return std::move(std::unique_ptr<OutputPass>());
+			case FileType::bc:
+				// llvm bitcode 生成用
 				return std::move(std::unique_ptr<BitcodeOutputPass>(new BitcodeOutputPass()));
-
-			// native code 生成
-			return std::move(std::unique_ptr<NativeOutputPass>(new NativeOutputPass()));
+			default:
+				// 空 (無効、何もしない用)
+				return std::move(std::unique_ptr<OutputPass>());
+			};
 		}
 	};
 }

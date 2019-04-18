@@ -12,3 +12,6 @@ a <- get_five();
 ##printn 5
 printf("%d\n", a);
 
+##return 0
+0;
+

@@ -49,8 +49,12 @@ int main(int argc, char *argv[])
 	llvm::cl::opt<bool> PrintLlvm("print-llvm",
 			llvm::cl::desc("Print llvm IR"),
 			llvm::cl::cat(CompilerCategory));
-	llvm::cl::opt<bool> OutputBC("output-bc",
-			llvm::cl::desc("output llvm bit code"),
+	llvm::cl::opt<FileType> Filetype_("filetype",
+			llvm::cl::values(
+				clEnumValN(FileType::asm_, "asm", "Emit an assembly ('.s') file"),
+				clEnumValN(FileType::obj, "obj", "Emit a native object ('.o') file"),
+				clEnumValN(FileType::bc, "bc", "Emit a llvm bitcode ('.bc') file")),
+			llvm::cl::desc("Choose a file type"),
 			llvm::cl::cat(CompilerCategory));
 	// CompilerCategory以外は非表示
 	llvm::cl::HideUnrelatedOptions({&CompilerCategory});
@@ -107,8 +111,9 @@ int main(int argc, char *argv[])
 		ofname = STDOUT_FNAME;
 
 	OutputPassFactory opf;
-	auto op = opf.create(OutputBC);
-	op->run(*m.get(), ofname);
+	auto op = opf.create(Filetype_);
+	if (op)
+		op->run(*m.get(), ofname);
 
 	return 0;
 }
