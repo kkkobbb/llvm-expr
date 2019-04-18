@@ -6,6 +6,8 @@ fnc get_five:int() {
 	return 5;
 };
 
+get_five();
+
 a <- get_five();
 ##printn 5
 printf("%d\n", a);

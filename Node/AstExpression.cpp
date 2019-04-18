@@ -88,16 +88,18 @@ Value *AstExpressionFunc::getValue(IRState &irs)
 	auto &builder = irs.getBuilder();
 	auto &m = irs.getModule();
 
-	auto name = this->identifier->getName();
-	auto argList = this->argumentList->getList();
-
+	auto name = identifier->getName();
 	auto callee = m.getFunction(*name);
-	if (callee->arg_size() > argList->size())
-		return nullptr;  // TODO エラー処理 引数が少ない
-
 	vector<Value*> args;
-	for (auto &arg : *argList)
-		args.push_back(arg->getValue(irs));
+
+	if (argumentList) {
+		auto argList = argumentList->getList();
+		if (callee->arg_size() > argList->size())
+			return nullptr;  // TODO エラー処理 引数が少ない
+
+		for (auto &arg : *argList)
+			args.push_back(arg->getValue(irs));
+	}
 
 	return builder.CreateCall(callee, args);
 }
@@ -120,11 +122,10 @@ Value *AstExpressionAS::getValue(IRState &irs)
 	auto &builder = irs.getBuilder();
 	auto rhs = r->getValue(irs);
 
-	auto name = this->identifier->getName();
+	auto name = identifier->getName();
 
+	// FIXME 変数がない場合、領域を確保している(ない場合はエラーにする？)
 	auto alloca = irs.getVariable(name);
-	// FIXME 変数がない場合、領域を確保している
-	//       ない場合はエラーにする？
 	if (!alloca)
 		alloca = builder.CreateAlloca(Type::getInt32Ty(c), 0, *name);
 
