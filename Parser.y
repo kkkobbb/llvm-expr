@@ -1,5 +1,4 @@
-/* vim: set filetype=yacc:
- *
+/*
  * bison 3.0.4
  * generating c++ code
  */

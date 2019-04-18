@@ -22,10 +22,10 @@ $(DEST): $(OBJS)
 Parser.o: Parser.cc
 	$(CXX) $(CXXFLAGS) -fexceptions -c -o $@ $<
 
-%.cc: %.ll
+%.cc: %.l
 	flex -o $@ $^
-%.cc %.hh: %.yy
-	bison -v -o $(patsubst %.yy,%.cc,$^) $^
+%.cc %.hh: %.y
+	bison -v -o $(basename $^).cc $^
 
 
 clean:
