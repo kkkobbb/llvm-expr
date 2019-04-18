@@ -1,0 +1,12 @@
+# 引数なし関数
+
+decl fnc printf:int(:string, ...);
+
+fnc get_five:int() {
+	return 5;
+};
+
+a <- get_five();
+##printn 5
+printf("%d\n", a);
+
