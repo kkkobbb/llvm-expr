@@ -7,6 +7,8 @@ decl fnc puts:int(:string);
 decl fnc putchar:int(:int);
 decl fnc printf:int(:string, ...);
 decl fnc atoi:int(:string);
+decl fnc rand:int();
+decl fnc srand:void(:int); # 本来はunsignedだがintで代用
 
 
 
@@ -17,6 +19,12 @@ puts("AAA");
 puts("AAA");
 puts("CCCCC");
 printf("printf\n");
+
+srand(12);
+printf("%d\n", rand());
+printf("%d\n", rand());
+printf("%d\n", rand());
+printf("%d\n", rand());
 
 atoi("2");
 
