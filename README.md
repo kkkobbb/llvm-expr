@@ -29,7 +29,7 @@
 ## コマンド使い方
 * `./exparrc srcfile.ea` で`a.s`ファイルが生成される
     * 中身はアセンブリコード
-    * ubuntu 18.04 では`gcc` `clang`で実行ファイル生成に成功
+    * `gcc` `clang`で実行ファイル生成
 
 * `./exparrc -output-bc srcfile.ea`で`a.bc`ファイルが生成される
     * 中身はllvmビットコード
@@ -54,6 +54,6 @@
     * `int` `char *` `...`の引数をとる関数なら呼び出し可能
         * 正確には、この条件でのみ外部関数宣言を書ける
     * 呼び出せる標準ライブラリの関数の例
-        * `putchar`
         * `printf`
+        * `atoi`
 
