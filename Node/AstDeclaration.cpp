@@ -55,10 +55,17 @@ Value *AstDeclarationFunc::getValue(IRState &irs)
 	auto &m = irs.getModule();
 	auto &builder = irs.getBuilder();
 
-	auto argTypes = argumentList->getTypes(irs);
-	auto argNames = argumentList->getNames();
+	FunctionType *funcType;
+
 	auto retType = decl->getType(irs);
-	auto funcType = FunctionType::get(retType, *argTypes, vararg);
+	if (argumentList) {
+		// 引数あり関数
+		auto argTypes = argumentList->getTypes(irs);
+		funcType = FunctionType::get(retType, *argTypes, vararg);
+	} else {
+		// 引数なし関数
+		funcType = FunctionType::get(retType, vararg);
+	}
 
 	auto name = decl->getName();
 	Function::Create(funcType, Function::ExternalLinkage, *name, &m);

@@ -1,11 +1,16 @@
 # 関数宣言、標準ライブラリの関数呼び出し
 
 decl fnc printf:int(:string, ...);
+decl fnc atoi:int(:string);
 
 ##printn test test
 printf("test test\n");
 ##printn aaa	aaa
 printf("aaa\taaa\n");
+
+##printn 5
+a <- atoi("5");
+printf("%d\n", a);
 
 ##return 0
 0;

@@ -1,0 +1,8 @@
+# 関数宣言
+
+decl fnc printf:int(:string, ...);
+decl fnc rand:int();
+
+##return 0
+0;
+

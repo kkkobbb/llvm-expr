@@ -474,6 +474,8 @@ primary_expression
         { $$ = std::move($2); }
     | identifier '(' mixed_expression_list ')'
         { $$ = new AstExpressionFunc((AstIdentifier *)$1, (AstList *)$3); }
+    | identifier '(' ')'
+        { $$ = new AstExpressionFunc((AstIdentifier *)$1, nullptr); }
     ;
 
 /* 定数 */

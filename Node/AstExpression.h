@@ -35,8 +35,8 @@ namespace expr {
 	class AstExpressionFunc: public AstExpression
 	{
 		protected:
-		AstIdentifier *identifier;
-		AstList *argumentList;
+		std::unique_ptr<AstIdentifier> identifier;
+		std::unique_ptr<AstList> argumentList;
 
 		public:
 		AstExpressionFunc(AstIdentifier *identifier, AstList *argumentList);
@@ -47,7 +47,7 @@ namespace expr {
 	class AstExpressionAS: public AstExpression
 	{
 		protected:
-		AstIdentifier *identifier;
+		std::unique_ptr<AstIdentifier> identifier;
 
 		public:
 		AstExpressionAS(AstIdentifier *identifier, AstNode *value);

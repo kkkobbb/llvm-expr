@@ -102,10 +102,17 @@ Value *AstDefinitionFunc::getValue(IRState &irs)
 	auto &m = irs.getModule();
 	auto &builder = irs.getBuilder();
 
-	auto argTypes = argumentList->getTypes(irs);
-	auto argNames = argumentList->getNames();
+	FunctionType *funcType;
+
 	auto retType = decl->getType(irs);
-	auto funcType = FunctionType::get(retType, *argTypes, false);
+	if (argumentList) {
+		// 引数有り関数
+		auto argTypes = argumentList->getTypes(irs);
+		funcType = FunctionType::get(retType, *argTypes, false);
+	} else {
+		// 引数無し関数
+		funcType = FunctionType::get(retType, false);
+	}
 
 	auto name = decl->getName();
 	auto func = Function::Create(funcType, Function::ExternalLinkage, *name, &m);
@@ -118,12 +125,16 @@ Value *AstDefinitionFunc::getValue(IRState &irs)
 	auto oldBb = builder.GetInsertBlock();
 	builder.SetInsertPoint(bb);
 
-	// 各引数の名前、値の変数を作成
-	auto ni = argNames->cbegin();
-	auto ti = argTypes->cbegin();
-	for (auto ai = func->arg_begin(); ai != func->arg_end(); ++ai, ++ni, ++ti) {
-		auto alloca = builder.CreateAlloca(*ti, 0, **ni);
-		builder.CreateStore(ai, alloca);
+	// 引数有り関数の場合、各引数の名前、値の変数を作成
+	if (argumentList) {
+		auto argNames = argumentList->getNames();
+		auto argTypes = argumentList->getTypes(irs);  // FIXME funcType生成時にも呼び出している
+		auto ni = argNames->cbegin();
+		auto ti = argTypes->cbegin();
+		for (auto ai = func->arg_begin(); ai != func->arg_end(); ++ai, ++ni, ++ti) {
+			auto alloca = builder.CreateAlloca(*ti, 0, **ni);
+			builder.CreateStore(ai, alloca);
+		}
 	}
 
 	auto bodyValue = this->body->getValue(irs);
