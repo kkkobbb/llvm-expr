@@ -45,7 +45,7 @@ bool IRGenerator::generate(AstNode &ast_root)
 	ast_root.getValue(irs);
 
 	// エラーがあった場合、終了する
-	bool errored = verifyModule(m, &errs());
+	const bool errored = verifyModule(m, &errs());
 	if (errored)
 		return false;
 

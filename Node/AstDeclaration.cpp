@@ -35,7 +35,7 @@ void AstDeclarationFunc::print_ast(std::ostream &dout, int indent)
 {
 	AstNode::print_ast(dout, indent);
 	// 子要素の表示
-	int next_indent = indent + 1;
+	const int next_indent = indent + 1;
 	if (decl != nullptr)
 		decl->print_ast(dout, next_indent);
 	if (argumentList != nullptr)
@@ -57,7 +57,7 @@ Value *AstDeclarationFunc::getValue(IRState &irs)
 
 	FunctionType *funcType;
 
-	auto retType = decl->getType(irs);
+	const auto retType = decl->getType(irs);
 	if (argumentList) {
 		// 引数あり関数
 		auto argTypes = argumentList->getTypes(irs);
@@ -67,7 +67,7 @@ Value *AstDeclarationFunc::getValue(IRState &irs)
 		funcType = FunctionType::get(retType, vararg);
 	}
 
-	auto name = decl->getName();
+	const auto name = decl->getName();
 	Function::Create(funcType, Function::ExternalLinkage, *name, &m);
 
 	// 最後にverifyModule()を実行するのでここで関数のチェックをしない

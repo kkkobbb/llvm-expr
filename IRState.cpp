@@ -81,14 +81,14 @@ GlobalVariable *IRState::getGlobalString(const char *str)
 	for (auto gval : GlobalStrList) {
 		if (!isa<GlobalVariable>(*gval))
 			continue;
-		auto glo = (GlobalVariable *)gval;
-		auto val = glo->getInitializer();
+		const auto glo = (GlobalVariable *)gval;
+		const auto val = glo->getInitializer();
 		if (!isa<ConstantDataArray>(*val))
 			continue;
-		auto arrayData = (ConstantDataArray *)val;
+		const auto arrayData = (ConstantDataArray *)val;
 		if (!arrayData->isString())
 			continue;
-		auto existStr = arrayData->getAsString();
+		const auto existStr = arrayData->getAsString();
 		if (newStr == existStr.str()) {
 			gStr = glo;
 			break;
@@ -109,9 +109,9 @@ GlobalVariable *IRState::getGlobalString(const char *str)
  */
 GlobalVariable *IRState::createGlobalString(const char *str)
 {
-	auto strValue = ConstantDataArray::getString(TheContext, str);
-	auto strType = strValue->getType();
-	auto gvar = new GlobalVariable(
+	const auto strValue = ConstantDataArray::getString(TheContext, str);
+	const auto strType = strValue->getType();
+	const auto gvar = new GlobalVariable(
 			*TheModule,
 			strType,
 			true,
@@ -154,13 +154,13 @@ void IRState::popCurFunc()
  */
 Value *IRState::getVariable(const string *name)
 {
-	auto curFunc = builder->GetInsertBlock()->getParent();
+	const auto curFunc = builder->GetInsertBlock()->getParent();
 
-	auto vs_table = curFunc->getValueSymbolTable();
+	const auto vs_table = curFunc->getValueSymbolTable();
 	auto alloca = vs_table->lookup(*name);
 
 	if (!alloca) {
-		auto &global_vs_table = TheModule->getValueSymbolTable();
+		const auto &global_vs_table = TheModule->getValueSymbolTable();
 		alloca = global_vs_table.lookup(*name);
 	}
 

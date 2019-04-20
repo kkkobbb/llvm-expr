@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 	AstGenerator astGen;
 	if (!astGen.generate(fin))
 		return 1;
-	auto ast = astGen.get();
+	const auto ast = astGen.get();
 
 	if (PrintAst) {
 		ast->print_ast(cout);
@@ -84,10 +84,10 @@ int main(int argc, char *argv[])
 	IRGenerator irGen;
 	if (!irGen.generate(*ast.get()))
 		return 1;
-	auto m = irGen.get();
+	const auto m = irGen.get();
 
 	// ファイル名設定
-	auto ifname = llvm::sys::path::filename(InputFilename);
+	const auto ifname = llvm::sys::path::filename(InputFilename);
 	m->setSourceFileName(ifname);
 
 	if (Optim) {
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 		ofname = STDOUT_FNAME;
 
 	OutputPassFactory opf;
-	auto op = opf.create(Filetype_);
+	const auto op = opf.create(Filetype_);
 	if (op)
 		op->run(*m.get(), ofname);
 
