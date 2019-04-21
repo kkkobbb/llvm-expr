@@ -31,7 +31,7 @@
     * 中身はアセンブリコード
     * ubuntu 18.04 では`gcc` `clang`で実行ファイル生成に成功
 
-* `./exparrc -output-bc srcfile.ea`で`a.bc`ファイルが生成される
+* `./exparrc -filetype=bc srcfile.ea`で`a.bc`ファイルが生成される
     * 中身はllvmビットコード
     * インタプリタ
         * `lli a.bc` で実行可能
