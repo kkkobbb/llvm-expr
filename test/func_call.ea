@@ -13,4 +13,8 @@ a <- get_int(7);
 ##printn 7
 printf("%d\n", a);
 
+b <- get_int(-8);
+##printn -8
+printf("%d\n", b);
+
 
