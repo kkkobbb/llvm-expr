@@ -8,7 +8,7 @@ DEST := exparrc
 SRC  := main.cpp \
         $(wildcard Node/*.cpp) \
         AstGenerator.cpp IRGenerator.cpp IRState.cpp OptimPass.cpp \
-        BitcodeOutputPass.cpp NativeOutputPass.cpp
+        OutputPassFactory.cpp BitcodeOutputPass.cpp NativeOutputPass.cpp
 
 OBJS := Lexer.o Parser.o $(patsubst %.cpp,%.o,$(SRC))
 
