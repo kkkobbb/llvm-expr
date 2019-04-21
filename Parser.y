@@ -4,45 +4,49 @@
  */
 
 %{
-#include <iostream>
-#include <string>
-#include <memory>
-#include <utility>
+/* .ccに追加するコード */
 %}
-
-%code requires
-{
-/* .hhに追加するコード */
-#include "Node/AstNode.h"
-#define MY_NAMESPACE expr
-namespace MY_NAMESPACE {
-	bool is_parse_err();
-	void set_ast(AstNode *root);
-	std::unique_ptr<AstNode> get_ast();
-	class Lexer;
-}
-}
 
 %code top
 {
 /* .ccの先頭に追加するコード */
+#include <iostream>
+#include <string>
+#include <memory>
+#include <utility>
 #include "Lexer.h"
-using namespace MY_NAMESPACE;
+#include "Node/AstNode.h"
 
 /* 関数名を強引に変更している */
 #define yylex lexer.yylex
 
+using namespace MY_NAMESPACE;
+
+static void set_ast(AstNode *root);
+
 /* 構文木格納用 */
 static std::unique_ptr<AstNode> ast_root;
-
 /* エラー確認用の変数 */
 static bool parse_err_f = false;
 static int parse_err_num = 0;
 }
 
-%code
+%code requires
 {
-/* .ccに追加するコード */
+/* .hhの先頭に追加するコード */
+#include <memory>
+#define MY_NAMESPACE expr
+namespace MY_NAMESPACE {
+	class Lexer;
+	class AstNode;
+}
+}
+
+%code provides
+{
+/* .hhの末尾に追加するコード */
+bool is_parse_err();
+std::unique_ptr<MY_NAMESPACE::AstNode> get_ast();
 }
 
 
@@ -511,7 +515,10 @@ void Parser::error(const location_type& l, const std::string& msg)
 }
 
 
-bool MY_NAMESPACE::is_parse_err()
+/*
+ * 構文解析中にエラーがあった場合、真
+ */
+bool is_parse_err()
 {
 	return parse_err_f;
 }
@@ -520,7 +527,7 @@ bool MY_NAMESPACE::is_parse_err()
 /*
  * 構文木のルートを保存する
  */
-void MY_NAMESPACE::set_ast(AstNode *root)
+static void set_ast(AstNode *root)
 {
 	ast_root = std::unique_ptr<AstNode>(root);
 }
@@ -529,7 +536,7 @@ void MY_NAMESPACE::set_ast(AstNode *root)
 /*
  * 構文木のルートを取得する
  */
-std::unique_ptr<AstNode> MY_NAMESPACE::get_ast()
+std::unique_ptr<AstNode> get_ast()
 {
 	return std::move(ast_root);
 }
