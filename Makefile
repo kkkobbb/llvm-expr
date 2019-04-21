@@ -8,7 +8,7 @@ DEST := exparrc
 SRC  := main.cpp \
         $(wildcard Node/*.cpp) \
         AstGenerator.cpp IRGenerator.cpp IRState.cpp OptimPass.cpp \
-        BitcodeOutputPass.cpp NativeOutputPass.cpp
+        OutputPassFactory.cpp BitcodeOutputPass.cpp NativeOutputPass.cpp
 
 OBJS := Lexer.o Parser.o $(patsubst %.cpp,%.o,$(SRC))
 
@@ -22,10 +22,10 @@ $(DEST): $(OBJS)
 Parser.o: Parser.cc
 	$(CXX) $(CXXFLAGS) -fexceptions -c -o $@ $<
 
-%.cc: %.ll
+%.cc: %.l
 	flex -o $@ $^
-%.cc %.hh: %.yy
-	bison -v -o $(patsubst %.yy,%.cc,$^) $^
+%.cc %.hh: %.y
+	bison -v -o $(basename $^).cc $^
 
 
 clean:

@@ -26,7 +26,7 @@ test -f ./${EXEFILE} || { echo "not found './${EXEFILE}'"; exit 1; }
 
 run_exefile()
 {
-	./${EXEFILE} -f -output-bc $* ${TESTOPT}
+	./${EXEFILE} -f -filetype=bc $* ${TESTOPT}
 }
 
 

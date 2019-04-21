@@ -21,8 +21,39 @@ using namespace std;
 using namespace llvm;
 using namespace expr;
 
-static const string DEFAULT_FNAME = "a.s";
+static const string DEFAULT_FNAME = "a.bin";
+static const string DEFAULT_FNAME_ASM = "a.s";
+static const string DEFAULT_FNAME_OBJ = "a.o";
 
+
+
+NativeOutputPass::NativeOutputPass(TargetMachine::CodeGenFileType fileType)
+	: fileType(fileType), defaultName(getDefaultName(fileType))
+{}
+
+
+/*
+ * ファイルタイプからデフォルトのファイル名を取得する
+ */
+string NativeOutputPass::getDefaultName(TargetMachine::CodeGenFileType fileType)
+{
+	string name = DEFAULT_FNAME;
+
+	// デフォルトのファイル名
+	switch (fileType) {
+	case TargetMachine::CGFT_AssemblyFile:
+		name = DEFAULT_FNAME_ASM;
+		break;
+	case TargetMachine::CGFT_ObjectFile:
+		name = DEFAULT_FNAME_OBJ;
+		break;
+	case TargetMachine::CGFT_Null:
+		// 何もしない
+		break;
+	}
+
+	return name;
+}
 
 
 /*
@@ -63,7 +94,7 @@ bool NativeOutputPass::run(Module &module, string &fname)
 
 	module.setDataLayout(targetMachine->createDataLayout());
 
-	string outfname = DEFAULT_FNAME;
+	string outfname = defaultName;
 	if (!fname.empty())
 		outfname = fname;
 	// 目的ファイル生成
@@ -74,8 +105,6 @@ bool NativeOutputPass::run(Module &module, string &fname)
 			sys::fs::OpenFlags::F_None);
 
 	legacy::PassManager pass;
-	//const auto fileType = TargetMachine::CGFT_ObjectFile;
-	const auto fileType = TargetMachine::CGFT_AssemblyFile;
 
 	if (targetMachine->addPassesToEmitFile(pass, outfile, fileType)) {
 		errs() << "targetMachine can't emit a file of this type";

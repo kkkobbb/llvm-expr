@@ -36,7 +36,7 @@ void AstJumpReturn::print_ast(ostream &dout, int indent)
 {
 	AstNode::print_ast(dout, indent);
 	// 子要素の表示
-	int next_indent = indent + 1;
+	const int next_indent = indent + 1;
 	if (ret != nullptr)
 		ret->print_ast(dout, next_indent);
 	else
@@ -57,7 +57,7 @@ Value *AstJumpReturn::getValue(IRState &irs)
 	if (this->ret == nullptr) {
 		retV = builder.CreateRetVoid();
 	} else {
-		auto retval = this->ret->getValue(irs);
+		const auto retval = this->ret->getValue(irs);
 		retV = builder.CreateRet(retval);
 	}
 

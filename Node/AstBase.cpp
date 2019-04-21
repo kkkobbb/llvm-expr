@@ -100,7 +100,7 @@ void AstList::print_ast(std::ostream &dout, int indent)
 	AstNode::print_ast(dout, indent);
 
 	// 子要素の表示
-	int next_indent = indent + 1;
+	const int next_indent = indent + 1;
 	for (auto &child : children)
 		child->print_ast(dout, next_indent);
 }
@@ -129,7 +129,7 @@ Value *AstUnit::getValue(IRState &irs)
 	// 便宜上ここで関数mainを定義する
 	// (全ての処理は関数mainの処理とする)
 
-	auto func = Function::Create(
+	const auto func = Function::Create(
 			FunctionType::get(Type::getInt32Ty(c), false),
 			Function::ExternalLinkage, "main", &m);
 

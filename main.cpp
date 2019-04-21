@@ -49,8 +49,12 @@ int main(int argc, char *argv[])
 	llvm::cl::opt<bool> PrintLlvm("print-llvm",
 			llvm::cl::desc("Print llvm IR"),
 			llvm::cl::cat(CompilerCategory));
-	llvm::cl::opt<bool> OutputBC("output-bc",
-			llvm::cl::desc("output llvm bit code"),
+	llvm::cl::opt<FileTypeKind> FileType("filetype",
+			llvm::cl::values(
+				clEnumValN(FileTypeKind::asm_, "asm", "Emit an assembly ('.s') file"),
+				clEnumValN(FileTypeKind::obj, "obj", "Emit a native object ('.o') file"),
+				clEnumValN(FileTypeKind::bc, "bc", "Emit a llvm bitcode ('.bc') file")),
+			llvm::cl::desc("Choose a file type"),
 			llvm::cl::cat(CompilerCategory));
 	// CompilerCategory以外は非表示
 	llvm::cl::HideUnrelatedOptions({&CompilerCategory});
@@ -67,7 +71,7 @@ int main(int argc, char *argv[])
 	AstGenerator astGen;
 	if (!astGen.generate(fin))
 		return 1;
-	auto ast = astGen.get();
+	const auto ast = astGen.get();
 
 	if (PrintAst) {
 		ast->print_ast(cout);
@@ -80,10 +84,10 @@ int main(int argc, char *argv[])
 	IRGenerator irGen;
 	if (!irGen.generate(*ast.get()))
 		return 1;
-	auto m = irGen.get();
+	const auto m = irGen.get();
 
 	// ファイル名設定
-	auto ifname = llvm::sys::path::filename(InputFilename);
+	const auto ifname = llvm::sys::path::filename(InputFilename);
 	m->setSourceFileName(ifname);
 
 	if (Optim) {
@@ -107,8 +111,9 @@ int main(int argc, char *argv[])
 		ofname = STDOUT_FNAME;
 
 	OutputPassFactory opf;
-	auto op = opf.create(OutputBC);
-	op->run(*m.get(), ofname);
+	const auto op = opf.create(FileType);
+	if (op)
+		op->run(*m.get(), ofname);
 
 	return 0;
 }

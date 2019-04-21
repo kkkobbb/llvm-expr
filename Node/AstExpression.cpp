@@ -64,7 +64,7 @@ void AstExpression::print_ast(ostream &dout, int indent)
 {
 	AstNode::print_ast(dout, indent);
 	// 子要素の表示
-	int next_indent = indent + 1;
+	const int next_indent = indent + 1;
 	if (l != nullptr)
 		l->print_ast(dout, next_indent);
 	if (r != nullptr)
@@ -88,12 +88,12 @@ Value *AstExpressionFunc::getValue(IRState &irs)
 	auto &builder = irs.getBuilder();
 	auto &m = irs.getModule();
 
-	auto name = identifier->getName();
-	auto callee = m.getFunction(*name);
+	const auto name = identifier->getName();
+	const auto callee = m.getFunction(*name);
 	vector<Value*> args;
 
 	if (argumentList) {
-		auto argList = argumentList->getList();
+		const auto argList = argumentList->getList();
 		if (callee->arg_size() > argList->size())
 			return nullptr;  // TODO エラー処理 引数が少ない
 
@@ -122,7 +122,7 @@ Value *AstExpressionAS::getValue(IRState &irs)
 	auto &builder = irs.getBuilder();
 	auto rhs = r->getValue(irs);
 
-	auto name = identifier->getName();
+	const auto name = identifier->getName();
 
 	// FIXME 変数がない場合、領域を確保している(ない場合はエラーにする？)
 	auto alloca = irs.getVariable(name);
@@ -148,7 +148,7 @@ Value *AstExpressionEQ::generate_exp(IRState &irs, Value *lv, Value *rv)
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
 
-	auto cmp = builder.CreateICmpEQ(lv, rv, "eq_tmp");
+	const auto cmp = builder.CreateICmpEQ(lv, rv, "eq_tmp");
 
 	// signed i32へ型変換
 	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), false);
@@ -164,7 +164,7 @@ Value *AstExpressionNE::generate_exp(IRState &irs, Value *lv, Value *rv)
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
 
-	auto cmp = builder.CreateICmpNE(lv, rv, "ne_tmp");
+	const auto cmp = builder.CreateICmpNE(lv, rv, "ne_tmp");
 
 	// signed i32へ型変換
 	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), false);
@@ -180,7 +180,7 @@ Value *AstExpressionLT::generate_exp(IRState &irs, Value *lv, Value *rv)
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
 
-	auto cmp = builder.CreateICmpSLT(lv, rv, "lt_tmp");
+	const auto cmp = builder.CreateICmpSLT(lv, rv, "lt_tmp");
 
 	// signed i32へ型変換
 	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), false);
@@ -196,7 +196,7 @@ Value *AstExpressionGT::generate_exp(IRState &irs, Value *lv, Value *rv)
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
 
-	auto cmp = builder.CreateICmpSGT(lv, rv, "gt_tmp");
+	const auto cmp = builder.CreateICmpSGT(lv, rv, "gt_tmp");
 
 	// signed i32へ型変換
 	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), false);
@@ -212,7 +212,7 @@ Value *AstExpressionLTE::generate_exp(IRState &irs, Value *lv, Value *rv)
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
 
-	auto cmp = builder.CreateICmpSLE(lv, rv, "lte_tmp");
+	const auto cmp = builder.CreateICmpSLE(lv, rv, "lte_tmp");
 
 	// signed i32へ型変換
 	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), false);
@@ -228,7 +228,7 @@ Value *AstExpressionGTE::generate_exp(IRState &irs, Value *lv, Value *rv)
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
 
-	auto cmp = builder.CreateICmpSGE(lv, rv, "gte_tmp");
+	const auto cmp = builder.CreateICmpSGE(lv, rv, "gte_tmp");
 
 	// signed i32へ型変換
 	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), false);

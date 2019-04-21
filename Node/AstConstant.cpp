@@ -67,13 +67,13 @@ Value *AstConstantString::getValue(IRState &irs)
 {
 	auto &builder = irs.getBuilder();
 
-	auto gstr = irs.getGlobalString(this->str->c_str());
+	const auto gstr = irs.getGlobalString(this->str->c_str());
 
 	// グローバル変数のポインタの取得
-	auto constZero = builder.getInt32(0);
+	const auto constZero = builder.getInt32(0);
 	vector<Constant *> index(2, constZero);
-	auto strType = gstr->getInitializer()->getType();
-	auto strPtr = ConstantExpr::getGetElementPtr(strType, gstr, index);
+	const auto strType = gstr->getInitializer()->getType();
+	const auto strPtr = ConstantExpr::getGetElementPtr(strType, gstr, index);
 
 	return strPtr;
 }
@@ -96,7 +96,7 @@ void AstIdentifier::print_ast(ostream &dout, int indent)
 {
 	AstNode::print_ast(dout, indent);
 	// 子要素の表示
-	int next_indent = indent + 1;
+	const int next_indent = indent + 1;
 	if (type != nullptr)
 		type->print_ast(dout, next_indent);
 }
@@ -125,8 +125,8 @@ Type *AstIdentifier::getType(IRState &irs)
 Value *AstIdentifier::getValue(IRState &irs)
 {
 	auto &builder = irs.getBuilder();
-	auto name = getName();
-	auto alloca = irs.getVariable(name);
+	const auto name = getName();
+	const auto alloca = irs.getVariable(name);
 
 	return builder.CreateLoad(alloca, "var");
 }
@@ -153,7 +153,7 @@ void AstIdentifierList::print_ast(ostream &dout, int indent)
 	AstNode::print_ast(dout, indent);
 
 	// 子要素の表示
-	int next_indent = indent + 1;
+	const int next_indent = indent + 1;
 	for (auto &child : children)
 		child->print_ast(dout, next_indent);
 }
@@ -167,7 +167,7 @@ void AstIdentifierList::print_ast(ostream &dout, int indent)
  */
 unique_ptr<vector<Type*>> AstIdentifierList::getTypes(IRState &irs)
 {
-	auto typelist = new vector<Type*>();
+	const auto typelist = new vector<Type*>();
 
 	for (auto &child : children)
 		typelist->push_back(child->getType(irs));
@@ -185,7 +185,7 @@ unique_ptr<vector<Type*>> AstIdentifierList::getTypes(IRState &irs)
  */
 unique_ptr<vector<const string*>> AstIdentifierList::getNames()
 {
-	auto namelist = new vector<const string*>();
+	const auto namelist = new vector<const string*>();
 
 	for (auto &child : children)
 		namelist->push_back(child->getName());

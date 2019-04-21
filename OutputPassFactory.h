@@ -4,21 +4,17 @@
 #include <memory>
 
 #include "OutputPass.h"
-#include "BitcodeOutputPass.h"
-#include "NativeOutputPass.h"
 
 
 
 namespace expr {
+	enum FileTypeKind {
+		asm_, obj, bc,
+	};
+
 	class OutputPassFactory {
 		public:
-		std::unique_ptr<OutputPass> create(bool bitcode) {
-			if (bitcode)  // llvm bitcode 生成
-				return std::move(std::unique_ptr<BitcodeOutputPass>(new BitcodeOutputPass()));
-
-			// native code 生成
-			return std::move(std::unique_ptr<NativeOutputPass>(new NativeOutputPass()));
-		}
+		std::unique_ptr<OutputPass> create(FileTypeKind fileType);
 	};
 }
 
