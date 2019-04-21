@@ -141,6 +141,61 @@ Value *AstExpressionAS::getValue(IRState &irs)
 
 /*
  * IR 生成
+ * ||
+ */
+Value *AstExpressionLOR::generate_exp(IRState &irs, Value *lv, Value *rv)
+{
+	// TODO
+	return nullptr;
+}
+
+
+/*
+ * IR 生成
+ * &&
+ */
+Value *AstExpressionLAND::generate_exp(IRState &irs, Value *lv, Value *rv)
+{
+	// TODO
+	return nullptr;
+}
+
+
+/*
+ * IR 生成
+ * |
+ */
+Value *AstExpressionBOR::generate_exp(IRState &irs, Value *lv, Value *rv)
+{
+	// TODO
+	return nullptr;
+}
+
+
+/*
+ * IR 生成
+ * ^
+ */
+Value *AstExpressionBXOR::generate_exp(IRState &irs, Value *lv, Value *rv)
+{
+	// TODO
+	return nullptr;
+}
+
+
+/*
+ * IR 生成
+ * &
+ */
+Value *AstExpressionBAND::generate_exp(IRState &irs, Value *lv, Value *rv)
+{
+	// TODO
+	return nullptr;
+}
+
+
+/*
+ * IR 生成
  * ==
  */
 Value *AstExpressionEQ::generate_exp(IRState &irs, Value *lv, Value *rv)
@@ -293,4 +348,49 @@ Value *AstExpressionMOD::generate_exp(IRState &irs, Value *lv, Value *rv)
 
 	return builder.CreateSRem(lv, rv, "mod_tmp");
 }
+
+
+/*
+ * IR 生成
+ * 単項演算子 +
+ */
+Value *AstExpressionSPOS::generate_exp(IRState &irs, Value *lv, Value *rv)
+{
+	// TODO
+	return nullptr;
+}
+
+
+/*
+ * IR 生成
+ * 単項演算子 -
+ */
+Value *AstExpressionSNEG::generate_exp(IRState &irs, Value *lv, Value *rv)
+{
+	// TODO
+	return nullptr;
+}
+
+
+/*
+ * IR 生成
+ * 単項演算子 !
+ */
+Value *AstExpressionLNOT::generate_exp(IRState &irs, Value *lv, Value *rv)
+{
+	// TODO
+	return nullptr;
+}
+
+
+/*
+ * IR 生成
+ * 単項演算子 ~
+ */
+Value *AstExpressionBNOT::generate_exp(IRState &irs, Value *lv, Value *rv)
+{
+	// TODO
+	return nullptr;
+}
+
 
