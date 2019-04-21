@@ -51,7 +51,7 @@ for testcase in ${testcaselist}; do
 	err_size=$(cat ${err} | wc -c)
 
 	# エラーがあったかのテスト
-	# (標準エラー出力に出力があったか確認する)
+	# (標準エラー出力に出力があったか確認する、内容は確認しない)
 	if [ -n "${expected_output_stderr}" ]; then
 		test_num=$((test_num + 1))
 		if [ "${err_size}" -ne 0 ]; then

@@ -1,4 +1,4 @@
-# main関数の戻り値 (voidの場合、0を返す)
+# main関数の戻り値 (voidの場合、エラー)
 
 decl fnc printf:int(:string, ...);
 

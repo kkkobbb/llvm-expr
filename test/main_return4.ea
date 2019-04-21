@@ -9,5 +9,7 @@ fnc funcv:void (a:int) {
 ##printn 5
 funcv(5);
 
+# 暗黙にvoidを戻り値とする場合(最後の式の結果がvoid)、
+# 0が戻り値になる
 ##return 0
 
