@@ -356,8 +356,7 @@ Value *AstExpressionMOD::generate_exp(IRState &irs, Value *lv, Value *rv)
  */
 Value *AstExpressionSPOS::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
-	// TODO
-	return nullptr;
+	return rv;
 }
 
 
@@ -367,8 +366,9 @@ Value *AstExpressionSPOS::generate_exp(IRState &irs, Value *lv, Value *rv)
  */
 Value *AstExpressionSNEG::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
-	// TODO
-	return nullptr;
+	auto &builder = irs.getBuilder();
+
+	return builder.CreateNeg(rv, "neg");
 }
 
 
