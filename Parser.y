@@ -15,7 +15,7 @@
 #include <memory>
 #include <utility>
 #include "Lexer.h"
-#include "Node/AstNode.h"
+#include "Node/AstAll.h"
 
 /* 関数名を強引に変更している */
 #define yylex lexer.yylex
