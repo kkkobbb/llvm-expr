@@ -66,5 +66,5 @@ fi
 rm -f ${out}
 rm -f ${err}
 
-return ${result}
+exit ${result}
 

@@ -45,7 +45,7 @@ for testcase in ${testcaselist}; do
 	expected_r=$(grep "^##return " ${testcase} | sed "s/^##return //")
 	expected_p=$(grep "^##printn " ${testcase} | sed "s/^##printn //")
 
-	result_pn=$(run_exefile ${testcase} | lli -force-interpreter) 2> ${err}
+	result_pn=$(run_exefile ${testcase} 2> ${err} | lli -force-interpreter 2> ${err})
 	result_ret=$?
 
 	err_size=$(cat ${err} | wc -c)

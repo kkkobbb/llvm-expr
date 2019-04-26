@@ -82,5 +82,5 @@ fi
 # 一時ファイルの削除
 rm -rf ${RUN_DIR}
 
-return ${result}
+exit ${result}
 
