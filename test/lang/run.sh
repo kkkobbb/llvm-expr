@@ -25,6 +25,8 @@ COLOR_RESET="\e[m"
 
 # 実行ファイルの指定
 test $# -eq 1 && EXEFILE="$1"
+# ./付きかの確認
+test "${EXEFILE}" = "$(basename ${EXEFILE})" && EXEFILE="./${EXEFILE}"
 # 実行ファイルの存在確認
 test -f ${EXEFILE} || { echo "not found '${EXEFILE}'"; exit 1; }
 

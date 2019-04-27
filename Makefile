@@ -34,7 +34,11 @@ clean:
 	$(RM) Parser.cc Parser.hh stack.hh location.hh position.hh Parser.output
 
 
-.PHONY: all clean
+test: $(DEST)
+	test/run.sh $^
+
+
+.PHONY: all clean test
 .PRECIOUS: %.cc %.hh
 
 
