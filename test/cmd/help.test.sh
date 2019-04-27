@@ -5,66 +5,49 @@
 #
 
 ######################### 準備 #########################
-
-EXEFILE="./exparrc"
+DEFAULT_EXE="./exparrc"
 TESTDIR="$(dirname $0)"
-
-# 実行ファイルの指定
-test $# -eq 1 && EXEFILE="$1"
-# 実行ファイルの存在確認
-test -f ${EXEFILE} || { echo "not found '${EXEFILE}'"; exit 1; }
+. ${TESTDIR}/run_init.sh
 
 
 # テストとして実行するコマンド
-run_exefile()
+testcase()
 {
-	${EXEFILE} -help
+	# 標準出力 取得用
+	out="test_stdout"
+	# 標準エラー出力 取得用
+	err="test_stderr"
+
+	${TEST_EXE} -help > ${out} 2> ${err}
+	ret=$?
+
+	result=0
+	# 戻り値が0であること
+	if [ ${ret} -ne 0 ]; then
+		echo "bad return (${ret})"
+		result=1
+	fi
+	# 標準出力に出力されていること
+	if [ -z "$(cat ${out})" ]; then
+		echo "no help output"
+		result=1
+	fi
+	# 標準エラー出力に出力されていないこと
+	if [ -n "$(cat ${err})" ]; then
+		result=1
+	fi
+
+	# テスト失敗時出力を表示する
+	if [ ${result} -ne 0 ]; then
+		cat ${out}
+		cat ${err}
+	fi
+
+	return ${result}
 }
 
 
 ######################### 実行 #########################
 
-# 標準出力 取得用
-out=$(mktemp)
-# 標準エラー出力 取得用
-err=$(mktemp)
-
-# 実行
-run_exefile > ${out} 2> ${err}
-ret=$?
-
-
-######################### 確認 #########################
-
-result=0
-
-# 戻り値が0であること
-if [ ${ret} -ne 0 ]; then
-	result=1
-fi
-
-# 標準出力に出力されていること
-if [ -z "$(cat ${out})" ]; then
-	result=1
-fi
-
-# 標準エラー出力に出力されていないこと
-if [ -n "$(cat ${err})" ]; then
-	result=1
-fi
-
-
-######################### 掃除 #########################
-
-# テスト失敗時出力を表示する
-if [ ${result} -ne 0 ]; then
-	cat ${out}
-	cat ${err}
-fi
-
-# 一時ファイルの削除
-rm -f ${out}
-rm -f ${err}
-
-exit ${result}
+run_test
 

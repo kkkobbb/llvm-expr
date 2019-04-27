@@ -1,5 +1,6 @@
 #!/bin/sh
-# アセンブリ出力の確認
+# 出力ファイル種類指定無し場合の確認
+#   デフォルトはasmを出力する
 #
 # 成功時、0を返す
 #
@@ -14,10 +15,10 @@ TESTDIR="$(dirname $0)"
 testcase()
 {
 	# 実行
-	printf "12;\n" | ${TEST_EXE} -filetype=asm /dev/stdin
+	printf "12;\n" | ${TEST_EXE} /dev/stdin
 	ret=$?
 
-	# 戻り値が0でない場合、失敗
+	# 戻り値が0出ない場合、失敗
 	if [ "${ret}" -ne 0 ]; then
 		echo "bad return (${ret})"
 		return 1
