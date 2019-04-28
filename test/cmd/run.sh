@@ -36,10 +36,18 @@ for testcase in ${testcaselist}; do
 	echo "  [${testcase}]"
 done
 
+# 全体の成否
+all_result=0
+if [ "${success_num}" -ne "${test_num}" ]; then
+	all_result=1
+fi
+
 # 全体の成否で色を変える
 color="${COLOR_SUCCESS}"
-if [ "${success_num}" -ne "${test_num}" ]; then
+if [ "${all_result}" -ne 0 ]; then
 	color="${COLOR_FAILURE}"
 fi
 printf "\n${color}${success_num} / ${test_num}${COLOR_RESET}\n"
+
+exit ${all_result}
 
