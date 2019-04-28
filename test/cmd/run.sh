@@ -1,7 +1,16 @@
 #!/bin/sh
 # コマンド実行、ファイル出力の動作確認
 #
+# ./run.sh [exefile]
 #
+# run.shと同じディレクトリで拡張子が${TESTEXT}のファイルがテストケースとなる
+# コマンドライン引数でexefileの指定があればその実行ファイルでテストする
+#
+# exefile
+#     テストするコマンド 指定がなければ同じ階層のコマンド
+#
+# 戻り値
+#     成功時 0
 EXEFILE="./exparrc"
 TESTDIR="$(dirname $0)"
 TESTEXT="test.sh"
@@ -33,7 +42,7 @@ for testcase in ${testcaselist}; do
 		printf "${COLOR_FAILURE}Failure:${COLOR_RESET}"
 	fi
 
-	echo "  [${testcase}]"
+	echo "  [$(basename ${testcase})]"
 done
 
 # 全体の成否
