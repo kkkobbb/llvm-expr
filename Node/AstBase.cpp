@@ -14,7 +14,7 @@
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
 
-#include "AstNode.h"
+#include "AstBase.h"
 #include "IRState.h"
 
 

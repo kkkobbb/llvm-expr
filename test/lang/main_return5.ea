@@ -1,0 +1,16 @@
+# main関数の戻り値 (voidの場合、エラー)
+
+decl fnc printf:int(:string, ...);
+
+fnc funcv:void (a:int) {
+	printf("%d\n", a);
+};
+
+# void はreturnを使用して明示的に戻り値とすることはできない
+# ここで文法エラーになるのでコンパイルは失敗する
+##output_stderr
+return funcv(5);
+
+# lliでエラーになるので戻り値は0にならない
+##return 255
+

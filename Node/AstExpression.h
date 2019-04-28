@@ -59,6 +59,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
+		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 論理演算 AND
@@ -66,6 +67,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
+		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// ビット演算 OR
@@ -73,6 +75,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
+		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// ビット演算 XOR
@@ -80,6 +83,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
+		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// ビット演算 AND
@@ -87,6 +91,7 @@ namespace expr {
 	{
 		public:
 		using AstExpression::AstExpression;
+		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 関係演算 等値
@@ -182,6 +187,7 @@ namespace expr {
 	{
 		public:
 		AstExpressionSPOS(AstNode *n) : AstExpression(nullptr, n) {}
+		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 単項演算子 負
@@ -189,6 +195,7 @@ namespace expr {
 	{
 		public:
 		AstExpressionSNEG(AstNode *n) : AstExpression(nullptr, n) {}
+		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 論理演算 否定
@@ -196,6 +203,7 @@ namespace expr {
 	{
 		public:
 		AstExpressionLNOT(AstNode *n) : AstExpression(nullptr, n) {}
+		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// ビット演算 否定
@@ -203,6 +211,7 @@ namespace expr {
 	{
 		public:
 		AstExpressionBNOT(AstNode *n) : AstExpression(nullptr, n) {}
+		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 }
 
