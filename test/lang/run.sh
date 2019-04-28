@@ -5,18 +5,24 @@
 #
 # run.shと同じディレクトリで拡張子が${TESTEXT}のファイルがテストケースとなる
 # コマンドライン引数でexefileの指定があればその実行ファイルでテストする
-#
 # TESTOPT="-O" ./run.sh とかでテスト時の追加のオプションを指定可能
 #
+# exefile
+#     テストするコマンド 指定がなければ同じ階層のコマンド
+#
+# 戻り値
+#     成功時 0
+#
+#
+# テスト用の入力ファイルについて
 # 期待値の指定方法
 # テストケースとなるファイルに以下のコメントを付ける
 #     * `##return 0`       戻り値の期待値
 #     * `##printn aaa`     標準出力への出力の期待値(改行付き)
 #     * `##output_stderr`  標準エラー出力への出力があること (内容は問わない)
-#
 EXEFILE="./exparrc"
 TESTDIR="$(dirname $0)"
-TESTEXT="ea"
+TESTEXT="test.ea"
 
 COLOR_SUCCESS="\e[32m"
 COLOR_FAILURE="\e[31m"
@@ -64,7 +70,7 @@ for testcase in ${testcaselist}; do
 		else
 			printf "${COLOR_FAILURE}Failure:  (no output_stderr)${COLOR_RESET}"
 		fi
-		echo "  [${testcase}]"
+		echo "  [$(basename ${testcase})]"
 	fi
 
 	# 標準エラー出力に出力があれば表示する
@@ -82,7 +88,7 @@ for testcase in ${testcaselist}; do
 		else
 			printf "${COLOR_FAILURE}Failure:  (return ${result_ret}:${expected_r})${COLOR_RESET}"
 		fi
-		echo "  [${testcase}]"
+		echo "  [$(basename ${testcase})]"
 	fi
 
 	# 標準出力への出力のテスト
@@ -94,17 +100,25 @@ for testcase in ${testcaselist}; do
 		else
 			printf "${COLOR_FAILURE}Failure:  (printn\n${result_pn}\n:\n${expected_p}\n)${COLOR_RESET}"
 		fi
-		echo "  [${testcase}]"
+		echo "  [$(basename ${testcase})]"
 	fi
 done
 
 # 一時ファイルの削除
 rm -f ${err}
 
+# 全体の成否
+all_result=0
+if [ "${success_num}" -ne "${test_num}" ]; then
+	all_result=1
+fi
+
 # 全体の成否で色を変える
 color="${COLOR_SUCCESS}"
-if [ "${success_num}" -ne "${test_num}" ]; then
+if [ "${all_result}" -ne 0 ]; then
 	color="${COLOR_FAILURE}"
 fi
 printf "\n${color}${success_num} / ${test_num}${COLOR_RESET}\n"
+
+exit ${all_result}
 
