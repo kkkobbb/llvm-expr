@@ -15,7 +15,7 @@
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
 
-#include "AstExpression.h"
+#include "Expression.h"
 #include "IRState.h"
 
 
@@ -25,9 +25,9 @@ using namespace expr;
 
 
 
-// AstExpression
+// Expression
 
-AstExpression::AstExpression(AstNode *l, AstNode *r)
+Expression::Expression(Node *l, Node *r)
 	: l(l), r(r)
 {}
 
@@ -36,7 +36,7 @@ AstExpression::AstExpression(AstNode *l, AstNode *r)
  * IR 生成
  * 式
  */
-Value *AstExpression::getValue(IRState &irs)
+Value *Expression::getValue(IRState &irs)
 {
 	Value *lv = nullptr;
 	if (l != nullptr)
@@ -54,15 +54,15 @@ Value *AstExpression::getValue(IRState &irs)
  *
  * 演算子毎に変更すること
  */
-Value *AstExpression::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *Expression::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	return nullptr;
 }
 
 
-void AstExpression::print_ast(ostream &dout, int indent)
+void Expression::print_ast(ostream &dout, int indent)
 {
-	AstNode::print_ast(dout, indent);
+	Node::print_ast(dout, indent);
 	// 子要素の表示
 	const int next_indent = indent + 1;
 	if (l != nullptr)
@@ -72,10 +72,10 @@ void AstExpression::print_ast(ostream &dout, int indent)
 }
 
 
-// AstExpressionFunc
+// ExpressionFunc
 
-AstExpressionFunc::AstExpressionFunc(AstIdentifier *identifier, AstList *argumentList)
-	: AstExpression(identifier, argumentList), identifier(identifier), argumentList(argumentList)
+ExpressionFunc::ExpressionFunc(Identifier *identifier, NodeList *argumentList)
+	: Expression(identifier, argumentList), identifier(identifier), argumentList(argumentList)
 {}
 
 
@@ -83,7 +83,7 @@ AstExpressionFunc::AstExpressionFunc(AstIdentifier *identifier, AstList *argumen
  * IR 生成
  * 関数呼び出し
  */
-Value *AstExpressionFunc::getValue(IRState &irs)
+Value *ExpressionFunc::getValue(IRState &irs)
 {
 	auto &builder = irs.getBuilder();
 	auto &m = irs.getModule();
@@ -105,10 +105,10 @@ Value *AstExpressionFunc::getValue(IRState &irs)
 }
 
 
-// AstExpressionAS
+// ExpressionAS
 
-AstExpressionAS::AstExpressionAS(AstIdentifier *identifier, AstNode *value)
-	: AstExpression(identifier, value), identifier(identifier)
+ExpressionAS::ExpressionAS(Identifier *identifier, Node *value)
+	: Expression(identifier, value), identifier(identifier)
 {}
 
 
@@ -116,7 +116,7 @@ AstExpressionAS::AstExpressionAS(AstIdentifier *identifier, AstNode *value)
  * IR 生成
  * 代入
  */
-Value *AstExpressionAS::getValue(IRState &irs)
+Value *ExpressionAS::getValue(IRState &irs)
 {
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
@@ -143,7 +143,7 @@ Value *AstExpressionAS::getValue(IRState &irs)
  * IR 生成
  * ||
  */
-Value *AstExpressionLOR::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionLOR::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	// TODO
 	return nullptr;
@@ -154,7 +154,7 @@ Value *AstExpressionLOR::generate_exp(IRState &irs, Value *lv, Value *rv)
  * IR 生成
  * &&
  */
-Value *AstExpressionLAND::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionLAND::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	// TODO
 	return nullptr;
@@ -165,7 +165,7 @@ Value *AstExpressionLAND::generate_exp(IRState &irs, Value *lv, Value *rv)
  * IR 生成
  * |
  */
-Value *AstExpressionBOR::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionBOR::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	// TODO
 	return nullptr;
@@ -176,7 +176,7 @@ Value *AstExpressionBOR::generate_exp(IRState &irs, Value *lv, Value *rv)
  * IR 生成
  * ^
  */
-Value *AstExpressionBXOR::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionBXOR::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	// TODO
 	return nullptr;
@@ -187,7 +187,7 @@ Value *AstExpressionBXOR::generate_exp(IRState &irs, Value *lv, Value *rv)
  * IR 生成
  * &
  */
-Value *AstExpressionBAND::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionBAND::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	// TODO
 	return nullptr;
@@ -198,7 +198,7 @@ Value *AstExpressionBAND::generate_exp(IRState &irs, Value *lv, Value *rv)
  * IR 生成
  * ==
  */
-Value *AstExpressionEQ::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionEQ::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
@@ -214,7 +214,7 @@ Value *AstExpressionEQ::generate_exp(IRState &irs, Value *lv, Value *rv)
  * IR 生成
  * !=
  */
-Value *AstExpressionNE::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionNE::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
@@ -230,7 +230,7 @@ Value *AstExpressionNE::generate_exp(IRState &irs, Value *lv, Value *rv)
  * IR 生成
  * <
  */
-Value *AstExpressionLT::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionLT::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
@@ -246,7 +246,7 @@ Value *AstExpressionLT::generate_exp(IRState &irs, Value *lv, Value *rv)
  * IR 生成
  * >
  */
-Value *AstExpressionGT::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionGT::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
@@ -262,7 +262,7 @@ Value *AstExpressionGT::generate_exp(IRState &irs, Value *lv, Value *rv)
  * IR 生成
  * <=
  */
-Value *AstExpressionLTE::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionLTE::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
@@ -278,7 +278,7 @@ Value *AstExpressionLTE::generate_exp(IRState &irs, Value *lv, Value *rv)
  * IR 生成
  * >=
  */
-Value *AstExpressionGTE::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionGTE::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
@@ -294,7 +294,7 @@ Value *AstExpressionGTE::generate_exp(IRState &irs, Value *lv, Value *rv)
  * IR 生成
  * 加算
  */
-Value *AstExpressionADD::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionADD::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &builder = irs.getBuilder();
 
@@ -306,7 +306,7 @@ Value *AstExpressionADD::generate_exp(IRState &irs, Value *lv, Value *rv)
  * IR 生成
  * 減算
  */
-Value *AstExpressionSUB::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionSUB::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &builder = irs.getBuilder();
 
@@ -318,7 +318,7 @@ Value *AstExpressionSUB::generate_exp(IRState &irs, Value *lv, Value *rv)
  * IR 生成
  * 乗算
  */
-Value *AstExpressionMUL::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionMUL::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &builder = irs.getBuilder();
 
@@ -330,7 +330,7 @@ Value *AstExpressionMUL::generate_exp(IRState &irs, Value *lv, Value *rv)
  * IR 生成
  * 除算
  */
-Value *AstExpressionDIV::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionDIV::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &builder = irs.getBuilder();
 
@@ -342,7 +342,7 @@ Value *AstExpressionDIV::generate_exp(IRState &irs, Value *lv, Value *rv)
  * IR 生成
  * 余算
  */
-Value *AstExpressionMOD::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionMOD::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &builder = irs.getBuilder();
 
@@ -354,7 +354,7 @@ Value *AstExpressionMOD::generate_exp(IRState &irs, Value *lv, Value *rv)
  * IR 生成
  * 単項演算子 +
  */
-Value *AstExpressionSPOS::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionSPOS::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	return rv;
 }
@@ -364,7 +364,7 @@ Value *AstExpressionSPOS::generate_exp(IRState &irs, Value *lv, Value *rv)
  * IR 生成
  * 単項演算子 -
  */
-Value *AstExpressionSNEG::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionSNEG::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &builder = irs.getBuilder();
 
@@ -376,7 +376,7 @@ Value *AstExpressionSNEG::generate_exp(IRState &irs, Value *lv, Value *rv)
  * IR 生成
  * 単項演算子 !
  */
-Value *AstExpressionLNOT::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionLNOT::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	// TODO
 	return nullptr;
@@ -387,7 +387,7 @@ Value *AstExpressionLNOT::generate_exp(IRState &irs, Value *lv, Value *rv)
  * IR 生成
  * 単項演算子 ~
  */
-Value *AstExpressionBNOT::generate_exp(IRState &irs, Value *lv, Value *rv)
+Value *ExpressionBNOT::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	// TODO
 	return nullptr;

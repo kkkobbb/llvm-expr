@@ -1,6 +1,7 @@
 /*
  * LLVM確認用言語 Exparr コンパイラ
  */
+#include <iostream>
 #include <memory>
 #include <fstream>
 
@@ -9,7 +10,7 @@
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Support/Path.h>
 
-#include "Node/AstNode.h"
+#include "Ast/Node.h"
 #include "AstGenerator.h"
 #include "IRGenerator.h"
 #include "OptimPass.h"

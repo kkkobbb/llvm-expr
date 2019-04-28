@@ -14,7 +14,7 @@
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
 
-#include "AstBase.h"
+#include "Base.h"
 #include "IRState.h"
 
 
@@ -24,21 +24,21 @@ using namespace expr;
 
 
 
-// AstNode
+// Node
 
-Value *AstNode::getValue(IRState &irs)
+Value *Node::getValue(IRState &irs)
 {
 	return nullptr;
 }
 
 
-Type *AstNode::getType(IRState &irs)
+Type *Node::getType(IRState &irs)
 {
 	return nullptr;
 }
 
 
-void AstNode::print_ast_string(const char *msg, ostream &dout, int indent)
+void Node::print_ast_string(const char *msg, ostream &dout, int indent)
 {
 	// インデント
 	for (int i = 0; i < indent; ++i)
@@ -48,7 +48,7 @@ void AstNode::print_ast_string(const char *msg, ostream &dout, int indent)
 }
 
 
-void AstNode::print_ast(ostream &dout, int indent)
+void Node::print_ast(ostream &dout, int indent)
 {
 	string msg = "";
 
@@ -62,19 +62,19 @@ void AstNode::print_ast(ostream &dout, int indent)
 }
 
 
-// AstList
+// NodeList
 
-AstList::AstList(AstNode *n)
+NodeList::NodeList(Node *n)
 {
 	add(n);
 }
 
 
-void AstList::add(AstNode *n)
+void NodeList::add(Node *n)
 {
 	if (n == nullptr)
 		return;
-	children.push_back(unique_ptr<AstNode>(n));
+	children.push_back(unique_ptr<Node>(n));
 }
 
 
@@ -84,7 +84,7 @@ void AstList::add(AstNode *n)
  *
  * 子要素の実行のみ
  */
-Value *AstList::getValue(IRState &irs)
+Value *NodeList::getValue(IRState &irs)
 {
 	Value *lastVal = nullptr;
 
@@ -95,9 +95,9 @@ Value *AstList::getValue(IRState &irs)
 }
 
 
-void AstList::print_ast(std::ostream &dout, int indent)
+void NodeList::print_ast(std::ostream &dout, int indent)
 {
-	AstNode::print_ast(dout, indent);
+	Node::print_ast(dout, indent);
 
 	// 子要素の表示
 	const int next_indent = indent + 1;
@@ -106,19 +106,19 @@ void AstList::print_ast(std::ostream &dout, int indent)
 }
 
 
-vector<unique_ptr<AstNode>> *AstList::getList()
+vector<unique_ptr<Node>> *NodeList::getList()
 {
 	return &children;
 }
 
 
-// AstUnit
+// Unit
 
 /*
  * IR 生成
  * 翻訳単位 (1ファイル分)
  */
-Value *AstUnit::getValue(IRState &irs)
+Value *Unit::getValue(IRState &irs)
 {
 	auto &c = irs.getContext();
 	auto &m = irs.getModule();
@@ -139,7 +139,7 @@ Value *AstUnit::getValue(IRState &irs)
 	irs.pushCurFunc(func);
 
 	// 子要素の実行
-	auto *v = AstList::getValue(irs);
+	auto *v = NodeList::getValue(irs);
 
 	// returnしていない場合、最後の式を戻り値とする
 	if (!isa<ReturnInst>(v)) {

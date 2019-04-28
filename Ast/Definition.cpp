@@ -14,7 +14,7 @@
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
 
-#include "AstDefinition.h"
+#include "Definition.h"
 #include "IRState.h"
 
 
@@ -24,16 +24,16 @@ using namespace expr;
 
 
 
-// AstDefinitionVar
+// DefinitionVar
 
-AstDefinitionVar::AstDefinitionVar(AstIdentifier *decl, AstNode *init)
+DefinitionVar::DefinitionVar(Identifier *decl, Node *init)
 	: decl(decl), init(init)
 {}
 
 
-void AstDefinitionVar::print_ast(ostream &dout, int indent)
+void DefinitionVar::print_ast(ostream &dout, int indent)
 {
-	AstNode::print_ast(dout, indent);
+	Node::print_ast(dout, indent);
 	// 子要素の表示
 	const int next_indent = indent + 1;
 	if (decl != nullptr)
@@ -50,7 +50,7 @@ void AstDefinitionVar::print_ast(ostream &dout, int indent)
  *
  * TODO エラー処理
  */
-Value *AstDefinitionVar::getValue(IRState &irs)
+Value *DefinitionVar::getValue(IRState &irs)
 {
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
@@ -68,16 +68,16 @@ Value *AstDefinitionVar::getValue(IRState &irs)
 }
 
 
-// AstDefinitionFunc
+// DefinitionFunc
 
-AstDefinitionFunc::AstDefinitionFunc(AstIdentifier *decl, AstIdentifierList *argumentList, AstNode *body)
+DefinitionFunc::DefinitionFunc(Identifier *decl, IdentifierList *argumentList, Node *body)
 	: decl(decl), argumentList(argumentList), body(body)
 {}
 
 
-void AstDefinitionFunc::print_ast(std::ostream &dout, int indent)
+void DefinitionFunc::print_ast(std::ostream &dout, int indent)
 {
-	AstNode::print_ast(dout, indent);
+	Node::print_ast(dout, indent);
 	// 子要素の表示
 	const int next_indent = indent + 1;
 	if (decl != nullptr)
@@ -96,7 +96,7 @@ void AstDefinitionFunc::print_ast(std::ostream &dout, int indent)
  *
  * TODO エラー処理
  */
-Value *AstDefinitionFunc::getValue(IRState &irs)
+Value *DefinitionFunc::getValue(IRState &irs)
 {
 	auto &c = irs.getContext();
 	auto &m = irs.getModule();

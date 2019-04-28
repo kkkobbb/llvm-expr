@@ -1,5 +1,5 @@
-#ifndef ASTEXPRESSION_H
-#define ASTEXPRESSION_H
+#ifndef EXPRESSION_H
+#define EXPRESSION_H
 
 #include <iostream>
 #include <string>
@@ -9,8 +9,8 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
 
-#include "AstBase.h"
-#include "AstConstant.h"
+#include "Base.h"
+#include "Const.h"
 
 
 
@@ -18,202 +18,202 @@ namespace expr {
 	class IRState;
 
 	// 式
-	class AstExpression: public AstNode
+	class Expression: public Node
 	{
 		protected:
-		std::unique_ptr<AstNode> l;  // 左辺
-		std::unique_ptr<AstNode> r;  // 右辺
+		std::unique_ptr<Node> l;  // 左辺
+		std::unique_ptr<Node> r;  // 右辺
 
 		public:
-		AstExpression(AstNode *l, AstNode *r);
+		Expression(Node *l, Node *r);
 		virtual llvm::Value *getValue(IRState &irs) override;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 	};
 
 	// 関数呼び出し
-	class AstExpressionFunc: public AstExpression
+	class ExpressionFunc: public Expression
 	{
 		protected:
-		std::unique_ptr<AstIdentifier> identifier;
-		std::unique_ptr<AstList> argumentList;
+		std::unique_ptr<Identifier> identifier;
+		std::unique_ptr<NodeList> argumentList;
 
 		public:
-		AstExpressionFunc(AstIdentifier *identifier, AstList *argumentList);
+		ExpressionFunc(Identifier *identifier, NodeList *argumentList);
 		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 
 	// 代入演算子
-	class AstExpressionAS: public AstExpression
+	class ExpressionAS: public Expression
 	{
 		protected:
-		std::unique_ptr<AstIdentifier> identifier;
+		std::unique_ptr<Identifier> identifier;
 
 		public:
-		AstExpressionAS(AstIdentifier *identifier, AstNode *value);
+		ExpressionAS(Identifier *identifier, Node *value);
 		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 
 	// 論理演算 OR
-	class AstExpressionLOR: public AstExpression
+	class ExpressionLOR: public Expression
 	{
 		public:
-		using AstExpression::AstExpression;
+		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 論理演算 AND
-	class AstExpressionLAND: public AstExpression
+	class ExpressionLAND: public Expression
 	{
 		public:
-		using AstExpression::AstExpression;
+		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// ビット演算 OR
-	class AstExpressionBOR: public AstExpression
+	class ExpressionBOR: public Expression
 	{
 		public:
-		using AstExpression::AstExpression;
+		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// ビット演算 XOR
-	class AstExpressionBXOR: public AstExpression
+	class ExpressionBXOR: public Expression
 	{
 		public:
-		using AstExpression::AstExpression;
+		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// ビット演算 AND
-	class AstExpressionBAND: public AstExpression
+	class ExpressionBAND: public Expression
 	{
 		public:
-		using AstExpression::AstExpression;
+		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 関係演算 等値
-	class AstExpressionEQ: public AstExpression
+	class ExpressionEQ: public Expression
 	{
 		public:
-		using AstExpression::AstExpression;
+		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 関係演算 非等値
-	class AstExpressionNE: public AstExpression
+	class ExpressionNE: public Expression
 	{
 		public:
-		using AstExpression::AstExpression;
+		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 関係演算 <
-	class AstExpressionLT: public AstExpression
+	class ExpressionLT: public Expression
 	{
 		public:
-		using AstExpression::AstExpression;
+		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 関係演算 >
-	class AstExpressionGT: public AstExpression
+	class ExpressionGT: public Expression
 	{
 		public:
-		using AstExpression::AstExpression;
+		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 関係演算 <=
-	class AstExpressionLTE: public AstExpression
+	class ExpressionLTE: public Expression
 	{
 		public:
-		using AstExpression::AstExpression;
+		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 関係演算 >=
-	class AstExpressionGTE: public AstExpression
+	class ExpressionGTE: public Expression
 	{
 		public:
-		using AstExpression::AstExpression;
+		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 加算
-	class AstExpressionADD: public AstExpression
+	class ExpressionADD: public Expression
 	{
 		public:
-		using AstExpression::AstExpression;
+		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 減算
-	class AstExpressionSUB: public AstExpression
+	class ExpressionSUB: public Expression
 	{
 		public:
-		using AstExpression::AstExpression;
+		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 乗算
-	class AstExpressionMUL: public AstExpression
+	class ExpressionMUL: public Expression
 	{
 		public:
-		using AstExpression::AstExpression;
+		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 除算
-	class AstExpressionDIV: public AstExpression
+	class ExpressionDIV: public Expression
 	{
 		public:
-		using AstExpression::AstExpression;
+		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 余算
-	class AstExpressionMOD: public AstExpression
+	class ExpressionMOD: public Expression
 	{
 		public:
-		using AstExpression::AstExpression;
+		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 単項演算子 正
-	class AstExpressionSPOS: public AstExpression
+	class ExpressionSPOS: public Expression
 	{
 		public:
-		AstExpressionSPOS(AstNode *n) : AstExpression(nullptr, n) {}
+		ExpressionSPOS(Node *n) : Expression(nullptr, n) {}
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 単項演算子 負
-	class AstExpressionSNEG: public AstExpression
+	class ExpressionSNEG: public Expression
 	{
 		public:
-		AstExpressionSNEG(AstNode *n) : AstExpression(nullptr, n) {}
+		ExpressionSNEG(Node *n) : Expression(nullptr, n) {}
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// 論理演算 否定
-	class AstExpressionLNOT: public AstExpression
+	class ExpressionLNOT: public Expression
 	{
 		public:
-		AstExpressionLNOT(AstNode *n) : AstExpression(nullptr, n) {}
+		ExpressionLNOT(Node *n) : Expression(nullptr, n) {}
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 
 	// ビット演算 否定
-	class AstExpressionBNOT: public AstExpression
+	class ExpressionBNOT: public Expression
 	{
 		public:
-		AstExpressionBNOT(AstNode *n) : AstExpression(nullptr, n) {}
+		ExpressionBNOT(Node *n) : Expression(nullptr, n) {}
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
 }
 
-#endif  // ASTEXPRESSION_H
+#endif  // EXPRESSION_H
 

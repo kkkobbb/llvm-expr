@@ -9,7 +9,7 @@
 #include <llvm/IR/Verifier.h>
 #include <llvm/IR/GlobalVariable.h>
 
-#include "Node/AstNode.h"
+#include "Ast/Node.h"
 #include "IRGenerator.h"
 #include "IRState.h"
 
@@ -25,7 +25,7 @@ using namespace expr;
  *
  * 生成に成功した場合、真を返す
  */
-bool IRGenerator::generate(AstNode &ast_root)
+bool IRGenerator::generate(Node &ast_root)
 {
 	// デバッグ用
 	// グローバル変数(定数)を生成する

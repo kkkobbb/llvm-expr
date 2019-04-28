@@ -1,5 +1,5 @@
-#ifndef ASTBASE_H
-#define ASTBASE_H
+#ifndef BASE_H
+#define BASE_H
 
 #include <iostream>
 #include <string>
@@ -15,7 +15,7 @@ namespace expr {
 	class IRState;
 
 	// ノード
-	class AstNode
+	class Node
 	{
 		protected:
 		std::string dbg_msg;
@@ -28,27 +28,27 @@ namespace expr {
 	};
 
 	// ノードの一覧を持つ
-	class AstList: public AstNode
+	class NodeList: public Node
 	{
 		protected:
-		std::vector<std::unique_ptr<AstNode>> children;
+		std::vector<std::unique_ptr<Node>> children;
 
 		public:
-		AstList(AstNode *n);
-		void add(AstNode *n);
+		NodeList(Node *n);
+		void add(Node *n);
 		virtual llvm::Value *getValue(IRState &irs) override;
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
-		std::vector<std::unique_ptr<AstNode>> *getList();
+		std::vector<std::unique_ptr<Node>> *getList();
 	};
 
 	// 翻訳単位
-	class AstUnit: public AstList
+	class Unit: public NodeList
 	{
 		public:
-		using AstList::AstList;
+		using NodeList::NodeList;
 		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 }
 
-#endif  // ASTBASE_H
+#endif  // BASE_H
 

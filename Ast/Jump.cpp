@@ -15,7 +15,7 @@
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
 
-#include "AstJump.h"
+#include "Jump.h"
 #include "IRState.h"
 
 
@@ -25,16 +25,16 @@ using namespace expr;
 
 
 
-// AstJumpReturn
+// JumpReturn
 
-AstJumpReturn::AstJumpReturn(AstNode *ret)
+JumpReturn::JumpReturn(Node *ret)
 	: ret(ret)
 {}
 
 
-void AstJumpReturn::print_ast(ostream &dout, int indent)
+void JumpReturn::print_ast(ostream &dout, int indent)
 {
-	AstNode::print_ast(dout, indent);
+	Node::print_ast(dout, indent);
 	// 子要素の表示
 	const int next_indent = indent + 1;
 	if (ret != nullptr)
@@ -49,7 +49,7 @@ void AstJumpReturn::print_ast(ostream &dout, int indent)
  *
  * return文
  */
-Value *AstJumpReturn::getValue(IRState &irs)
+Value *JumpReturn::getValue(IRState &irs)
 {
 	auto &builder = irs.getBuilder();
 

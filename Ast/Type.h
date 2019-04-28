@@ -1,5 +1,5 @@
-#ifndef ASTTYPE_H
-#define ASTTYPE_H
+#ifndef TYPE_H
+#define TYPE_H
 
 #include <iostream>
 #include <string>
@@ -9,40 +9,40 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
 
-#include "AstBase.h"
+#include "Base.h"
 
 
 
 namespace expr {
 	class IRState;
 
-	class AstType: public AstNode
+	class TypeBase: public Node
 	{
 		public:
-		using AstNode::AstNode;
+		using Node::Node;
 	};
 
-	class AstTypeVoid: public AstType
+	class TypeVoid: public TypeBase
 	{
 		public:
-		using AstType::AstType;
+		using TypeBase::TypeBase;
 		virtual llvm::Type *getType(IRState &irs) override;
 	};
 
-	class AstTypeInt: public AstType
+	class TypeInt: public TypeBase
 	{
 		public:
-		using AstType::AstType;
+		using TypeBase::TypeBase;
 		virtual llvm::Type *getType(IRState &irs) override;
 	};
 
-	class AstTypeString: public AstType
+	class TypeString: public TypeBase
 	{
 		public:
-		using AstType::AstType;
+		using TypeBase::TypeBase;
 		virtual llvm::Type *getType(IRState &irs) override;
 	};
 }
 
-#endif  // ASTTYPE_H
+#endif  // TYPE_H
 

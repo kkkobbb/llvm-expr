@@ -4,18 +4,18 @@
 #include <fstream>
 #include <memory>
 
-#include "Node/AstNode.h"
+#include "Ast/Node.h"
 
 
 namespace expr {
 	// 構文木 生成器
 	class AstGenerator
 	{
-		std::unique_ptr<AstNode> ast_root;
+		std::unique_ptr<Node> ast_root;
 
 		public:
 		bool generate(std::ifstream &fin);
-		std::unique_ptr<AstNode> get();
+		std::unique_ptr<Node> get();
 	};
 }
 
