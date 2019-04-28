@@ -62,8 +62,7 @@ std::unique_ptr<MY_NAMESPACE::AstNode> get_ast();
     int ival;
     std::string *sval;
 
-    int ntype;
-    AstNode *astnode;
+    AstNode *node;
 }
 
 /* 終端記号 */
@@ -93,44 +92,44 @@ std::unique_ptr<MY_NAMESPACE::AstNode> get_ast();
 %token           OP_ARROW_L OP_ARROW_R
 
 /* 構文木のルート */
-%type <astnode>  ast_root
-%type <astnode>  translation_unit
+%type <node>  ast_root
+%type <node>  translation_unit
 /* 文 */
-%type <astnode>  expression expression_list
-%type <astnode>  expression_unit
-%type <astnode>  compound_expression
-%type <astnode>  extended_expression
-%type <astnode>  mixed_expression_list
-%type <astnode>  mixed_expression
+%type <node>  expression expression_list
+%type <node>  expression_unit
+%type <node>  compound_expression
+%type <node>  extended_expression
+%type <node>  mixed_expression_list
+%type <node>  mixed_expression
 /* ジャンプ文 */
-%type <astnode>  jump
+%type <node>  jump
 /* 制御文 */
-%type <astnode>  control
-%type <astnode>  if_expression
-%type <astnode>  while_expression
+%type <node>  control
+%type <node>  if_expression
+%type <node>  while_expression
 /* 宣言 */
-%type <astnode>  declarator
-%type <astnode>  definition
-%type <astnode>  identifier_type_list
-%type <astnode>  primary_type
+%type <node>  declarator
+%type <node>  definition
+%type <node>  identifier_type_list
+%type <node>  primary_type
 /* 独自のエラー発生 */
-%type <astnode>  myerror myerror_compile myerror_runtime
+%type <node>  myerror myerror_compile myerror_runtime
 /* 式 */
-%type <astnode>  pure_expression
-%type <astnode>  assignment_expression_l assignment_expression_r
-%type <astnode>  constant_expression
-%type <astnode>  logical_OR_expression logical_AND_expression
-%type <astnode>  AND_expression exclusive_OR_expression inclusive_OR_expression
-%type <astnode>  equality_expression
-%type <astnode>  relational_expression
-%type <astnode>  additive_expression multiplicative_expression
-%type <astnode>  cast_expression
-%type <astnode>  unary_expression
-%type <astnode>  postfix_expression
-%type <astnode>  primary_expression
-%type <astnode>  constant_int constant_str
-%type <astnode>  identifier
-%type <astnode>  identifier_type
+%type <node>  pure_expression
+%type <node>  assignment_expression_l assignment_expression_r
+%type <node>  constant_expression
+%type <node>  logical_OR_expression logical_AND_expression
+%type <node>  AND_expression exclusive_OR_expression inclusive_OR_expression
+%type <node>  equality_expression
+%type <node>  relational_expression
+%type <node>  additive_expression multiplicative_expression
+%type <node>  cast_expression
+%type <node>  unary_expression
+%type <node>  postfix_expression
+%type <node>  primary_expression
+%type <node>  constant_int constant_str
+%type <node>  identifier
+%type <node>  identifier_type
 
 
 %%
