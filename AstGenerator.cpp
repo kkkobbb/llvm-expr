@@ -7,7 +7,7 @@
 #include "Lexer.h"
 #include "Parser.hh"
 
-#include "Node/AstNode.h"
+#include "Ast/Node.h"
 #include "AstGenerator.h"
 
 
@@ -42,7 +42,7 @@ bool AstGenerator::generate(ifstream &fin)
 /*
  * 生成した構文木を返す
  */
-unique_ptr<AstNode> AstGenerator::get()
+unique_ptr<Node> AstGenerator::get()
 {
 	return move(ast_root);
 }

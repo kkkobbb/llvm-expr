@@ -9,7 +9,7 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/GlobalVariable.h>
 
-#include "Node/AstNode.h"
+#include "Ast/Node.h"
 #include "IRState.h"
 
 
@@ -21,7 +21,7 @@ namespace expr {
 		IRState irs;
 
 		public:
-		bool generate(AstNode &ast_root);
+		bool generate(Node &ast_root);
 		std::unique_ptr<llvm::Module> get();
 	};
 }

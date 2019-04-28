@@ -14,7 +14,7 @@
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
 
-#include "AstDeclaration.h"
+#include "Declaration.h"
 #include "IRState.h"
 
 
@@ -24,16 +24,16 @@ using namespace expr;
 
 
 
-// AstDeclarationFunc
+// DeclarationFunc
 
-AstDeclarationFunc::AstDeclarationFunc(AstIdentifier *decl, AstIdentifierList *argumentList, bool vararg)
+DeclarationFunc::DeclarationFunc(Identifier *decl, IdentifierList *argumentList, bool vararg)
 	: decl(decl), argumentList(argumentList), vararg(vararg)
 {}
 
 
-void AstDeclarationFunc::print_ast(std::ostream &dout, int indent)
+void DeclarationFunc::print_ast(std::ostream &dout, int indent)
 {
-	AstNode::print_ast(dout, indent);
+	Node::print_ast(dout, indent);
 	// 子要素の表示
 	const int next_indent = indent + 1;
 	if (decl != nullptr)
@@ -50,7 +50,7 @@ void AstDeclarationFunc::print_ast(std::ostream &dout, int indent)
  *
  * TODO エラー処理
  */
-Value *AstDeclarationFunc::getValue(IRState &irs)
+Value *DeclarationFunc::getValue(IRState &irs)
 {
 	auto &m = irs.getModule();
 	auto &builder = irs.getBuilder();

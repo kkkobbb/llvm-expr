@@ -15,7 +15,7 @@
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
 
-#include "AstControl.h"
+#include "Control.h"
 #include "IRState.h"
 
 
@@ -25,16 +25,16 @@ using namespace expr;
 
 
 
-// AstControlIf
+// ControlIf
 
-AstControlIf::AstControlIf(AstNode *cond, AstNode *proc, AstNode *elseProc)
+ControlIf::ControlIf(Node *cond, Node *proc, Node *elseProc)
 	: cond(cond), proc(proc), elseProc(elseProc)
 {}
 
 
-void AstControlIf::print_ast(ostream &dout, int indent)
+void ControlIf::print_ast(ostream &dout, int indent)
 {
-	AstNode::print_ast(dout, indent);
+	Node::print_ast(dout, indent);
 	// 子要素の表示
 	int next_indent = indent + 1;
 	if (cond != nullptr)
@@ -55,7 +55,7 @@ void AstControlIf::print_ast(ostream &dout, int indent)
  *
  * TODO エラー処理
  */
-Value *AstControlIf::getValue(IRState &irs)
+Value *ControlIf::getValue(IRState &irs)
 {
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
@@ -116,16 +116,16 @@ Value *AstControlIf::getValue(IRState &irs)
 }
 
 
-// AstControlWhile
+// ControlWhile
 
-AstControlWhile::AstControlWhile(AstNode *cond, AstNode *proc)
+ControlWhile::ControlWhile(Node *cond, Node *proc)
 	: cond(cond), proc(proc)
 {}
 
 
-void AstControlWhile::print_ast(ostream &dout, int indent)
+void ControlWhile::print_ast(ostream &dout, int indent)
 {
-	AstNode::print_ast(dout, indent);
+	Node::print_ast(dout, indent);
 	// 子要素の表示
 	int next_indent = indent + 1;
 	if (cond != nullptr)
@@ -144,7 +144,7 @@ void AstControlWhile::print_ast(ostream &dout, int indent)
  *
  * TODO エラー処理
  */
-Value *AstControlWhile::getValue(IRState &irs)
+Value *ControlWhile::getValue(IRState &irs)
 {
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();

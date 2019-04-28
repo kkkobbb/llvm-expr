@@ -15,7 +15,7 @@
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
 
-#include "AstConstant.h"
+#include "Const.h"
 #include "IRState.h"
 
 
@@ -25,9 +25,9 @@ using namespace expr;
 
 
 
-// AstConstantInt
+// ConstInt
 
-AstConstantInt::AstConstantInt(int num)
+ConstInt::ConstInt(int num)
 	: num(num)
 {
 	dbg_msg = "(" + to_string(num) + ")";
@@ -38,7 +38,7 @@ AstConstantInt::AstConstantInt(int num)
  * IR 生成
  * 定数 整数
  */
-Value *AstConstantInt::getValue(IRState &irs)
+Value *ConstInt::getValue(IRState &irs)
 {
 	auto &builder = irs.getBuilder();
 
@@ -46,9 +46,9 @@ Value *AstConstantInt::getValue(IRState &irs)
 }
 
 
-// AstConstantString
+// ConstString
 
-AstConstantString::AstConstantString(string *str)
+ConstString::ConstString(string *str)
 {
 	if (str == nullptr)
 		this->str = llvm::make_unique<string>("");
@@ -63,7 +63,7 @@ AstConstantString::AstConstantString(string *str)
  * IR 生成
  * 定数 文字列
  */
-Value *AstConstantString::getValue(IRState &irs)
+Value *ConstString::getValue(IRState &irs)
 {
 	auto &builder = irs.getBuilder();
 
@@ -79,22 +79,22 @@ Value *AstConstantString::getValue(IRState &irs)
 }
 
 
-// AstIdentifier
+// Identifier
 
-AstIdentifier::AstIdentifier(string *name, AstNode *type)
+Identifier::Identifier(string *name, Node *type)
 {
 	if (name == nullptr)
 		this->name = llvm::make_unique<string>("");
 	else
 		this->name = unique_ptr<string>(name);
 	dbg_msg = "\"" + *this->name + "\"";
-	this->type = unique_ptr<AstNode>(type);
+	this->type = unique_ptr<Node>(type);
 }
 
 
-void AstIdentifier::print_ast(ostream &dout, int indent)
+void Identifier::print_ast(ostream &dout, int indent)
 {
-	AstNode::print_ast(dout, indent);
+	Node::print_ast(dout, indent);
 	// 子要素の表示
 	const int next_indent = indent + 1;
 	if (type != nullptr)
@@ -102,13 +102,13 @@ void AstIdentifier::print_ast(ostream &dout, int indent)
 }
 
 
-const string *AstIdentifier::getName()
+const string *Identifier::getName()
 {
 	return name.get();
 }
 
 
-Type *AstIdentifier::getType(IRState &irs)
+Type *Identifier::getType(IRState &irs)
 {
 	return this->type->getType(irs);
 }
@@ -122,7 +122,7 @@ Type *AstIdentifier::getType(IRState &irs)
  * 値の参照以外の用途(代入先、関数名など)の場合、getName()呼び出しで
  * 親ノードが処理すること
  */
-Value *AstIdentifier::getValue(IRState &irs)
+Value *Identifier::getValue(IRState &irs)
 {
 	auto &builder = irs.getBuilder();
 	const auto name = getName();
@@ -132,25 +132,25 @@ Value *AstIdentifier::getValue(IRState &irs)
 }
 
 
-// AstIdentifierList
+// IdentifierList
 
-AstIdentifierList::AstIdentifierList(AstIdentifier *n)
+IdentifierList::IdentifierList(Identifier *n)
 {
 	add(n);
 }
 
 
-void AstIdentifierList::add(AstIdentifier *n)
+void IdentifierList::add(Identifier *n)
 {
 	if (n == nullptr)
 		return;
-	children.push_back(unique_ptr<AstIdentifier>(n));
+	children.push_back(unique_ptr<Identifier>(n));
 }
 
 
-void AstIdentifierList::print_ast(ostream &dout, int indent)
+void IdentifierList::print_ast(ostream &dout, int indent)
 {
-	AstNode::print_ast(dout, indent);
+	Node::print_ast(dout, indent);
 
 	// 子要素の表示
 	const int next_indent = indent + 1;
@@ -165,7 +165,7 @@ void AstIdentifierList::print_ast(ostream &dout, int indent)
  * 型が設定されていない場合、nullptrが要素となる
  * Type自体のメモリはLLVMで管理されているためunique_ptrにしない
  */
-unique_ptr<vector<Type*>> AstIdentifierList::getTypes(IRState &irs)
+unique_ptr<vector<Type*>> IdentifierList::getTypes(IRState &irs)
 {
 	const auto typelist = new vector<Type*>();
 
@@ -181,9 +181,9 @@ unique_ptr<vector<Type*>> AstIdentifierList::getTypes(IRState &irs)
 /*
  * リスト中の識別子から識別子名を全て取り出す
  *
- * 識別子名はAstIdentifierで管理されているためunique_ptrにしない
+ * 識別子名はIdentifierで管理されているためunique_ptrにしない
  */
-unique_ptr<vector<const string*>> AstIdentifierList::getNames()
+unique_ptr<vector<const string*>> IdentifierList::getNames()
 {
 	const auto namelist = new vector<const string*>();
 

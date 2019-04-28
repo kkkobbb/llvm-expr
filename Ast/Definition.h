@@ -1,5 +1,5 @@
-#ifndef ASTCONTROL_H
-#define ASTCONTROL_H
+#ifndef DEFINITION_H
+#define DEFINITION_H
 
 #include <iostream>
 #include <string>
@@ -9,38 +9,39 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
 
-#include "AstBase.h"
+#include "Node.h"
+#include "Const.h"
 
 
 
 namespace expr {
 	class IRState;
 
-	class AstControlIf: public AstNode
+	class DefinitionVar: public Node
 	{
 		protected:
-		std::unique_ptr<AstNode> cond;
-		std::unique_ptr<AstNode> proc;
-		std::unique_ptr<AstNode> elseProc;
+		std::unique_ptr<Identifier> decl;
+		std::unique_ptr<Node> init;
 
 		public:
-		AstControlIf(AstNode *cond, AstNode *proc, AstNode *elseProc);
+		DefinitionVar(Identifier *decl, Node *init);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 
-	class AstControlWhile: public AstNode
+	class DefinitionFunc: public Node
 	{
 		protected:
-		std::unique_ptr<AstNode> cond;
-		std::unique_ptr<AstNode> proc;
+		std::unique_ptr<Identifier> decl;
+		std::unique_ptr<IdentifierList> argumentList;
+		std::unique_ptr<Node> body;
 
 		public:
-		AstControlWhile(AstNode *cond, AstNode *proc);
+		DefinitionFunc(Identifier *decl, IdentifierList *argumentList, Node *body);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 }
 
-#endif  // ASTCONTROL_H
+#endif  // DEFINITION_H
 

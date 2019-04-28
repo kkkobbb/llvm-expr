@@ -1,5 +1,5 @@
-#ifndef ASTJUMP_H
-#define ASTJUMP_H
+#ifndef DECLARATION_H
+#define DECLARATION_H
 
 #include <iostream>
 #include <string>
@@ -9,24 +9,27 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
 
-#include "AstBase.h"
+#include "Node.h"
+#include "Const.h"
 
 
 
 namespace expr {
 	class IRState;
 
-	class AstJumpReturn: public AstNode
+	class DeclarationFunc: public Node
 	{
 		protected:
-		std::unique_ptr<AstNode> ret;
+		std::unique_ptr<Identifier> decl;
+		std::unique_ptr<IdentifierList> argumentList;
+		bool vararg;
 
 		public:
-		AstJumpReturn(AstNode *ret);
+		DeclarationFunc(Identifier *decl, IdentifierList *argumentList, bool vararg=false);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 }
 
-#endif  // ASTJUMP_H
+#endif  // DECLARATION_H
 
