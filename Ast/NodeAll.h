@@ -1,7 +1,8 @@
 #ifndef NODEALL_H
 #define NODEALL_H
 
-#include "Base.h"
+#include "Node.h"
+#include "NodeList.h"
 #include "Const.h"
 #include "Control.h"
 #include "Declaration.h"

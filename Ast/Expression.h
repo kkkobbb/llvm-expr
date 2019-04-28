@@ -9,7 +9,8 @@
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
 
-#include "Base.h"
+#include "Node.h"
+#include "NodeList.h"
 #include "Const.h"
 
 
