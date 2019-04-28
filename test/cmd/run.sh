@@ -33,7 +33,7 @@ for testcase in ${testcaselist}; do
 	test_num=$((test_num + 1))
 
 	sh ${testcase} ${EXEFILE}
-	ret=$(echo $?)
+	ret=$?
 
 	if [ "${ret}" -eq 0 ]; then
 		success_num=$((success_num + 1))
