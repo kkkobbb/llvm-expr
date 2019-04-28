@@ -16,7 +16,7 @@
 #
 EXEFILE="./exparrc"
 TESTDIR="$(dirname $0)"
-TESTEXT="ea"
+TESTEXT="test.ea"
 
 COLOR_SUCCESS="\e[32m"
 COLOR_FAILURE="\e[31m"
