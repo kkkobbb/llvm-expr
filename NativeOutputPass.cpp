@@ -21,9 +21,11 @@ using namespace std;
 using namespace llvm;
 using namespace expr;
 
-static const string DEFAULT_FNAME = "a.bin";
-static const string DEFAULT_FNAME_ASM = "a.s";
-static const string DEFAULT_FNAME_OBJ = "a.o";
+namespace {
+	const string DEFAULT_FNAME = "a.bin";
+	const string DEFAULT_FNAME_ASM = "a.s";
+	const string DEFAULT_FNAME_OBJ = "a.o";
+}
 
 
 
