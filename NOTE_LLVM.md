@@ -32,13 +32,13 @@
             * <http://d.hatena.ne.jp/a4lg/20110111/1294720293>
             * <http://sile.hatenablog.jp/entry/20100206/1265454978>
     * `llc` では`-exception-model=dwarf`を付けると回避できた
-        * llvmのライブラリでこれ相当の設定がある？
+        * llvmのライブラリでのこれ相当の設定
         * `TargetOptions` クラス
             * `llvm/include/llvm/Target/TargetOptions.h`
         * `ExceptionHandling` enum
             * `llvm/include/llvm/MC/MCTargetOptions.h`
 
-* 出力するファイルの種類の指定方法をllcに合わせる？
+* 出力するファイルの種類の指定方法をllcに合わせる
     * llc では`-filetype=asm`のように指定する
 
 
