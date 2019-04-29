@@ -15,7 +15,9 @@ using namespace std;
 using namespace llvm;
 using namespace expr;
 
-static const string DEFAULT_FNAME = "a.bc";
+namespace {
+	static const string DEFAULT_FNAME = "a.bc";
+}
 
 
 

@@ -21,12 +21,10 @@
 using namespace std;
 using namespace expr;
 
-static const string STDOUT_FNAME = "-";
+namespace {
+	// 標準出力を表すファイル名
+	const string STDOUT_FNAME = "-";
 
-
-
-int main(int argc, char *argv[])
-{
 	// コマンドライン引数の設定
 	llvm::cl::OptionCategory CompilerCategory("Compiler Options");
 	llvm::cl::opt<string> InputFilename(llvm::cl::Positional,
@@ -51,12 +49,19 @@ int main(int argc, char *argv[])
 			llvm::cl::desc("Print llvm IR"),
 			llvm::cl::cat(CompilerCategory));
 	llvm::cl::opt<FileTypeKind> FileType("filetype",
+			llvm::cl::desc("Choose a file type"),
+			llvm::cl::init(FileTypeKind::asm_),
 			llvm::cl::values(
 				clEnumValN(FileTypeKind::asm_, "asm", "Emit an assembly ('.s') file"),
 				clEnumValN(FileTypeKind::obj, "obj", "Emit a native object ('.o') file"),
 				clEnumValN(FileTypeKind::bc, "bc", "Emit a llvm bitcode ('.bc') file")),
-			llvm::cl::desc("Choose a file type"),
 			llvm::cl::cat(CompilerCategory));
+}
+
+
+
+int main(int argc, char *argv[])
+{
 	// CompilerCategory以外は非表示
 	llvm::cl::HideUnrelatedOptions({&CompilerCategory});
 	llvm::cl::ParseCommandLineOptions(argc, argv, "tiny LLVM compiler\n");
