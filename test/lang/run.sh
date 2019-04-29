@@ -84,7 +84,7 @@ for testcase in ${testcaselist}; do
 		test_num=$((test_num + 1))
 		if [ ${result_ret} -eq ${expected_r} ]; then
 			success_num=$((success_num + 1))
-			printf "${COLOR_SUCCESS}Success:  (return)\e${COLOR_RESET}"
+			printf "${COLOR_SUCCESS}Success:  (return)${COLOR_RESET}"
 		else
 			printf "${COLOR_FAILURE}Failure:  (return ${result_ret}:${expected_r})${COLOR_RESET}"
 		fi
