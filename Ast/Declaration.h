@@ -1,17 +1,14 @@
 #ifndef DECLARATION_H
 #define DECLARATION_H
 
+#include "Node.h"
+#include "Const.h"
+#include <llvm/IR/Module.h>
+#include <llvm/IR/IRBuilder.h>
 #include <iostream>
 #include <string>
 #include <memory>
 #include <vector>
-
-#include <llvm/IR/Module.h>
-#include <llvm/IR/IRBuilder.h>
-
-#include "Node.h"
-#include "Const.h"
-
 
 
 namespace expr {

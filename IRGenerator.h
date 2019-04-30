@@ -1,16 +1,13 @@
 #ifndef IRGENERATOR_H
 #define IRGENERATOR_H
 
-#include <memory>
-#include <vector>
-
-// llvm
+#include "IRState.h"
+#include "Ast/Node.h"
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/GlobalVariable.h>
-
-#include "Ast/Node.h"
-#include "IRState.h"
+#include <memory>
+#include <vector>
 
 
 namespace expr {

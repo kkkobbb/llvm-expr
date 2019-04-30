@@ -3,25 +3,21 @@
 //
 // 関数の宣言
 //
-#include <iostream>
-#include <string>
-#include <memory>
-
+#include "Declaration.h"
+#include "IRState.h"
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
-
-#include "Declaration.h"
-#include "IRState.h"
-
+#include <iostream>
+#include <string>
+#include <memory>
 
 using namespace std;
 using namespace llvm;
 using namespace expr;
-
 
 
 // DeclarationFunc
@@ -29,7 +25,6 @@ using namespace expr;
 DeclarationFunc::DeclarationFunc(Identifier *decl, IdentifierList *argumentList, bool vararg)
 	: decl(decl), argumentList(argumentList), vararg(vararg)
 {}
-
 
 void DeclarationFunc::print_ast(std::ostream &dout, int indent)
 {
@@ -41,7 +36,6 @@ void DeclarationFunc::print_ast(std::ostream &dout, int indent)
 	if (argumentList != nullptr)
 		argumentList->print_ast(dout, next_indent);
 }
-
 
 // IR 生成
 //
@@ -72,5 +66,4 @@ Value *DeclarationFunc::getValue(IRState &irs)
 
 	return builder.getInt32(0);
 }
-
 

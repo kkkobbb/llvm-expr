@@ -3,10 +3,8 @@
 //
 // 制御文
 //
-#include <iostream>
-#include <string>
-#include <memory>
-
+#include "Control.h"
+#include "IRState.h"
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Constants.h>
@@ -14,15 +12,13 @@
 #include <llvm/IR/Verifier.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
-
-#include "Control.h"
-#include "IRState.h"
-
+#include <iostream>
+#include <string>
+#include <memory>
 
 using namespace std;
 using namespace llvm;
 using namespace expr;
-
 
 
 // ControlIf
@@ -30,7 +26,6 @@ using namespace expr;
 ControlIf::ControlIf(Node *cond, Node *proc, Node *elseProc)
 	: cond(cond), proc(proc), elseProc(elseProc)
 {}
-
 
 void ControlIf::print_ast(ostream &dout, int indent)
 {
@@ -46,7 +41,6 @@ void ControlIf::print_ast(ostream &dout, int indent)
 	if (elseProc != nullptr)
 		elseProc->print_ast(dout, next_indent);
 }
-
 
 // IR 生成
 //
@@ -113,7 +107,6 @@ Value *ControlIf::getValue(IRState &irs)
 	return constZero;
 }
 
-
 // ControlWhile
 
 ControlWhile::ControlWhile(Node *cond, Node *proc)
@@ -133,7 +126,6 @@ void ControlWhile::print_ast(ostream &dout, int indent)
 	else
 		this->print_ast_string("null", dout, next_indent);
 }
-
 
 // IR 生成
 //

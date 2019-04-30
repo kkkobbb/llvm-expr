@@ -1,14 +1,12 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include <llvm/IR/Module.h>
+#include <llvm/IR/IRBuilder.h>
 #include <iostream>
 #include <string>
 #include <memory>
 #include <vector>
-
-#include <llvm/IR/Module.h>
-#include <llvm/IR/IRBuilder.h>
-
 
 
 namespace expr {

@@ -1,23 +1,19 @@
 //
 // LLVM IRを生成するためのクラス
 //
-#include <fstream>
-#include <memory>
-
+#include "IRGenerator.h"
+#include "IRState.h"
+#include "Ast/Node.h"
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Verifier.h>
 #include <llvm/IR/GlobalVariable.h>
-
-#include "Ast/Node.h"
-#include "IRGenerator.h"
-#include "IRState.h"
-
+#include <fstream>
+#include <memory>
 
 using namespace std;
 using namespace llvm;
 using namespace expr;
-
 
 
 // 構文木からLLVM IRを生成する
@@ -51,7 +47,6 @@ bool IRGenerator::generate(Node &ast_root)
 
 	return !irs.isError();
 }
-
 
 // 生成したModuleを返す
 unique_ptr<Module> IRGenerator::get()

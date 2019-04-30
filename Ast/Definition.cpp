@@ -3,25 +3,21 @@
 //
 // 変数、関数の定義
 //
-#include <iostream>
-#include <string>
-#include <memory>
-
+#include "Definition.h"
+#include "IRState.h"
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
-
-#include "Definition.h"
-#include "IRState.h"
-
+#include <iostream>
+#include <string>
+#include <memory>
 
 using namespace std;
 using namespace llvm;
 using namespace expr;
-
 
 
 // DefinitionVar
@@ -29,7 +25,6 @@ using namespace expr;
 DefinitionVar::DefinitionVar(Identifier *decl, Node *init)
 	: decl(decl), init(init)
 {}
-
 
 void DefinitionVar::print_ast(ostream &dout, int indent)
 {
@@ -41,7 +36,6 @@ void DefinitionVar::print_ast(ostream &dout, int indent)
 	if (init != nullptr)
 		init->print_ast(dout, next_indent);
 }
-
 
 // IR 生成
 //
@@ -65,7 +59,6 @@ Value *DefinitionVar::getValue(IRState &irs)
 	return alloca;
 }
 
-
 // DefinitionFunc
 
 DefinitionFunc::DefinitionFunc(Identifier *decl, IdentifierList *argumentList, Node *body)
@@ -85,7 +78,6 @@ void DefinitionFunc::print_ast(std::ostream &dout, int indent)
 	if (body != nullptr)
 		body->print_ast(dout, next_indent);
 }
-
 
 // IR 生成
 //
@@ -152,5 +144,4 @@ Value *DefinitionFunc::getValue(IRState &irs)
 
 	return nullptr;
 }
-
 

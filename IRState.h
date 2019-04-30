@@ -1,12 +1,10 @@
 #ifndef IRGENINFO_H
 #define IRGENINFO_H
 
-#include <memory>
-#include <vector>
-
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
-
+#include <memory>
+#include <vector>
 
 
 namespace expr {
@@ -37,7 +35,6 @@ namespace expr {
 		std::vector<llvm::Value *> GlobalStrList;
 	};
 }
-
 
 #endif  // IRGENINFO_H
 

@@ -1,7 +1,6 @@
 // ネイティブコード出力
 // objfile or assembly
-#include <memory>
-
+#include "NativeOutputPass.h"
 #include <llvm/IR/Module.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Support/FileSystem.h>
@@ -11,9 +10,7 @@
 #include <llvm/Target/TargetMachine.h>
 #include <llvm/Target/TargetOptions.h>
 #include <llvm/MC/MCTargetOptions.h>
-
-#include "NativeOutputPass.h"
-
+#include <memory>
 
 using namespace std;
 using namespace llvm;
@@ -26,11 +23,9 @@ namespace {
 }
 
 
-
 NativeOutputPass::NativeOutputPass(TargetMachine::CodeGenFileType fileType)
 	: fileType(fileType), defaultName(getDefaultName(fileType))
 {}
-
 
 // ファイルタイプからデフォルトのファイル名を取得する
 string NativeOutputPass::getDefaultName(TargetMachine::CodeGenFileType fileType)
@@ -52,7 +47,6 @@ string NativeOutputPass::getDefaultName(TargetMachine::CodeGenFileType fileType)
 
 	return name;
 }
-
 
 // Moduleからネイティブコードを出力する
 //
@@ -112,5 +106,4 @@ bool NativeOutputPass::run(Module &module, string &fname)
 
 	return true;
 }
-
 

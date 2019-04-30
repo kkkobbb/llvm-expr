@@ -3,25 +3,21 @@
 //
 // 基本のノード
 //
-#include <iostream>
-#include <string>
-#include <memory>
-
+#include "NodeList.h"
+#include "IRState.h"
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
-
-#include "NodeList.h"
-#include "IRState.h"
-
+#include <iostream>
+#include <string>
+#include <memory>
 
 using namespace std;
 using namespace llvm;
 using namespace expr;
-
 
 
 // NodeList
@@ -31,14 +27,12 @@ NodeList::NodeList(Node *n)
 	add(n);
 }
 
-
 void NodeList::add(Node *n)
 {
 	if (n == nullptr)
 		return;
 	children.push_back(unique_ptr<Node>(n));
 }
-
 
 // IR 生成
 // List
@@ -54,7 +48,6 @@ Value *NodeList::getValue(IRState &irs)
 	return lastVal;
 }
 
-
 void NodeList::print_ast(std::ostream &dout, int indent)
 {
 	Node::print_ast(dout, indent);
@@ -65,12 +58,10 @@ void NodeList::print_ast(std::ostream &dout, int indent)
 		child->print_ast(dout, next_indent);
 }
 
-
 vector<unique_ptr<Node>> *NodeList::getList()
 {
 	return &children;
 }
-
 
 // Unit
 
@@ -111,5 +102,4 @@ Value *Unit::getValue(IRState &irs)
 
 	return nullptr;
 }
-
 

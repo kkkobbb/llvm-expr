@@ -1,19 +1,15 @@
 //
 // 構文木を生成するためのクラス
 //
+#include "AstGenerator.h"
+#include "Ast/Node.h"
+#include "Lexer.h"
+#include "Parser.hh"
 #include <fstream>
 #include <memory>
 
-#include "Lexer.h"
-#include "Parser.hh"
-
-#include "Ast/Node.h"
-#include "AstGenerator.h"
-
-
 using namespace std;
 using namespace expr;
-
 
 
 // 入力ファイルから構文木を生成する
@@ -35,7 +31,6 @@ bool AstGenerator::generate(ifstream &fin)
 
 	return true;
 }
-
 
 // 生成した構文木を返す
 unique_ptr<Node> AstGenerator::get()

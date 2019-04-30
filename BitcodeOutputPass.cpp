@@ -1,15 +1,12 @@
 //
 // ビットコード出力
 //
-#include <memory>
-
+#include "BitcodeOutputPass.h"
 #include <llvm/IR/Module.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Bitcode/BitcodeWriter.h>
-
-#include "BitcodeOutputPass.h"
-
+#include <memory>
 
 using namespace std;
 using namespace llvm;
@@ -18,7 +15,6 @@ using namespace expr;
 namespace {
 	static const string DEFAULT_FNAME = "a.bc";
 }
-
 
 
 // Moduleからビットコードを出力する
@@ -43,5 +39,4 @@ bool BitcodeOutputPass::run(Module &module, string &fname)
 
 	return true;
 }
-
 

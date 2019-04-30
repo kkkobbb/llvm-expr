@@ -1,13 +1,10 @@
 #ifndef NATIVE_OUTPUT_PASS_H
 #define NATIVE_OUTPUT_PASS_H
 
-#include <string>
-
+#include "OutputPass.h"
 #include <llvm/IR/Module.h>
 #include <llvm/Target/TargetMachine.h>
-
-#include "OutputPass.h"
-
+#include <string>
 
 
 namespace expr {
@@ -22,7 +19,6 @@ namespace expr {
 		std::string getDefaultName(llvm::TargetMachine::CodeGenFileType fileType);
 	};
 }
-
 
 #endif  // NATIVE_OUTPUT_PASS_H
 

@@ -1,22 +1,19 @@
 //
 // LLVM確認用言語 Exparr コンパイラ
 //
-#include <iostream>
-#include <memory>
-#include <fstream>
-
-#include <llvm/IR/Module.h>
-#include <llvm/Support/CommandLine.h>
-#include <llvm/Support/raw_ostream.h>
-#include <llvm/Support/Path.h>
-
-#include "Ast/Node.h"
 #include "AstGenerator.h"
 #include "IRGenerator.h"
 #include "OptimPass.h"
 #include "OutputPass.h"
 #include "OutputPassFactory.h"
-
+#include "Ast/Node.h"
+#include <llvm/IR/Module.h>
+#include <llvm/Support/CommandLine.h>
+#include <llvm/Support/raw_ostream.h>
+#include <llvm/Support/Path.h>
+#include <iostream>
+#include <memory>
+#include <fstream>
 
 using namespace std;
 using namespace expr;
@@ -57,7 +54,6 @@ namespace {
 				clEnumValN(FileTypeKind::bc, "bc", "Emit a llvm bitcode ('.bc') file")),
 			llvm::cl::cat(CompilerCategory));
 }
-
 
 
 int main(int argc, char *argv[])

@@ -1,10 +1,9 @@
 #ifndef ASTGENERATOR_H
 #define ASTGENERATOR_H
 
+#include "Ast/Node.h"
 #include <fstream>
 #include <memory>
-
-#include "Ast/Node.h"
 
 
 namespace expr {

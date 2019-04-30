@@ -1,21 +1,17 @@
 //
 // IR出力時の状態保持
 //
-#include <memory>
-#include <vector>
-
+#include "IRState.h"
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/ValueSymbolTable.h>
 #include <llvm/IR/GlobalVariable.h>
-
-#include "IRState.h"
-
+#include <memory>
+#include <vector>
 
 using namespace std;
 using namespace llvm;
 using namespace expr;
-
 
 
 IRState::IRState()
@@ -24,13 +20,11 @@ IRState::IRState()
 	TheModule = llvm::make_unique<Module>("code", TheContext);
 }
 
-
 // IR生成中にエラーが発生していた場合、真
 bool IRState::isError()
 {
 	return errorFlag;
 }
-
 
 // エラーフラグを真にする
 void IRState::setError()
@@ -38,30 +32,25 @@ void IRState::setError()
 	errorFlag = true;
 }
 
-
 LLVMContext &IRState::getContext()
 {
 	return TheContext;
 }
-
 
 Module &IRState::getModule()
 {
 	return *TheModule;
 }
 
-
 unique_ptr<Module> IRState::moveModule()
 {
 	return move(TheModule);
 }
 
-
 IRBuilder<> &IRState::getBuilder()
 {
 	return *builder;
 }
-
 
 // 文字列のグローバル変数を作成して返す
 //
@@ -97,7 +86,6 @@ GlobalVariable *IRState::getGlobalString(const char *str)
 	return gStr;
 }
 
-
 // 文字列のグローバル変数を作成する
 GlobalVariable *IRState::createGlobalString(const char *str)
 {
@@ -115,7 +103,6 @@ GlobalVariable *IRState::createGlobalString(const char *str)
 	return gvar;
 }
 
-
 [[deprecated("please use llvm::IRBuilder<>::GetInsertBlock()->getParent()")]]
 // TODO 削除? funcStackはIRStateでしか使用しない？
 Function *IRState::getCurFunc()
@@ -123,18 +110,15 @@ Function *IRState::getCurFunc()
 	return funcStack.back();
 }
 
-
 void IRState::pushCurFunc(Function *func)
 {
 	funcStack.push_back(func);
 }
 
-
 void IRState::popCurFunc()
 {
 	funcStack.pop_back();
 }
-
 
 // nameという変数の領域を探して返す
 //
@@ -157,7 +141,6 @@ Value *IRState::getVariable(const string *name)
 	return alloca;
 }
 
-
 // グローバル(関数内)ではない場合、真を返す
 //
 // 内部的に作成するmain関数内の場合、グローバルだとする
@@ -165,5 +148,4 @@ bool IRState::isGlobal()
 {
 	return funcStack.size() <= 1;
 }
-
 

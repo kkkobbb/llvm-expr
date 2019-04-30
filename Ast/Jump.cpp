@@ -3,10 +3,8 @@
 //
 // ジャンプ文
 //
-#include <iostream>
-#include <string>
-#include <memory>
-
+#include "Jump.h"
+#include "IRState.h"
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Constants.h>
@@ -14,15 +12,13 @@
 #include <llvm/IR/Verifier.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
-
-#include "Jump.h"
-#include "IRState.h"
-
+#include <iostream>
+#include <string>
+#include <memory>
 
 using namespace std;
 using namespace llvm;
 using namespace expr;
-
 
 
 // JumpReturn
@@ -30,7 +26,6 @@ using namespace expr;
 JumpReturn::JumpReturn(Node *ret)
 	: ret(ret)
 {}
-
 
 void JumpReturn::print_ast(ostream &dout, int indent)
 {
@@ -42,7 +37,6 @@ void JumpReturn::print_ast(ostream &dout, int indent)
 	else
 		this->print_ast_string("null", dout, next_indent);
 }
-
 
 // IR 生成
 //
@@ -61,5 +55,4 @@ Value *JumpReturn::getValue(IRState &irs)
 
 	return retV;
 }
-
 
