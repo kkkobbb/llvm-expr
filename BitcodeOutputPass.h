@@ -8,7 +8,7 @@
 
 namespace expr {
 	class BitcodeOutputPass: public OutputPass {
-		public:
+	public:
 		bool run(llvm::Module &module, std::string &fname) override;
 	};
 }

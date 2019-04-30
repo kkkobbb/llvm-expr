@@ -9,7 +9,15 @@
 
 namespace expr {
 	class IRState {
-		public:
+		bool errorFlag = false;
+		llvm::LLVMContext TheContext;
+		std::unique_ptr<llvm::Module> TheModule;
+		std::unique_ptr<llvm::IRBuilder<>> builder;
+		std::vector<llvm::Function*> funcStack;
+		// 文字列のグローバル変数の保存用
+		std::vector<llvm::Value *> GlobalStrList;
+
+	public:
 		IRState();
 		bool isError();
 		void setError();
@@ -24,15 +32,6 @@ namespace expr {
 		void popCurFunc();
 		llvm::Value *getVariable(const std::string *name);
 		bool isGlobal();
-
-		private:
-		bool errorFlag = false;
-		llvm::LLVMContext TheContext;
-		std::unique_ptr<llvm::Module> TheModule;
-		std::unique_ptr<llvm::IRBuilder<>> builder;
-		std::vector<llvm::Function*> funcStack;
-		// 文字列のグローバル変数の保存用
-		std::vector<llvm::Value *> GlobalStrList;
 	};
 }
 

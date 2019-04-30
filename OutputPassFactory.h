@@ -11,7 +11,7 @@ namespace expr {
 	};
 
 	class OutputPassFactory {
-		public:
+	public:
 		std::unique_ptr<OutputPass> create(FileTypeKind fileType);
 	};
 }

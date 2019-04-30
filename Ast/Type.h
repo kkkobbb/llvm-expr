@@ -15,27 +15,27 @@ namespace expr {
 
 	class TypeBase: public Node
 	{
-		public:
+	public:
 		using Node::Node;
 	};
 
 	class TypeVoid: public TypeBase
 	{
-		public:
+	public:
 		using TypeBase::TypeBase;
 		virtual llvm::Type *getType(IRState &irs) override;
 	};
 
 	class TypeInt: public TypeBase
 	{
-		public:
+	public:
 		using TypeBase::TypeBase;
 		virtual llvm::Type *getType(IRState &irs) override;
 	};
 
 	class TypeString: public TypeBase
 	{
-		public:
+	public:
 		using TypeBase::TypeBase;
 		virtual llvm::Type *getType(IRState &irs) override;
 	};

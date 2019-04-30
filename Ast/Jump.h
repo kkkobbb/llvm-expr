@@ -15,10 +15,10 @@ namespace expr {
 
 	class JumpReturn: public Node
 	{
-		protected:
+	protected:
 		std::unique_ptr<Node> ret;
 
-		public:
+	public:
 		JumpReturn(Node *ret);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 		virtual llvm::Value *getValue(IRState &irs) override;

@@ -16,12 +16,12 @@ namespace expr {
 
 	class DeclarationFunc: public Node
 	{
-		protected:
+	protected:
 		std::unique_ptr<Identifier> decl;
 		std::unique_ptr<IdentifierList> argumentList;
 		bool vararg;
 
-		public:
+	public:
 		DeclarationFunc(Identifier *decl, IdentifierList *argumentList, bool vararg=false);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 		virtual llvm::Value *getValue(IRState &irs) override;

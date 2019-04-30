@@ -18,11 +18,11 @@ namespace expr {
 	// 式
 	class Expression: public Node
 	{
-		protected:
+	protected:
 		std::unique_ptr<Node> l;  // 左辺
 		std::unique_ptr<Node> r;  // 右辺
 
-		public:
+	public:
 		Expression(Node *l, Node *r);
 		virtual llvm::Value *getValue(IRState &irs) override;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv);
@@ -32,11 +32,11 @@ namespace expr {
 	// 関数呼び出し
 	class ExpressionFunc: public Expression
 	{
-		protected:
+	protected:
 		std::unique_ptr<Identifier> identifier;
 		std::unique_ptr<NodeList> argumentList;
 
-		public:
+	public:
 		ExpressionFunc(Identifier *identifier, NodeList *argumentList);
 		virtual llvm::Value *getValue(IRState &irs) override;
 	};
@@ -44,10 +44,10 @@ namespace expr {
 	// 代入演算子
 	class ExpressionAS: public Expression
 	{
-		protected:
+	protected:
 		std::unique_ptr<Identifier> identifier;
 
-		public:
+	public:
 		ExpressionAS(Identifier *identifier, Node *value);
 		virtual llvm::Value *getValue(IRState &irs) override;
 	};
@@ -55,7 +55,7 @@ namespace expr {
 	// 論理演算 OR
 	class ExpressionLOR: public Expression
 	{
-		public:
+	public:
 		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
@@ -63,7 +63,7 @@ namespace expr {
 	// 論理演算 AND
 	class ExpressionLAND: public Expression
 	{
-		public:
+	public:
 		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
@@ -71,7 +71,7 @@ namespace expr {
 	// ビット演算 OR
 	class ExpressionBOR: public Expression
 	{
-		public:
+	public:
 		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
@@ -79,7 +79,7 @@ namespace expr {
 	// ビット演算 XOR
 	class ExpressionBXOR: public Expression
 	{
-		public:
+	public:
 		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
@@ -87,7 +87,7 @@ namespace expr {
 	// ビット演算 AND
 	class ExpressionBAND: public Expression
 	{
-		public:
+	public:
 		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
@@ -95,7 +95,7 @@ namespace expr {
 	// 関係演算 等値
 	class ExpressionEQ: public Expression
 	{
-		public:
+	public:
 		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
@@ -103,7 +103,7 @@ namespace expr {
 	// 関係演算 非等値
 	class ExpressionNE: public Expression
 	{
-		public:
+	public:
 		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
@@ -111,7 +111,7 @@ namespace expr {
 	// 関係演算 <
 	class ExpressionLT: public Expression
 	{
-		public:
+	public:
 		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
@@ -119,7 +119,7 @@ namespace expr {
 	// 関係演算 >
 	class ExpressionGT: public Expression
 	{
-		public:
+	public:
 		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
@@ -127,7 +127,7 @@ namespace expr {
 	// 関係演算 <=
 	class ExpressionLTE: public Expression
 	{
-		public:
+	public:
 		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
@@ -135,7 +135,7 @@ namespace expr {
 	// 関係演算 >=
 	class ExpressionGTE: public Expression
 	{
-		public:
+	public:
 		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
@@ -143,7 +143,7 @@ namespace expr {
 	// 加算
 	class ExpressionADD: public Expression
 	{
-		public:
+	public:
 		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
@@ -151,7 +151,7 @@ namespace expr {
 	// 減算
 	class ExpressionSUB: public Expression
 	{
-		public:
+	public:
 		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
@@ -159,7 +159,7 @@ namespace expr {
 	// 乗算
 	class ExpressionMUL: public Expression
 	{
-		public:
+	public:
 		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
@@ -167,7 +167,7 @@ namespace expr {
 	// 除算
 	class ExpressionDIV: public Expression
 	{
-		public:
+	public:
 		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
@@ -175,7 +175,7 @@ namespace expr {
 	// 余算
 	class ExpressionMOD: public Expression
 	{
-		public:
+	public:
 		using Expression::Expression;
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
@@ -183,7 +183,7 @@ namespace expr {
 	// 単項演算子 正
 	class ExpressionSPOS: public Expression
 	{
-		public:
+	public:
 		ExpressionSPOS(Node *n) : Expression(nullptr, n) {}
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
@@ -191,7 +191,7 @@ namespace expr {
 	// 単項演算子 負
 	class ExpressionSNEG: public Expression
 	{
-		public:
+	public:
 		ExpressionSNEG(Node *n) : Expression(nullptr, n) {}
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
@@ -199,7 +199,7 @@ namespace expr {
 	// 論理演算 否定
 	class ExpressionLNOT: public Expression
 	{
-		public:
+	public:
 		ExpressionLNOT(Node *n) : Expression(nullptr, n) {}
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};
@@ -207,7 +207,7 @@ namespace expr {
 	// ビット演算 否定
 	class ExpressionBNOT: public Expression
 	{
-		public:
+	public:
 		ExpressionBNOT(Node *n) : Expression(nullptr, n) {}
 		virtual llvm::Value *generate_exp(IRState &irs, llvm::Value *lv, llvm::Value *rv) override;
 	};

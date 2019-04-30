@@ -6,7 +6,7 @@
 
 namespace expr {
 	class OptimPass {
-		public:
+	public:
 		bool run(llvm::Module &module);
 	};
 }

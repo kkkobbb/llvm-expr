@@ -15,12 +15,12 @@ namespace expr {
 
 	class ControlIf: public Node
 	{
-		protected:
+	protected:
 		std::unique_ptr<Node> cond;
 		std::unique_ptr<Node> proc;
 		std::unique_ptr<Node> elseProc;
 
-		public:
+	public:
 		ControlIf(Node *cond, Node *proc, Node *elseProc);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 		virtual llvm::Value *getValue(IRState &irs) override;
@@ -28,11 +28,11 @@ namespace expr {
 
 	class ControlWhile: public Node
 	{
-		protected:
+	protected:
 		std::unique_ptr<Node> cond;
 		std::unique_ptr<Node> proc;
 
-		public:
+	public:
 		ControlWhile(Node *cond, Node *proc);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 		virtual llvm::Value *getValue(IRState &irs) override;

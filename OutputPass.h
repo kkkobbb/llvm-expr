@@ -7,7 +7,7 @@
 
 namespace expr {
 	class OutputPass {
-		public:
+	public:
 		virtual bool run(llvm::Module &module, std::string &fname) = 0;
 	};
 }

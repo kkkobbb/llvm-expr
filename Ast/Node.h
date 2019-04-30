@@ -15,10 +15,10 @@ namespace expr {
 	// ノード
 	class Node
 	{
-		protected:
+	protected:
 		std::string dbg_msg;
 
-		public:
+	public:
 		virtual llvm::Value *getValue(IRState &irs);
 		virtual llvm::Type *getType(IRState &irs);
 		void print_ast_string(const char *msg, std::ostream &dout, int indent = 0);

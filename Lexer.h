@@ -12,11 +12,11 @@
 namespace expr {
 	class Lexer: public yyFlexLexer {
 
-		public:
-			Lexer(std::istream* in = 0, std::ostream* out = 0) : yyFlexLexer(in, out) {}
-			~Lexer() {}
+	public:
+		Lexer(std::istream* in = 0, std::ostream* out = 0) : yyFlexLexer(in, out) {}
+		~Lexer() {}
 
-			int yylex(Parser::semantic_type *val, Parser::location_type *loc);
+		int yylex(Parser::semantic_type *val, Parser::location_type *loc);
 	};
 }
 

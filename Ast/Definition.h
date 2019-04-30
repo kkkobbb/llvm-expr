@@ -16,11 +16,11 @@ namespace expr {
 
 	class DefinitionVar: public Node
 	{
-		protected:
+	protected:
 		std::unique_ptr<Identifier> decl;
 		std::unique_ptr<Node> init;
 
-		public:
+	public:
 		DefinitionVar(Identifier *decl, Node *init);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 		virtual llvm::Value *getValue(IRState &irs) override;
@@ -28,12 +28,12 @@ namespace expr {
 
 	class DefinitionFunc: public Node
 	{
-		protected:
+	protected:
 		std::unique_ptr<Identifier> decl;
 		std::unique_ptr<IdentifierList> argumentList;
 		std::unique_ptr<Node> body;
 
-		public:
+	public:
 		DefinitionFunc(Identifier *decl, IdentifierList *argumentList, Node *body);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 		virtual llvm::Value *getValue(IRState &irs) override;

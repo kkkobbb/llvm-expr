@@ -9,13 +9,14 @@
 
 namespace expr {
 	class NativeOutputPass: public OutputPass {
-		public:
+		const llvm::TargetMachine::CodeGenFileType fileType;
+		const std::string defaultName;
+
+	public:
 		NativeOutputPass(llvm::TargetMachine::CodeGenFileType fileType);
 		bool run(llvm::Module &module, std::string &fname) override;
 
-		private:
-		const llvm::TargetMachine::CodeGenFileType fileType;
-		const std::string defaultName;
+	private:
 		std::string getDefaultName(llvm::TargetMachine::CodeGenFileType fileType);
 	};
 }

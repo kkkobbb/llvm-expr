@@ -12,7 +12,7 @@ namespace expr {
 	{
 		std::unique_ptr<Node> ast_root;
 
-		public:
+	public:
 		bool generate(std::ifstream &fin);
 		std::unique_ptr<Node> get();
 	};

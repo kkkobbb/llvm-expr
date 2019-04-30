@@ -16,10 +16,10 @@ namespace expr {
 	// ノードの一覧を持つ
 	class NodeList: public Node
 	{
-		protected:
+	protected:
 		std::vector<std::unique_ptr<Node>> children;
 
-		public:
+	public:
 		NodeList(Node *n);
 		void add(Node *n);
 		virtual llvm::Value *getValue(IRState &irs) override;
@@ -30,7 +30,7 @@ namespace expr {
 	// 翻訳単位
 	class Unit: public NodeList
 	{
-		public:
+	public:
 		using NodeList::NodeList;
 		virtual llvm::Value *getValue(IRState &irs) override;
 	};

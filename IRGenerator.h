@@ -17,7 +17,7 @@ namespace expr {
 		std::unique_ptr<llvm::Module> TheModule = nullptr;
 		IRState irs;
 
-		public:
+	public:
 		bool generate(Node &ast_root);
 		std::unique_ptr<llvm::Module> get();
 	};
