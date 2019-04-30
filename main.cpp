@@ -62,6 +62,7 @@ int main(int argc, char *argv[])
 	llvm::cl::HideUnrelatedOptions({&CompilerCategory});
 	llvm::cl::ParseCommandLineOptions(argc, argv, "tiny LLVM compiler\n");
 
+	// 入力ファイルを開く
 	ifstream fin;
 	fin.open(InputFilename, ios::binary);
 	if (!fin) {
@@ -76,6 +77,7 @@ int main(int argc, char *argv[])
 	const auto ast = astGen.get();
 
 	if (PrintAst) {
+		// 構文木表示
 		ast->print_ast(cout);
 		cout << endl;
 		if (!PrintLlvm)
@@ -88,7 +90,7 @@ int main(int argc, char *argv[])
 		return 1;
 	const auto m = irGen.get();
 
-	// ファイル名設定
+	// 入力ファイル名を出力用に設定
 	const auto ifname = llvm::sys::path::filename(InputFilename);
 	m->setSourceFileName(ifname);
 
@@ -100,6 +102,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (PrintLlvm) {
+		// llvm IR 表示
 		m->print(llvm::outs(), nullptr);
 		llvm::outs() << "\n";
 		return 0;
@@ -108,10 +111,12 @@ int main(int argc, char *argv[])
 	// 中間表現表示系のオプションが指定されていた場合、
 	// 以降のコード生成は実行されない
 
+	// 出力ファイル名の決定
 	string ofname = OutputFilename;
 	if (Force)
 		ofname = STDOUT_FNAME;
 
+	// ファイル生成
 	OutputPassFactory opf;
 	const auto op = opf.create(FileType);
 	if (op)

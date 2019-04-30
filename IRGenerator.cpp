@@ -29,10 +29,10 @@ bool IRGenerator::generate(Node &ast_root)
 	new GlobalVariable(
 			m,
 			Type::getInt32Ty(c),
-			true,  /* isConstant */
+			true,  // isConstant
 			GlobalValue::PrivateLinkage,
-			builder.getInt32(20),  /* Initializer */
-			"test_const_20"  /* name */
+			builder.getInt32(20),  // Initializer
+			"test_const_20"  // name
 			);
 
 	// IR生成
