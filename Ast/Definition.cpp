@@ -1,8 +1,8 @@
-/*
- * ノードの処理
- *
- * 変数、関数の定義
- */
+//
+// ノードの処理
+//
+// 変数、関数の定義
+//
 #include <iostream>
 #include <string>
 #include <memory>
@@ -43,13 +43,11 @@ void DefinitionVar::print_ast(ostream &dout, int indent)
 }
 
 
-/*
- * IR 生成
- *
- * 変数定義
- *
- * TODO エラー処理
- */
+// IR 生成
+//
+// 変数定義
+//
+// TODO エラー処理
 Value *DefinitionVar::getValue(IRState &irs)
 {
 	auto &c = irs.getContext();
@@ -89,13 +87,11 @@ void DefinitionFunc::print_ast(std::ostream &dout, int indent)
 }
 
 
-/*
- * IR 生成
- *
- * 関数定義
- *
- * TODO エラー処理
- */
+// IR 生成
+//
+// 関数定義
+//
+// TODO エラー処理
 Value *DefinitionFunc::getValue(IRState &irs)
 {
 	auto &c = irs.getContext();

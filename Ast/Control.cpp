@@ -1,8 +1,8 @@
-/*
- * ノードの処理
- *
- * 制御文
- */
+//
+// ノードの処理
+//
+// 制御文
+//
 #include <iostream>
 #include <string>
 #include <memory>
@@ -48,13 +48,11 @@ void ControlIf::print_ast(ostream &dout, int indent)
 }
 
 
-/*
- * IR 生成
- *
- * if文
- *
- * TODO エラー処理
- */
+// IR 生成
+//
+// if文
+//
+// TODO エラー処理
 Value *ControlIf::getValue(IRState &irs)
 {
 	auto &c = irs.getContext();
@@ -137,13 +135,11 @@ void ControlWhile::print_ast(ostream &dout, int indent)
 }
 
 
-/*
- * IR 生成
- *
- * while文
- *
- * TODO エラー処理
- */
+// IR 生成
+//
+// while文
+//
+// TODO エラー処理
 Value *ControlWhile::getValue(IRState &irs)
 {
 	auto &c = irs.getContext();

@@ -1,5 +1,5 @@
 /*
- * flex 2.6.4
+ * flex
  * generating c++ code
  */
 

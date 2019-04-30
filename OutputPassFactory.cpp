@@ -1,6 +1,6 @@
-/*
- * OutputPass生成
- */
+//
+// OutputPass生成
+//
 #include <memory>
 
 #include "OutputPassFactory.h"

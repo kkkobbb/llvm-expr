@@ -1,8 +1,8 @@
-/*
- * ノードの処理
- *
- * 関数の宣言
- */
+//
+// ノードの処理
+//
+// 関数の宣言
+//
 #include <iostream>
 #include <string>
 #include <memory>
@@ -43,13 +43,11 @@ void DeclarationFunc::print_ast(std::ostream &dout, int indent)
 }
 
 
-/*
- * IR 生成
- *
- * 関数宣言
- *
- * TODO エラー処理
- */
+// IR 生成
+//
+// 関数宣言
+//
+// TODO エラー処理
 Value *DeclarationFunc::getValue(IRState &irs)
 {
 	auto &m = irs.getModule();

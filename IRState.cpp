@@ -1,6 +1,6 @@
-/*
- * IR出力時の状態保持
- */
+//
+// IR出力時の状態保持
+//
 #include <memory>
 #include <vector>
 
@@ -25,18 +25,14 @@ IRState::IRState()
 }
 
 
-/*
- * IR生成中にエラーが発生していた場合、真
- */
+// IR生成中にエラーが発生していた場合、真
 bool IRState::isError()
 {
 	return errorFlag;
 }
 
 
-/*
- * エラーフラグを真にする
- */
+// エラーフラグを真にする
 void IRState::setError()
 {
 	errorFlag = true;
@@ -67,11 +63,9 @@ IRBuilder<> &IRState::getBuilder()
 }
 
 
-/*
- * 文字列のグローバル変数を作成して返す
- *
- * 既に同じ文字列が生成されていた場合、それを返す
- */
+// 文字列のグローバル変数を作成して返す
+//
+// 既に同じ文字列が生成されていた場合、それを返す
 GlobalVariable *IRState::getGlobalString(const char *str)
 {
 	// 今まで同じ文字列のグローバル変数を作成したか確認する
@@ -104,9 +98,7 @@ GlobalVariable *IRState::getGlobalString(const char *str)
 }
 
 
-/*
- * 文字列のグローバル変数を作成する
- */
+// 文字列のグローバル変数を作成する
 GlobalVariable *IRState::createGlobalString(const char *str)
 {
 	const auto strValue = ConstantDataArray::getString(TheContext, str);
@@ -144,14 +136,12 @@ void IRState::popCurFunc()
 }
 
 
-/*
- * nameという変数の領域を探して返す
- *
- * 見つからなかった場合、偽となる値を返す
- *
- * 1. 現在の関数のスコープに対象の変数があるか
- * 2. グローバルに対象の変数があるか
- */
+// nameという変数の領域を探して返す
+//
+// 見つからなかった場合、偽となる値を返す
+//
+// 1. 現在の関数のスコープに対象の変数があるか
+// 2. グローバルに対象の変数があるか
 Value *IRState::getVariable(const string *name)
 {
 	const auto curFunc = builder->GetInsertBlock()->getParent();
@@ -168,11 +158,9 @@ Value *IRState::getVariable(const string *name)
 }
 
 
-/*
- * グローバル(関数内)ではない場合、真を返す
- *
- * 内部的に作成するmain関数内の場合、グローバルだとする
- */
+// グローバル(関数内)ではない場合、真を返す
+//
+// 内部的に作成するmain関数内の場合、グローバルだとする
 bool IRState::isGlobal()
 {
 	return funcStack.size() <= 1;

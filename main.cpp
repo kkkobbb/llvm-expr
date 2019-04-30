@@ -1,6 +1,6 @@
-/*
- * LLVM確認用言語 Exparr コンパイラ
- */
+//
+// LLVM確認用言語 Exparr コンパイラ
+//
 #include <iostream>
 #include <memory>
 #include <fstream>

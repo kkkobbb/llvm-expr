@@ -1,6 +1,6 @@
-/*
- * ビットコード出力
- */
+//
+// ビットコード出力
+//
 #include <memory>
 
 #include <llvm/IR/Module.h>
@@ -21,13 +21,11 @@ namespace {
 
 
 
-/*
- * Moduleからビットコードを出力する
- *
- * fnameがnullptrの場合、標準出力に出力する
- *
- * 生成に成功した場合、真を返す
- */
+// Moduleからビットコードを出力する
+//
+// fnameがnullptrの場合、標準出力に出力する
+//
+// 生成に成功した場合、真を返す
 bool BitcodeOutputPass::run(Module &module, string &fname)
 {
 	string outfname = DEFAULT_FNAME;

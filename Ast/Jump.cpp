@@ -1,8 +1,8 @@
-/*
- * ノードの処理
- *
- * ジャンプ文
- */
+//
+// ノードの処理
+//
+// ジャンプ文
+//
 #include <iostream>
 #include <string>
 #include <memory>
@@ -44,11 +44,9 @@ void JumpReturn::print_ast(ostream &dout, int indent)
 }
 
 
-/*
- * IR 生成
- *
- * return文
- */
+// IR 生成
+//
+// return文
 Value *JumpReturn::getValue(IRState &irs)
 {
 	auto &builder = irs.getBuilder();

@@ -1,8 +1,8 @@
-/*
- * ノードの処理
- *
- * 基本のノード
- */
+//
+// ノードの処理
+//
+// 基本のノード
+//
 #include <iostream>
 #include <string>
 #include <memory>
@@ -40,12 +40,10 @@ void NodeList::add(Node *n)
 }
 
 
-/*
- * IR 生成
- * List
- *
- * 子要素の実行のみ
- */
+// IR 生成
+// List
+//
+// 子要素の実行のみ
 Value *NodeList::getValue(IRState &irs)
 {
 	Value *lastVal = nullptr;
@@ -76,10 +74,8 @@ vector<unique_ptr<Node>> *NodeList::getList()
 
 // Unit
 
-/*
- * IR 生成
- * 翻訳単位 (1ファイル分)
- */
+// IR 生成
+// 翻訳単位 (1ファイル分)
 Value *Unit::getValue(IRState &irs)
 {
 	auto &c = irs.getContext();

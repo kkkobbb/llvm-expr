@@ -1,8 +1,8 @@
-/*
- * ノードの処理
- *
- * 型
- */
+//
+// ノードの処理
+//
+// 型
+//
 #include <iostream>
 #include <string>
 #include <memory>

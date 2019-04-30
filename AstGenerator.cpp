@@ -1,6 +1,6 @@
-/*
- * 構文木を生成するためのクラス
- */
+//
+// 構文木を生成するためのクラス
+//
 #include <fstream>
 #include <memory>
 
@@ -16,11 +16,9 @@ using namespace expr;
 
 
 
-/*
- * 入力ファイルから構文木を生成する
- *
- * 生成に成功した場合、真を返す
- */
+// 入力ファイルから構文木を生成する
+//
+// 生成に成功した場合、真を返す
 bool AstGenerator::generate(ifstream &fin)
 {
 	Lexer lexer(&fin);
@@ -39,9 +37,7 @@ bool AstGenerator::generate(ifstream &fin)
 }
 
 
-/*
- * 生成した構文木を返す
- */
+// 生成した構文木を返す
 unique_ptr<Node> AstGenerator::get()
 {
 	return move(ast_root);

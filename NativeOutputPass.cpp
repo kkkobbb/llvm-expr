@@ -1,7 +1,5 @@
-/*
- * ネイティブコード出力
- * objfile or assembly
- */
+// ネイティブコード出力
+// objfile or assembly
 #include <memory>
 
 #include <llvm/IR/Module.h>
@@ -34,9 +32,7 @@ NativeOutputPass::NativeOutputPass(TargetMachine::CodeGenFileType fileType)
 {}
 
 
-/*
- * ファイルタイプからデフォルトのファイル名を取得する
- */
+// ファイルタイプからデフォルトのファイル名を取得する
 string NativeOutputPass::getDefaultName(TargetMachine::CodeGenFileType fileType)
 {
 	string name = DEFAULT_FNAME;
@@ -58,13 +54,11 @@ string NativeOutputPass::getDefaultName(TargetMachine::CodeGenFileType fileType)
 }
 
 
-/*
- * Moduleからネイティブコードを出力する
- *
- * fnameがnullptrの場合、標準出力に出力する
- *
- * 生成に成功した場合、真を返す
- */
+// Moduleからネイティブコードを出力する
+//
+// fnameがnullptrの場合、標準出力に出力する
+//
+// 生成に成功した場合、真を返す
 bool NativeOutputPass::run(Module &module, string &fname)
 {
 	// Initialize the target registry etc.

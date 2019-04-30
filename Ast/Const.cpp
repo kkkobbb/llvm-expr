@@ -1,8 +1,7 @@
-/*
- * ノードの処理
- *
- * 定数、識別子
- */
+//
+// ノードの処理
+// 定数、識別子
+//
 #include <iostream>
 #include <string>
 #include <memory>
@@ -34,10 +33,8 @@ ConstInt::ConstInt(int num)
 }
 
 
-/*
- * IR 生成
- * 定数 整数
- */
+// IR 生成
+// 定数 整数
 Value *ConstInt::getValue(IRState &irs)
 {
 	auto &builder = irs.getBuilder();
@@ -59,10 +56,8 @@ ConstString::ConstString(string *str)
 }
 
 
-/*
- * IR 生成
- * 定数 文字列
- */
+// IR 生成
+// 定数 文字列
 Value *ConstString::getValue(IRState &irs)
 {
 	auto &builder = irs.getBuilder();
@@ -114,14 +109,12 @@ Type *Identifier::getType(IRState &irs)
 }
 
 
-/*
- * IR 生成
- *
- * 変数の値を返す
- *
- * 値の参照以外の用途(代入先、関数名など)の場合、getName()呼び出しで
- * 親ノードが処理すること
- */
+// IR 生成
+//
+// 変数の値を返す
+//
+// 値の参照以外の用途(代入先、関数名など)の場合、getName()呼び出しで
+// 親ノードが処理すること
 Value *Identifier::getValue(IRState &irs)
 {
 	auto &builder = irs.getBuilder();
@@ -159,12 +152,10 @@ void IdentifierList::print_ast(ostream &dout, int indent)
 }
 
 
-/*
- * リスト中の識別子から型を全て取り出す
- *
- * 型が設定されていない場合、nullptrが要素となる
- * Type自体のメモリはLLVMで管理されているためunique_ptrにしない
- */
+// リスト中の識別子から型を全て取り出す
+//
+// 型が設定されていない場合、nullptrが要素となる
+// Type自体のメモリはLLVMで管理されているためunique_ptrにしない
 unique_ptr<vector<Type*>> IdentifierList::getTypes(IRState &irs)
 {
 	const auto typelist = new vector<Type*>();
@@ -178,11 +169,9 @@ unique_ptr<vector<Type*>> IdentifierList::getTypes(IRState &irs)
 }
 
 
-/*
- * リスト中の識別子から識別子名を全て取り出す
- *
- * 識別子名はIdentifierで管理されているためunique_ptrにしない
- */
+// リスト中の識別子から識別子名を全て取り出す
+//
+// 識別子名はIdentifierで管理されているためunique_ptrにしない
 unique_ptr<vector<const string*>> IdentifierList::getNames()
 {
 	const auto namelist = new vector<const string*>();

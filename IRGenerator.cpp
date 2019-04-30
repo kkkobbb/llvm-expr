@@ -1,6 +1,6 @@
-/*
- * LLVM IRを生成するためのクラス
- */
+//
+// LLVM IRを生成するためのクラス
+//
 #include <fstream>
 #include <memory>
 
@@ -20,11 +20,9 @@ using namespace expr;
 
 
 
-/*
- * 構文木からLLVM IRを生成する
- *
- * 生成に成功した場合、真を返す
- */
+// 構文木からLLVM IRを生成する
+//
+// 生成に成功した場合、真を返す
 bool IRGenerator::generate(Node &ast_root)
 {
 	// デバッグ用
@@ -55,9 +53,7 @@ bool IRGenerator::generate(Node &ast_root)
 }
 
 
-/*
- * 生成したModuleを返す
- */
+// 生成したModuleを返す
 unique_ptr<Module> IRGenerator::get()
 {
 	return move(TheModule);
