@@ -1,10 +1,8 @@
 #ifndef OUTPUT_PASS_FACTORY_H
 #define OUTPUT_PASS_FACTORY_H
 
-#include <memory>
-
 #include "OutputPass.h"
-
+#include <memory>
 
 
 namespace expr {
@@ -13,11 +11,10 @@ namespace expr {
 	};
 
 	class OutputPassFactory {
-		public:
+	public:
 		std::unique_ptr<OutputPass> create(FileTypeKind fileType);
 	};
 }
-
 
 #endif  // OUTPUT_PASS_FACTORY_H
 

@@ -4,14 +4,12 @@
 #include <llvm/IR/Module.h>
 
 
-
 namespace expr {
 	class OptimPass {
-		public:
+	public:
 		bool run(llvm::Module &module);
 	};
 }
-
 
 #endif  // OPTIMPASS_H
 

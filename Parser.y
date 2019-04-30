@@ -1,5 +1,5 @@
 /*
- * bison 3.0.4
+ * bison
  * generating c++ code
  */
 

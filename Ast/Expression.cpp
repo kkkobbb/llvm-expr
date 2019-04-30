@@ -1,12 +1,10 @@
-/*
- * ノードの処理
- *
- * 単純な式
- */
-#include <iostream>
-#include <string>
-#include <memory>
-
+//
+// ノードの処理
+//
+// 単純な式
+//
+#include "Expression.h"
+#include "IRState.h"
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Constants.h>
@@ -14,15 +12,13 @@
 #include <llvm/IR/Verifier.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
-
-#include "Expression.h"
-#include "IRState.h"
-
+#include <iostream>
+#include <string>
+#include <memory>
 
 using namespace std;
 using namespace llvm;
 using namespace expr;
-
 
 
 // Expression
@@ -31,11 +27,8 @@ Expression::Expression(Node *l, Node *r)
 	: l(l), r(r)
 {}
 
-
-/*
- * IR 生成
- * 式
- */
+// IR 生成
+// 式
 Value *Expression::getValue(IRState &irs)
 {
 	Value *lv = nullptr;
@@ -48,17 +41,13 @@ Value *Expression::getValue(IRState &irs)
 	return generate_exp(irs, lv, rv);
 }
 
-
-/*
- * 演算処理
- *
- * 演算子毎に変更すること
- */
+// 演算処理
+//
+// 演算子毎に変更すること
 Value *Expression::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	return nullptr;
 }
-
 
 void Expression::print_ast(ostream &dout, int indent)
 {
@@ -71,18 +60,14 @@ void Expression::print_ast(ostream &dout, int indent)
 		r->print_ast(dout, next_indent);
 }
 
-
 // ExpressionFunc
 
 ExpressionFunc::ExpressionFunc(Identifier *identifier, NodeList *argumentList)
 	: Expression(identifier, argumentList), identifier(identifier), argumentList(argumentList)
 {}
 
-
-/*
- * IR 生成
- * 関数呼び出し
- */
+// IR 生成
+// 関数呼び出し
 Value *ExpressionFunc::getValue(IRState &irs)
 {
 	auto &builder = irs.getBuilder();
@@ -104,18 +89,14 @@ Value *ExpressionFunc::getValue(IRState &irs)
 	return builder.CreateCall(callee, args);
 }
 
-
 // ExpressionAS
 
 ExpressionAS::ExpressionAS(Identifier *identifier, Node *value)
 	: Expression(identifier, value), identifier(identifier)
 {}
 
-
-/*
- * IR 生成
- * 代入
- */
+// IR 生成
+// 代入
 Value *ExpressionAS::getValue(IRState &irs)
 {
 	auto &c = irs.getContext();
@@ -134,70 +115,50 @@ Value *ExpressionAS::getValue(IRState &irs)
 	return rhs;
 }
 
-
-
 // 以降、各演算用ノード
 
-
-/*
- * IR 生成
- * ||
- */
+// IR 生成
+// 論理和
 Value *ExpressionLOR::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	// TODO
 	return nullptr;
 }
 
-
-/*
- * IR 生成
- * &&
- */
+// IR 生成
+// 論理積
 Value *ExpressionLAND::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	// TODO
 	return nullptr;
 }
 
-
-/*
- * IR 生成
- * |
- */
+// IR 生成
+// ビット演算 or
 Value *ExpressionBOR::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	// TODO
 	return nullptr;
 }
 
-
-/*
- * IR 生成
- * ^
- */
+// IR 生成
+// ビット演算 排他的論理和
 Value *ExpressionBXOR::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	// TODO
 	return nullptr;
 }
 
-
-/*
- * IR 生成
- * &
- */
+// IR 生成
+// ビット演算 and
 Value *ExpressionBAND::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	// TODO
 	return nullptr;
 }
 
-
-/*
- * IR 生成
- * ==
- */
+// IR 生成
+// 比較演算 等値
 Value *ExpressionEQ::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &c = irs.getContext();
@@ -209,11 +170,8 @@ Value *ExpressionEQ::generate_exp(IRState &irs, Value *lv, Value *rv)
 	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), false);
 }
 
-
-/*
- * IR 生成
- * !=
- */
+// IR 生成
+// 比較演算 不等
 Value *ExpressionNE::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &c = irs.getContext();
@@ -225,11 +183,8 @@ Value *ExpressionNE::generate_exp(IRState &irs, Value *lv, Value *rv)
 	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), false);
 }
 
-
-/*
- * IR 生成
- * <
- */
+// IR 生成
+// 比較演算 <
 Value *ExpressionLT::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &c = irs.getContext();
@@ -241,11 +196,8 @@ Value *ExpressionLT::generate_exp(IRState &irs, Value *lv, Value *rv)
 	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), false);
 }
 
-
-/*
- * IR 生成
- * >
- */
+// IR 生成
+// 比較演算 >
 Value *ExpressionGT::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &c = irs.getContext();
@@ -257,11 +209,8 @@ Value *ExpressionGT::generate_exp(IRState &irs, Value *lv, Value *rv)
 	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), false);
 }
 
-
-/*
- * IR 生成
- * <=
- */
+// IR 生成
+// 比較演算 <=
 Value *ExpressionLTE::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &c = irs.getContext();
@@ -273,11 +222,8 @@ Value *ExpressionLTE::generate_exp(IRState &irs, Value *lv, Value *rv)
 	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), false);
 }
 
-
-/*
- * IR 生成
- * >=
- */
+// IR 生成
+// 比較演算 >=
 Value *ExpressionGTE::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &c = irs.getContext();
@@ -289,11 +235,8 @@ Value *ExpressionGTE::generate_exp(IRState &irs, Value *lv, Value *rv)
 	return builder.CreateIntCast(cmp, Type::getInt32Ty(c), false);
 }
 
-
-/*
- * IR 生成
- * 加算
- */
+// IR 生成
+// 加算
 Value *ExpressionADD::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &builder = irs.getBuilder();
@@ -301,11 +244,8 @@ Value *ExpressionADD::generate_exp(IRState &irs, Value *lv, Value *rv)
 	return builder.CreateAdd(lv, rv, "add_tmp");
 }
 
-
-/*
- * IR 生成
- * 減算
- */
+// IR 生成
+// 減算
 Value *ExpressionSUB::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &builder = irs.getBuilder();
@@ -313,11 +253,8 @@ Value *ExpressionSUB::generate_exp(IRState &irs, Value *lv, Value *rv)
 	return builder.CreateSub(lv, rv, "sub_tmp");
 }
 
-
-/*
- * IR 生成
- * 乗算
- */
+// IR 生成
+// 乗算
 Value *ExpressionMUL::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &builder = irs.getBuilder();
@@ -325,11 +262,8 @@ Value *ExpressionMUL::generate_exp(IRState &irs, Value *lv, Value *rv)
 	return builder.CreateMul(lv, rv, "mul_tmp");
 }
 
-
-/*
- * IR 生成
- * 除算
- */
+// IR 生成
+// 除算
 Value *ExpressionDIV::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &builder = irs.getBuilder();
@@ -337,11 +271,8 @@ Value *ExpressionDIV::generate_exp(IRState &irs, Value *lv, Value *rv)
 	return builder.CreateSDiv(lv, rv, "div_tmp");
 }
 
-
-/*
- * IR 生成
- * 余算
- */
+// IR 生成
+// 余算
 Value *ExpressionMOD::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &builder = irs.getBuilder();
@@ -349,21 +280,15 @@ Value *ExpressionMOD::generate_exp(IRState &irs, Value *lv, Value *rv)
 	return builder.CreateSRem(lv, rv, "mod_tmp");
 }
 
-
-/*
- * IR 生成
- * 単項演算子 +
- */
+// IR 生成
+// 単項演算子 +
 Value *ExpressionSPOS::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	return rv;
 }
 
-
-/*
- * IR 生成
- * 単項演算子 -
- */
+// IR 生成
+// 単項演算子 -
 Value *ExpressionSNEG::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	auto &builder = irs.getBuilder();
@@ -371,26 +296,19 @@ Value *ExpressionSNEG::generate_exp(IRState &irs, Value *lv, Value *rv)
 	return builder.CreateNeg(rv, "neg");
 }
 
-
-/*
- * IR 生成
- * 単項演算子 !
- */
+// IR 生成
+// 単項演算子 !
 Value *ExpressionLNOT::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	// TODO
 	return nullptr;
 }
 
-
-/*
- * IR 生成
- * 単項演算子 ~
- */
+// IR 生成
+// 単項演算子 ~
 Value *ExpressionBNOT::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
 	// TODO
 	return nullptr;
 }
-
 

@@ -1,30 +1,24 @@
-/*
- * LLVM IRを生成するためのクラス
- */
-#include <fstream>
-#include <memory>
-
+//
+// LLVM IRを生成するためのクラス
+//
+#include "IRGenerator.h"
+#include "IRState.h"
+#include "Ast/Node.h"
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Verifier.h>
 #include <llvm/IR/GlobalVariable.h>
-
-#include "Ast/Node.h"
-#include "IRGenerator.h"
-#include "IRState.h"
-
+#include <fstream>
+#include <memory>
 
 using namespace std;
 using namespace llvm;
 using namespace expr;
 
 
-
-/*
- * 構文木からLLVM IRを生成する
- *
- * 生成に成功した場合、真を返す
- */
+// 構文木からLLVM IRを生成する
+//
+// 生成に成功した場合、真を返す
 bool IRGenerator::generate(Node &ast_root)
 {
 	// デバッグ用
@@ -35,10 +29,10 @@ bool IRGenerator::generate(Node &ast_root)
 	new GlobalVariable(
 			m,
 			Type::getInt32Ty(c),
-			true,  /* isConstant */
+			true,  // isConstant
 			GlobalValue::PrivateLinkage,
-			builder.getInt32(20),  /* Initializer */
-			"test_const_20"  /* name */
+			builder.getInt32(20),  // Initializer
+			"test_const_20"  // name
 			);
 
 	// IR生成
@@ -54,10 +48,7 @@ bool IRGenerator::generate(Node &ast_root)
 	return !irs.isError();
 }
 
-
-/*
- * 生成したModuleを返す
- */
+// 生成したModuleを返す
 unique_ptr<Module> IRGenerator::get()
 {
 	return move(TheModule);

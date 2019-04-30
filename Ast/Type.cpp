@@ -1,12 +1,10 @@
-/*
- * ノードの処理
- *
- * 型
- */
-#include <iostream>
-#include <string>
-#include <memory>
-
+//
+// ノードの処理
+//
+// 型
+//
+#include "Type.h"
+#include "IRState.h"
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Constants.h>
@@ -14,15 +12,13 @@
 #include <llvm/IR/Verifier.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
-
-#include "Type.h"
-#include "IRState.h"
-
+#include <iostream>
+#include <string>
+#include <memory>
 
 using namespace std;
 using namespace llvm;
 using namespace expr;
-
 
 
 Type *TypeVoid::getType(IRState &irs)
@@ -31,18 +27,15 @@ Type *TypeVoid::getType(IRState &irs)
 	return Type::getVoidTy(c);
 }
 
-
 Type *TypeInt::getType(IRState &irs)
 {
 	auto &c = irs.getContext();
 	return Type::getInt32Ty(c);
 }
 
-
 Type *TypeString::getType(IRState &irs)
 {
 	auto &builder = irs.getBuilder();
 	return builder.getInt8PtrTy();
 }
-
 

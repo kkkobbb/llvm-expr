@@ -1,18 +1,16 @@
-/*
- * OutputPass生成
- */
-#include <memory>
+//
+// OutputPass生成
+//
 
 #include "OutputPassFactory.h"
 #include "OutputPass.h"
 #include "BitcodeOutputPass.h"
 #include "NativeOutputPass.h"
-
+#include <memory>
 
 using namespace std;
 using namespace llvm;
 using namespace expr;
-
 
 
 unique_ptr<OutputPass> OutputPassFactory::create(FileTypeKind fileType) {
@@ -35,5 +33,4 @@ unique_ptr<OutputPass> OutputPassFactory::create(FileTypeKind fileType) {
 
 	return move(op);
 }
-
 

@@ -1,27 +1,23 @@
-/*
- * ノードの処理
- *
- * 変数、関数の定義
- */
-#include <iostream>
-#include <string>
-#include <memory>
-
+//
+// ノードの処理
+//
+// 変数、関数の定義
+//
+#include "Definition.h"
+#include "IRState.h"
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
-
-#include "Definition.h"
-#include "IRState.h"
-
+#include <iostream>
+#include <string>
+#include <memory>
 
 using namespace std;
 using namespace llvm;
 using namespace expr;
-
 
 
 // DefinitionVar
@@ -29,7 +25,6 @@ using namespace expr;
 DefinitionVar::DefinitionVar(Identifier *decl, Node *init)
 	: decl(decl), init(init)
 {}
-
 
 void DefinitionVar::print_ast(ostream &dout, int indent)
 {
@@ -42,14 +37,11 @@ void DefinitionVar::print_ast(ostream &dout, int indent)
 		init->print_ast(dout, next_indent);
 }
 
-
-/*
- * IR 生成
- *
- * 変数定義
- *
- * TODO エラー処理
- */
+// IR 生成
+//
+// 変数定義
+//
+// TODO エラー処理
 Value *DefinitionVar::getValue(IRState &irs)
 {
 	auto &c = irs.getContext();
@@ -66,7 +58,6 @@ Value *DefinitionVar::getValue(IRState &irs)
 
 	return alloca;
 }
-
 
 // DefinitionFunc
 
@@ -88,14 +79,11 @@ void DefinitionFunc::print_ast(std::ostream &dout, int indent)
 		body->print_ast(dout, next_indent);
 }
 
-
-/*
- * IR 生成
- *
- * 関数定義
- *
- * TODO エラー処理
- */
+// IR 生成
+//
+// 関数定義
+//
+// TODO エラー処理
 Value *DefinitionFunc::getValue(IRState &irs)
 {
 	auto &c = irs.getContext();
@@ -156,5 +144,4 @@ Value *DefinitionFunc::getValue(IRState &irs)
 
 	return nullptr;
 }
-
 

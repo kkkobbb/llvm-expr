@@ -1,16 +1,13 @@
 #ifndef CONSTANT_H
 #define CONSTANT_H
 
+#include "Node.h"
+#include <llvm/IR/Module.h>
+#include <llvm/IR/IRBuilder.h>
 #include <iostream>
 #include <string>
 #include <memory>
 #include <vector>
-
-#include <llvm/IR/Module.h>
-#include <llvm/IR/IRBuilder.h>
-
-#include "Node.h"
-
 
 
 namespace expr {
@@ -21,7 +18,7 @@ namespace expr {
 	{
 		int num;
 
-		public:
+	public:
 		ConstInt(int num);
 		virtual llvm::Value *getValue(IRState &irs) override;
 	};
@@ -31,7 +28,7 @@ namespace expr {
 	{
 		std::unique_ptr<std::string> str;
 
-		public:
+	public:
 		ConstString(std::string *str);
 		virtual llvm::Value *getValue(IRState &irs) override;
 	};
@@ -43,7 +40,7 @@ namespace expr {
 		std::unique_ptr<std::string> name;
 		std::unique_ptr<Node> type;
 
-		public:
+	public:
 		Identifier(std::string *name, Node *type);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 		const std::string *getName();
@@ -54,10 +51,10 @@ namespace expr {
 	// 識別子の一覧を持つ
 	class IdentifierList: public Node
 	{
-		protected:
+	protected:
 		std::vector<std::unique_ptr<Identifier>> children;
 
-		public:
+	public:
 		IdentifierList(Identifier *n);
 		void add(Identifier *n);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;

@@ -1,15 +1,12 @@
-/*
- * ビットコード出力
- */
-#include <memory>
-
+//
+// ビットコード出力
+//
+#include "BitcodeOutputPass.h"
 #include <llvm/IR/Module.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Bitcode/BitcodeWriter.h>
-
-#include "BitcodeOutputPass.h"
-
+#include <memory>
 
 using namespace std;
 using namespace llvm;
@@ -20,14 +17,11 @@ namespace {
 }
 
 
-
-/*
- * Moduleからビットコードを出力する
- *
- * fnameがnullptrの場合、標準出力に出力する
- *
- * 生成に成功した場合、真を返す
- */
+// Moduleからビットコードを出力する
+//
+// fnameがnullptrの場合、標準出力に出力する
+//
+// 生成に成功した場合、真を返す
 bool BitcodeOutputPass::run(Module &module, string &fname)
 {
 	string outfname = DEFAULT_FNAME;
@@ -45,5 +39,4 @@ bool BitcodeOutputPass::run(Module &module, string &fname)
 
 	return true;
 }
-
 

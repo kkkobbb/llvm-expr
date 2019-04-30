@@ -1,17 +1,14 @@
 #ifndef DECLARATION_H
 #define DECLARATION_H
 
+#include "Node.h"
+#include "Const.h"
+#include <llvm/IR/Module.h>
+#include <llvm/IR/IRBuilder.h>
 #include <iostream>
 #include <string>
 #include <memory>
 #include <vector>
-
-#include <llvm/IR/Module.h>
-#include <llvm/IR/IRBuilder.h>
-
-#include "Node.h"
-#include "Const.h"
-
 
 
 namespace expr {
@@ -19,12 +16,12 @@ namespace expr {
 
 	class DeclarationFunc: public Node
 	{
-		protected:
+	protected:
 		std::unique_ptr<Identifier> decl;
 		std::unique_ptr<IdentifierList> argumentList;
 		bool vararg;
 
-		public:
+	public:
 		DeclarationFunc(Identifier *decl, IdentifierList *argumentList, bool vararg=false);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
 		virtual llvm::Value *getValue(IRState &irs) override;
