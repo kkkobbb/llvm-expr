@@ -1,0 +1,22 @@
+# 論理否定
+
+decl fnc printf:int(:string, ...);
+
+##printn 1
+a <- not 0;
+printf("%d\n", a);
+##printn 0
+b <- not 1;
+printf("%d\n", b);
+##printn 0
+c <- not 8;
+printf("%d\n", c);
+##printn 0
+d <- not 32;
+printf("%d\n", d);
+##printn 0
+printf("%d\n", not 10);
+
+##return 0
+0;
+

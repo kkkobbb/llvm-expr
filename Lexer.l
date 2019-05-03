@@ -68,14 +68,15 @@ EscSq     ({EscSq1}|{EscSqX})
 "..."         { return token_type::RE_VARARG; }
 
  /* 演算子 2文字以上 */
-"<="  { return token_type::OP_LTE; }
-">="  { return token_type::OP_GTE; }
-"=="  { return token_type::OP_EQ; }
-"!="  { return token_type::OP_NE; }
-"or"  { return token_type::OP_LOR; }
+"<="   { return token_type::OP_LTE; }
+">="   { return token_type::OP_GTE; }
+"=="   { return token_type::OP_EQ; }
+"!="   { return token_type::OP_NE; }
+"or"   { return token_type::OP_LOR; }
 "and"  { return token_type::OP_LAND; }
-"<-"  { return token_type::OP_ARROW_L; }
-"->"  { return token_type::OP_ARROW_R; }
+"not"  { return token_type::OP_LNOT; }
+"<-"   { return token_type::OP_ARROW_L; }
+"->"   { return token_type::OP_ARROW_R; }
 
  /* 識別子 */
 {Letter}({Letter}|{Digit})*  { val->sval = new std::string(yytext); return token_type::IDENTIFIER; }

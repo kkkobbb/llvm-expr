@@ -1,0 +1,22 @@
+# bit演算 否定
+
+decl fnc printf:int(:string, ...);
+
+##printn 15
+a <- (~ 0) & 15;
+printf("%d\n", a);
+##printn 14
+b <- (~ 1) & 15;
+printf("%d\n", b);
+##printn 0
+c <- (~ 15) & 15;
+printf("%d\n", c);
+##printn 0
+d <- (~ 31) & 31;
+printf("%d\n", d);
+##printn 28
+printf("%d\n", (~ 3) & 31);
+
+##return 0
+0;
+
