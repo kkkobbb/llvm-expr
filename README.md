@@ -8,11 +8,8 @@
 
 
 ## 準備
-* 以下のコマンドをビルド時に使用するので、なければインストール
-    * `make`
-    * `g++`
-    * `flex`
-    * `bison`
+* ビルドに使用するコマンドのインストール
+    * `sudo apt install make g++ flex bison`
 * Ubuntu 16.04
     * llvm 3.8を使う場合 `sudo apt install llvm zlib1g-dev`
         * (ビルドオプションで`-lz`が指定されるためzlibも必要)
