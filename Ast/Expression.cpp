@@ -133,7 +133,7 @@ Value *ExpressionLOR::generate_exp(IRState &irs, Value *lv, Value *rv)
 	const auto rv32 = builder.CreateIntCast(rv1, Type::getInt32Ty(c), false);
 
 	// bit演算or を実行
-	return builder.CreateOr(lv32, rv32, "or_tmp");
+	return builder.CreateOr(lv32, rv32, "lor_tmp");
 }
 
 // IR 生成
@@ -152,31 +152,34 @@ Value *ExpressionLAND::generate_exp(IRState &irs, Value *lv, Value *rv)
 	const auto rv32 = builder.CreateIntCast(rv1, Type::getInt32Ty(c), false);
 
 	// bit演算and を実行
-	return builder.CreateAnd(lv32, rv32, "and_tmp");
+	return builder.CreateAnd(lv32, rv32, "land_tmp");
 }
 
 // IR 生成
 // ビット演算 or
 Value *ExpressionBOR::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
-	// TODO
-	return nullptr;
+	auto &builder = irs.getBuilder();
+
+	return builder.CreateOr(lv, rv, "bor_tmp");
 }
 
 // IR 生成
 // ビット演算 排他的論理和
 Value *ExpressionBXOR::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
-	// TODO
-	return nullptr;
+	auto &builder = irs.getBuilder();
+
+	return builder.CreateXor(lv, rv, "bxor_tmp");
 }
 
 // IR 生成
 // ビット演算 and
 Value *ExpressionBAND::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
-	// TODO
-	return nullptr;
+	auto &builder = irs.getBuilder();
+
+	return builder.CreateAnd(lv, rv, "band_tmp");
 }
 
 // IR 生成

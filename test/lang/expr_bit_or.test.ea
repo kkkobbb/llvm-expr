@@ -1,0 +1,28 @@
+# bit演算 or
+
+decl fnc printf:int(:string, ...);
+
+##printn 0
+a <- 0 | 0;
+printf("%d\n", a);
+##printn 1
+b <- 1 | 0;
+printf("%d\n", b);
+##printn 10
+c <- 0 | 10;
+printf("%d\n", c);
+##printn 1
+d <- 1 | 1;
+printf("%d\n", d);
+##printn 14
+e <- 4 | 10;
+printf("%d\n", e);
+##printn 15
+f <- 15 | 10;
+printf("%d\n", f);
+##printn 15
+printf("%d\n", 5 | 11);
+
+##return 0
+0;
+
