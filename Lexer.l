@@ -67,6 +67,16 @@ EscSq     ({EscSq1}|{EscSqX})
 "runtimeerr"  { return token_type::RE_RUNTIMEERR; }
 "..."         { return token_type::RE_VARARG; }
 
+ /* 演算子 2文字以上 */
+"<="  { return token_type::OP_LTE; }
+">="  { return token_type::OP_GTE; }
+"=="  { return token_type::OP_EQ; }
+"!="  { return token_type::OP_NE; }
+"or"  { return token_type::OP_LOR; }
+"and"  { return token_type::OP_LAND; }
+"<-"  { return token_type::OP_ARROW_L; }
+"->"  { return token_type::OP_ARROW_R; }
+
  /* 識別子 */
 {Letter}({Letter}|{Digit})*  { val->sval = new std::string(yytext); return token_type::IDENTIFIER; }
  /* 10進数の整数定数 */
@@ -78,15 +88,6 @@ EscSq     ({EscSq1}|{EscSqX})
  /* 文字列定数 */
 \"({EscSq}|[^\\"\n]*)*\"     { val->sval = get_string(yytext); return token_type::STRING; }
 
- /* 2文字 */
-"<="  { return token_type::OP_LTE; }
-">="  { return token_type::OP_GTE; }
-"=="  { return token_type::OP_EQ; }
-"!="  { return token_type::OP_NE; }
-"||"  { return token_type::OP_LOR; }
-"&&"  { return token_type::OP_LAND; }
-"<-"  { return token_type::OP_ARROW_L; }
-"->"  { return token_type::OP_ARROW_R; }
  /* 1文字 */
 .     { return yytext[0]; }
 

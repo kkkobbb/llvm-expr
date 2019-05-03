@@ -121,16 +121,38 @@ Value *ExpressionAS::getValue(IRState &irs)
 // 論理和
 Value *ExpressionLOR::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
-	// TODO
-	return nullptr;
+	auto &c = irs.getContext();
+	auto &builder = irs.getBuilder();
+
+	// 0か1(0以外の場合)に変換する
+	const auto lv1 = builder.CreateIsNotNull(lv, "zero_or_one_tmp");
+	const auto rv1 = builder.CreateIsNotNull(rv, "zero_or_one_tmp");
+
+	// 32bit型に変換する
+	const auto lv32 = builder.CreateIntCast(lv1, Type::getInt32Ty(c), false);
+	const auto rv32 = builder.CreateIntCast(rv1, Type::getInt32Ty(c), false);
+
+	// bit演算or を実行
+	return builder.CreateOr(lv32, rv32, "or_tmp");
 }
 
 // IR 生成
 // 論理積
 Value *ExpressionLAND::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
-	// TODO
-	return nullptr;
+	auto &c = irs.getContext();
+	auto &builder = irs.getBuilder();
+
+	// 0か1(0以外の場合)に変換する
+	const auto lv1 = builder.CreateIsNotNull(lv, "zero_or_one_tmp");
+	const auto rv1 = builder.CreateIsNotNull(rv, "zero_or_one_tmp");
+
+	// 32bit型に変換する
+	const auto lv32 = builder.CreateIntCast(lv1, Type::getInt32Ty(c), false);
+	const auto rv32 = builder.CreateIntCast(rv1, Type::getInt32Ty(c), false);
+
+	// bit演算and を実行
+	return builder.CreateAnd(lv32, rv32, "and_tmp");
 }
 
 // IR 生成
