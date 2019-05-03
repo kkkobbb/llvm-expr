@@ -84,11 +84,10 @@ std::unique_ptr<MY_NAMESPACE::Node> get_ast();
 %token           OP_LT OP_GT
 %token           OP_ADD OP_SUB
 %token           OP_MUL OP_DIV OP_MOD
-%token           OP_NOT
 
 /* 2文字以上の演算子 */
 %token           OP_LTE OP_GTE OP_EQ OP_NE
-%token           OP_LOR OP_LAND
+%token           OP_LOR OP_LAND OP_LNOT
 %token           OP_ARROW_L OP_ARROW_R
 
 /* 構文木のルート */
@@ -456,7 +455,7 @@ unary_expression
         { $$ = new ExpressionSNEG($2); }
     | '~' cast_expression
         { $$ = new ExpressionBNOT($2); }
-    | '!' cast_expression
+    | OP_LNOT cast_expression
         { $$ = new ExpressionLNOT($2); }
     ;
 

@@ -121,40 +121,65 @@ Value *ExpressionAS::getValue(IRState &irs)
 // 論理和
 Value *ExpressionLOR::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
-	// TODO
-	return nullptr;
+	auto &c = irs.getContext();
+	auto &builder = irs.getBuilder();
+
+	// 0か1(0以外の場合)に変換する
+	const auto lv1 = builder.CreateIsNotNull(lv, "zero_or_one_tmp");
+	const auto rv1 = builder.CreateIsNotNull(rv, "zero_or_one_tmp");
+
+	// signed i32へ型変換
+	const auto lv32 = builder.CreateIntCast(lv1, Type::getInt32Ty(c), false);
+	const auto rv32 = builder.CreateIntCast(rv1, Type::getInt32Ty(c), false);
+
+	// bit演算or を実行
+	return builder.CreateOr(lv32, rv32, "lor_tmp");
 }
 
 // IR 生成
 // 論理積
 Value *ExpressionLAND::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
-	// TODO
-	return nullptr;
+	auto &c = irs.getContext();
+	auto &builder = irs.getBuilder();
+
+	// 0か1(0以外の場合)に変換する
+	const auto lv1 = builder.CreateIsNotNull(lv, "zero_or_one_tmp");
+	const auto rv1 = builder.CreateIsNotNull(rv, "zero_or_one_tmp");
+
+	// signed i32へ型変換
+	const auto lv32 = builder.CreateIntCast(lv1, Type::getInt32Ty(c), false);
+	const auto rv32 = builder.CreateIntCast(rv1, Type::getInt32Ty(c), false);
+
+	// bit演算and を実行
+	return builder.CreateAnd(lv32, rv32, "land_tmp");
 }
 
 // IR 生成
 // ビット演算 or
 Value *ExpressionBOR::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
-	// TODO
-	return nullptr;
+	auto &builder = irs.getBuilder();
+
+	return builder.CreateOr(lv, rv, "bor_tmp");
 }
 
 // IR 生成
 // ビット演算 排他的論理和
 Value *ExpressionBXOR::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
-	// TODO
-	return nullptr;
+	auto &builder = irs.getBuilder();
+
+	return builder.CreateXor(lv, rv, "bxor_tmp");
 }
 
 // IR 生成
 // ビット演算 and
 Value *ExpressionBAND::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
-	// TODO
-	return nullptr;
+	auto &builder = irs.getBuilder();
+
+	return builder.CreateAnd(lv, rv, "band_tmp");
 }
 
 // IR 生成
@@ -300,15 +325,28 @@ Value *ExpressionSNEG::generate_exp(IRState &irs, Value *lv, Value *rv)
 // 単項演算子 !
 Value *ExpressionLNOT::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
-	// TODO
-	return nullptr;
+	auto &c = irs.getContext();
+	auto &builder = irs.getBuilder();
+
+	// 0か1(0以外の場合)に変換する
+	const auto rv1 = builder.CreateIsNotNull(rv, "zero_or_one_tmp");
+
+	// bit演算not を実行
+	const auto bnot = builder.CreateNot(rv1, "lnot_tmp");
+
+	// 0か1(0以外の場合)に変換する
+	const auto bnot1 = builder.CreateIsNotNull(bnot, "zero_or_one_tmp");
+
+	// signed i32へ型変換
+	return builder.CreateIntCast(bnot1, Type::getInt32Ty(c), false);
 }
 
 // IR 生成
 // 単項演算子 ~
 Value *ExpressionBNOT::generate_exp(IRState &irs, Value *lv, Value *rv)
 {
-	// TODO
-	return nullptr;
+	auto &builder = irs.getBuilder();
+
+	return builder.CreateNot(rv, "bnot_tmp");
 }
 
