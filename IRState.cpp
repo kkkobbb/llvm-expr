@@ -132,6 +132,9 @@ Value *IRState::getVariable(const string *name)
 	const auto vs_table = curFunc->getValueSymbolTable();
 	auto alloca = vs_table->lookup(*name);
 
+	// TODO 上の階層のblockを検索する
+	// curFunc->getEntryBlock() とか?
+
 	if (!alloca) {
 		const auto &global_vs_table = TheModule->getValueSymbolTable();
 		alloca = global_vs_table.lookup(*name);
