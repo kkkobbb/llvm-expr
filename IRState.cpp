@@ -127,17 +127,19 @@ Function *IRState::popCurFunc()
 // 2. グローバルに対象の変数があるか
 Value *IRState::getVariable(const string *name)
 {
-	const auto curFunc = builder->GetInsertBlock()->getParent();
 
-	const auto vs_table = curFunc->getValueSymbolTable();
-	auto alloca = vs_table->lookup(*name);
+	Value *alloca = nullptr;
 
-	// TODO 上の階層のblockを検索する
-	// curFunc->getEntryBlock() とか?
+	// 変数の名前空間を制限するため、無駄なif文を付けている
+	if (!alloca) {
+		const auto func = builder->GetInsertBlock()->getParent();
+		const auto vs_table = func->getValueSymbolTable();
+		alloca = vs_table->lookup(*name);
+	}
 
 	if (!alloca) {
-		const auto &global_vs_table = TheModule->getValueSymbolTable();
-		alloca = global_vs_table.lookup(*name);
+		const auto &vs_table = TheModule->getValueSymbolTable();
+		alloca = vs_table.lookup(*name);
 	}
 
 	return alloca;

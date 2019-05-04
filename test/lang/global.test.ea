@@ -7,6 +7,8 @@ v <- test_const_20 + 1;
 printf("%d\n", v);
 
 
+a <- 3;
+
 fnc test:int()
 {
 	# ローカル変数を作成する
@@ -15,7 +17,6 @@ fnc test:int()
 	printf("%d\n", a);
 };
 
-a <- 3;
 test();
 
 # グローバル変数は変更されていない

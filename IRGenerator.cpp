@@ -38,10 +38,10 @@ bool IRGenerator::generate(Node &ast_root)
 	// IR生成
 	ast_root.getValue(irs);
 
-	// エラーがあった場合、終了する
+	// エラーがあった場合、フラグを設定する
 	const bool errored = verifyModule(m, &errs());
 	if (errored)
-		return false;
+		irs.setError();
 
 	TheModule = irs.moveModule();
 
