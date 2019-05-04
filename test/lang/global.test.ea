@@ -6,6 +6,22 @@ v <- test_const_20 + 1;
 ##printn 21
 printf("%d\n", v);
 
+
+fnc test:int()
+{
+	# ローカル変数を作成する
+	a <- 12;
+	##printn 12
+	printf("%d\n", a);
+};
+
+a <- 3;
+test();
+
+# グローバル変数は変更されていない
+##printn 3
+printf("%d\n", a);
+
 ##return 0
 0;
 

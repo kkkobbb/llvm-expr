@@ -50,8 +50,8 @@ test_num=0
 success_num=0
 for testcase in ${testcaselist}; do
 	expected_output_stderr=$(grep "^##output_stderr" ${testcase})
-	expected_r=$(grep "^##return " ${testcase} | sed "s/^##return //")
-	expected_p=$(grep "^##printn " ${testcase} | sed "s/^##printn //")
+	expected_r=$(grep "^\s*##return " ${testcase} | sed "s/^\s*##return //")
+	expected_p=$(grep "^\s*##printn " ${testcase} | sed "s/^\s*##printn //")
 
 	result_pn=$(run_exefile ${testcase} 2> ${err} | lli -force-interpreter 2> ${err})
 	result_ret=$?
