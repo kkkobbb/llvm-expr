@@ -103,21 +103,20 @@ GlobalVariable *IRState::createGlobalString(const char *str)
 	return gvar;
 }
 
-[[deprecated("please use llvm::IRBuilder<>::GetInsertBlock()->getParent()")]]
-// TODO 削除? funcStackはIRStateでしか使用しない？
-Function *IRState::getCurFunc()
-{
-	return funcStack.back();
-}
-
 void IRState::pushCurFunc(Function *func)
 {
 	funcStack.push_back(func);
 }
 
-void IRState::popCurFunc()
+Function *IRState::popCurFunc()
 {
+	if (funcStack.empty())
+		return nullptr;
+
+	const auto func = funcStack.back();
 	funcStack.pop_back();
+
+	return func;
 }
 
 // nameという変数の領域を探して返す
@@ -132,6 +131,9 @@ Value *IRState::getVariable(const string *name)
 
 	const auto vs_table = curFunc->getValueSymbolTable();
 	auto alloca = vs_table->lookup(*name);
+
+	// TODO 上の階層のblockを検索する
+	// curFunc->getEntryBlock() とか?
 
 	if (!alloca) {
 		const auto &global_vs_table = TheModule->getValueSymbolTable();
