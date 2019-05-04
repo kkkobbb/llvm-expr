@@ -103,21 +103,20 @@ GlobalVariable *IRState::createGlobalString(const char *str)
 	return gvar;
 }
 
-[[deprecated("please use llvm::IRBuilder<>::GetInsertBlock()->getParent()")]]
-// TODO 削除? funcStackはIRStateでしか使用しない？
-Function *IRState::getCurFunc()
-{
-	return funcStack.back();
-}
-
 void IRState::pushCurFunc(Function *func)
 {
 	funcStack.push_back(func);
 }
 
-void IRState::popCurFunc()
+Function *IRState::popCurFunc()
 {
+	if (funcStack.empty())
+		return nullptr;
+
+	const auto func = funcStack.back();
 	funcStack.pop_back();
+
+	return func;
 }
 
 // nameという変数の領域を探して返す
