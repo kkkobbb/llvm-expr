@@ -55,7 +55,7 @@ Value *ConstString::getValue(IRState &irs)
 {
 	auto &builder = irs.getBuilder();
 
-	const auto gstr = irs.getGlobalString(this->str->c_str());
+	const auto gstr = irs.getGlobalString(str->c_str());
 
 	// グローバル変数のポインタの取得
 	const auto constZero = builder.getInt32(0);

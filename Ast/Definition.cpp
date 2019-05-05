@@ -77,7 +77,7 @@ Value *DefinitionVarLocal::getValue(IRState &irs)
 
 	// 初期値の指定があれば、設定する
 	if (init.get() != nullptr) {
-		const auto value = init->getValue(irs);
+		const auto value = irs.createValueInBlock(init.get());
 		builder.CreateStore(value, alloca);
 	}
 
@@ -113,7 +113,7 @@ Value *DefinitionVarGlobal::getValue(IRState &irs)
 
 	// 初期値の指定があれば、設定する
 	if (init.get() != nullptr) {
-		const auto value = init->getValue(irs);
+		const auto value = irs.createValueInBlock(init.get());
 		const auto constVal = dyn_cast_or_null<Constant>(value);
 		if (constVal != nullptr)
 			gvar->setInitializer(constVal);
@@ -168,9 +168,6 @@ Value *DefinitionFunc::getValue(IRState &irs)
 	const auto name = decl->getName();
 	const auto func = Function::Create(funcType, Function::ExternalLinkage, *name, &m);
 
-	// 現在の関数を更新
-	irs.pushCurFunc(func);
-
 	// 命令挿入位置の更新
 	BasicBlock *bb = BasicBlock::Create(c, "entry", func);
 	const auto oldBb = builder.GetInsertBlock();
@@ -188,7 +185,7 @@ Value *DefinitionFunc::getValue(IRState &irs)
 		}
 	}
 
-	const auto bodyValue = body->getValue(irs);
+	const auto bodyValue = irs.createValueInBlock(body.get(), true);
 
 	// body内でreturn していた場合、ここでreturnを追加しない
 	if (!isa<ReturnInst>(bodyValue)) {
@@ -200,8 +197,6 @@ Value *DefinitionFunc::getValue(IRState &irs)
 
 	// 命令挿入位置を戻す
 	builder.SetInsertPoint(oldBb);
-	// 現在の関数を戻す
-	irs.popCurFunc();
 
 	// 最後にverifyModule()を実行するのでここで関数のチェックをしない
 

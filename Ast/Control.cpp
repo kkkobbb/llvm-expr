@@ -37,7 +37,7 @@ void ControlIf::print_ast(ostream &dout, int indent)
 	if (proc != nullptr)
 		proc->print_ast(dout, next_indent);
 	else
-		this->print_ast_string("null", dout, next_indent);
+		print_ast_string("null", dout, next_indent);
 	if (elseProc != nullptr)
 		elseProc->print_ast(dout, next_indent);
 }
@@ -52,9 +52,8 @@ Value *ControlIf::getValue(IRState &irs)
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
 
-	auto cond = this->cond->getValue(irs);
-	auto constZero = builder.getInt32(0);
-	auto cmp = builder.CreateICmpNE(cond, constZero);
+	auto condV = irs.createValueInBlock(cond.get());
+	auto cmp = builder.CreateIsNotNull(condV);
 
 	auto curFunc = builder.GetInsertBlock()->getParent();
 	auto thenBB = BasicBlock::Create(c, "then", curFunc);
@@ -72,8 +71,8 @@ Value *ControlIf::getValue(IRState &irs)
 
 	// then
 	builder.SetInsertPoint(thenBB);
-	if (this->proc) {
-		thenV = this->proc->getValue(irs);
+	if (proc) {
+		thenV = irs.createValueInBlock(proc.get(), true);
 		++brnum;
 	}
 	builder.CreateBr(retBB);  // 分岐終了地点へジャンプ
@@ -83,8 +82,8 @@ Value *ControlIf::getValue(IRState &irs)
 	// else
 	curFunc->getBasicBlockList().push_back(elseBB);
 	builder.SetInsertPoint(elseBB);
-	if (this->elseProc) {
-		elseV = this->elseProc->getValue(irs);
+	if (elseProc) {
+		elseV = irs.createValueInBlock(elseProc.get(), true);
 		++brnum;
 	}
 	builder.CreateBr(retBB);  // 分岐終了地点へジャンプ
@@ -104,6 +103,7 @@ Value *ControlIf::getValue(IRState &irs)
 		return phi;
 	}
 
+	auto constZero = builder.getInt32(0);
 	return constZero;
 }
 
@@ -124,7 +124,7 @@ void ControlWhile::print_ast(ostream &dout, int indent)
 	if (proc != nullptr)
 		proc->print_ast(dout, next_indent);
 	else
-		this->print_ast_string("null", dout, next_indent);
+		print_ast_string("null", dout, next_indent);
 }
 
 // IR 生成
@@ -148,7 +148,7 @@ Value *ControlWhile::getValue(IRState &irs)
 	curFunc->getBasicBlockList().push_back(loopBB);
 	builder.SetInsertPoint(loopBB);
 
-	auto condV = cond->getValue(irs);
+	auto condV = irs.createValueInBlock(cond.get(), true);
 	auto constZero = builder.getInt32(0);
 	auto cmp = builder.CreateICmpNE(condV, constZero);
 
@@ -158,8 +158,7 @@ Value *ControlWhile::getValue(IRState &irs)
 	// ループ内処理
 	curFunc->getBasicBlockList().push_back(bodyBB);
 	builder.SetInsertPoint(bodyBB);
-	//auto procV = proc->getValue(irs);
-	proc->getValue(irs);
+	irs.createValueInBlock(proc.get(), true);
 	builder.CreateBr(loopBB);  // ループ始点へジャンプ
 
 	// ループ終端

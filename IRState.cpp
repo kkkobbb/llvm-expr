@@ -58,11 +58,6 @@ Module &IRState::getModule()
 	return *TheModule;
 }
 
-unique_ptr<Module> IRState::moveModule()
-{
-	return move(TheModule);
-}
-
 IRBuilder<> &IRState::getBuilder()
 {
 	return *builder;
@@ -95,7 +90,7 @@ GlobalVariable *IRState::getGlobalString(const char *str)
 	}
 
 	if (gStr == nullptr) {
-		gStr = this->createGlobalString(str);
+		gStr = createGlobalString(str);
 		GlobalStrList.push_back(gStr);
 	}
 
@@ -117,22 +112,6 @@ GlobalVariable *IRState::createGlobalString(const char *str)
 	gvar->setAlignment(1);
 
 	return gvar;
-}
-
-void IRState::pushCurFunc(Function *func)
-{
-	funcStack.push_back(func);
-}
-
-Function *IRState::popCurFunc()
-{
-	if (funcStack.empty())
-		return nullptr;
-
-	const auto func = funcStack.back();
-	funcStack.pop_back();
-
-	return func;
 }
 
 // nameという変数の領域を探して返す
@@ -162,11 +141,24 @@ Value *IRState::getVariable(const string *name)
 	return alloca;
 }
 
-// グローバル(関数内)ではない場合、真を返す
-//
-// 内部的に作成するmain関数内の場合、グローバルだとする
-bool IRState::isGlobal()
+void IRState::pushBlock(BasicBlock *block)
 {
-	return funcStack.size() <= 1;
+	blockStack.push_back(block);
+}
+
+BasicBlock *IRState::popBlock()
+{
+	if (blockStack.empty())
+		return nullptr;
+
+	const auto block = blockStack.back();
+	blockStack.pop_back();
+
+	return block;
+}
+
+unique_ptr<Module> IRState::moveModule()
+{
+	return move(TheModule);
 }
 
