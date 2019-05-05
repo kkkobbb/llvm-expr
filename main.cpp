@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
 	ifstream fin;
 	fin.open(InputFilename, ios::binary);
 	if (!fin) {
-		cerr << "Error: open \"" << InputFilename << "\"" << endl;
+		cerr << "Error: open \"" << InputFilename << "\"\n";
 		return 1;
 	}
 
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 	if (PrintAst) {
 		// 構文木表示
 		ast->print_ast(cout);
-		cout << endl;
+		cout << "\n";
 		if (!PrintLlvm)
 			return 0;
 	}

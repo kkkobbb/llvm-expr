@@ -514,7 +514,7 @@ void Parser::error(const location_type& l, const std::string& msg)
 {
 	parse_err_f = true;
 	++parse_err_num;
-	std::cerr << "Error (" << l.end.line << "): " << msg << std::endl;
+	std::cerr << "Error (" << l.end.line << "): " << msg << "\n";
 }
 
 
