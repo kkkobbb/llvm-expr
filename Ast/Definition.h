@@ -19,10 +19,25 @@ namespace expr {
 	protected:
 		std::unique_ptr<Identifier> decl;
 		std::unique_ptr<Node> init;
+		virtual bool verifyType(IRState &irs);
 
 	public:
 		DefinitionVar(Identifier *decl, Node *init);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
+		virtual llvm::Value *getValue(IRState &irs) = 0;
+	};
+
+	class DefinitionVarLocal: public DefinitionVar
+	{
+	public:
+		DefinitionVarLocal(Identifier *decl, Node *init) : DefinitionVar(decl, init) {}
+		virtual llvm::Value *getValue(IRState &irs) override;
+	};
+
+	class DefinitionVarGlobal: public DefinitionVar
+	{
+	public:
+		DefinitionVarGlobal(Identifier *decl, Node *init) : DefinitionVar(decl, init) {}
 		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 

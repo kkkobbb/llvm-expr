@@ -51,6 +51,6 @@ void Node::print_ast(ostream &dout, int indent)
 	else
 		msg.assign(typeid(*this).name());
 
-	this->print_ast_string(msg.c_str(), dout, indent);
+	print_ast_string(msg.c_str(), dout, indent);
 }
 

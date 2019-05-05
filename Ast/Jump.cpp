@@ -35,7 +35,7 @@ void JumpReturn::print_ast(ostream &dout, int indent)
 	if (ret != nullptr)
 		ret->print_ast(dout, next_indent);
 	else
-		this->print_ast_string("null", dout, next_indent);
+		print_ast_string("null", dout, next_indent);
 }
 
 // IR 生成
@@ -46,10 +46,10 @@ Value *JumpReturn::getValue(IRState &irs)
 	auto &builder = irs.getBuilder();
 
 	Value *retV = nullptr;
-	if (this->ret == nullptr) {
+	if (ret == nullptr) {
 		retV = builder.CreateRetVoid();
 	} else {
-		const auto retval = this->ret->getValue(irs);
+		const auto retval = irs.createValueInBlock(ret.get());
 		retV = builder.CreateRet(retval);
 	}
 

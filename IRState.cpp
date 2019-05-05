@@ -26,10 +26,26 @@ bool IRState::isError()
 	return errorFlag;
 }
 
+const std::vector<unique_ptr<string> > *IRState::getErrorMsgList()
+{
+	return &errorMstList;
+}
+
 // エラーフラグを真にする
 void IRState::setError()
 {
 	errorFlag = true;
+}
+
+void IRState::setError(const char *msg)
+{
+	setError(make_unique<string>(msg));
+}
+
+void IRState::setError(unique_ptr<string> msg)
+{
+	setError();
+	errorMstList.push_back(move(msg));
 }
 
 LLVMContext &IRState::getContext()
@@ -40,11 +56,6 @@ LLVMContext &IRState::getContext()
 Module &IRState::getModule()
 {
 	return *TheModule;
-}
-
-unique_ptr<Module> IRState::moveModule()
-{
-	return move(TheModule);
 }
 
 IRBuilder<> &IRState::getBuilder()
@@ -79,7 +90,7 @@ GlobalVariable *IRState::getGlobalString(const char *str)
 	}
 
 	if (gStr == nullptr) {
-		gStr = this->createGlobalString(str);
+		gStr = createGlobalString(str);
 		GlobalStrList.push_back(gStr);
 	}
 
@@ -103,22 +114,6 @@ GlobalVariable *IRState::createGlobalString(const char *str)
 	return gvar;
 }
 
-void IRState::pushCurFunc(Function *func)
-{
-	funcStack.push_back(func);
-}
-
-Function *IRState::popCurFunc()
-{
-	if (funcStack.empty())
-		return nullptr;
-
-	const auto func = funcStack.back();
-	funcStack.pop_back();
-
-	return func;
-}
-
 // nameという変数の領域を探して返す
 //
 // 見つからなかった場合、偽となる値を返す
@@ -127,27 +122,43 @@ Function *IRState::popCurFunc()
 // 2. グローバルに対象の変数があるか
 Value *IRState::getVariable(const string *name)
 {
-	const auto curFunc = builder->GetInsertBlock()->getParent();
 
-	const auto vs_table = curFunc->getValueSymbolTable();
-	auto alloca = vs_table->lookup(*name);
+	Value *alloca = nullptr;
 
-	// TODO 上の階層のblockを検索する
-	// curFunc->getEntryBlock() とか?
+	// 現在の関数のスコープでの検索
+	if (!alloca) {  // 変数の名前空間を制限するため、無駄なif文を付けている
+		const auto func = builder->GetInsertBlock()->getParent();
+		const auto vs_table = func->getValueSymbolTable();
+		alloca = vs_table->lookup(*name);
+	}
 
+	// グローバル領域での検索
 	if (!alloca) {
-		const auto &global_vs_table = TheModule->getValueSymbolTable();
-		alloca = global_vs_table.lookup(*name);
+		const auto &vs_table = TheModule->getValueSymbolTable();
+		alloca = vs_table.lookup(*name);
 	}
 
 	return alloca;
 }
 
-// グローバル(関数内)ではない場合、真を返す
-//
-// 内部的に作成するmain関数内の場合、グローバルだとする
-bool IRState::isGlobal()
+void IRState::pushBlock(BasicBlock *block)
 {
-	return funcStack.size() <= 1;
+	blockStack.push_back(block);
+}
+
+BasicBlock *IRState::popBlock()
+{
+	if (blockStack.empty())
+		return nullptr;
+
+	const auto block = blockStack.back();
+	blockStack.pop_back();
+
+	return block;
+}
+
+unique_ptr<Module> IRState::moveModule()
+{
+	return move(TheModule);
 }
 

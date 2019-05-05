@@ -55,7 +55,7 @@ Value *ConstString::getValue(IRState &irs)
 {
 	auto &builder = irs.getBuilder();
 
-	const auto gstr = irs.getGlobalString(this->str->c_str());
+	const auto gstr = irs.getGlobalString(str->c_str());
 
 	// グローバル変数のポインタの取得
 	const auto constZero = builder.getInt32(0);
@@ -94,7 +94,13 @@ const string *Identifier::getName()
 
 Type *Identifier::getType(IRState &irs)
 {
-	return this->type->getType(irs);
+	auto &c = irs.getContext();
+
+	// 型の指定がない場合、void型とみなす
+	if (type == nullptr)
+		return Type::getVoidTy(c);
+
+	return type->getType(irs);
 }
 
 // IR 生成
@@ -108,6 +114,13 @@ Value *Identifier::getValue(IRState &irs)
 	auto &builder = irs.getBuilder();
 	const auto name = getName();
 	const auto alloca = irs.getVariable(name);
+
+	if (!alloca) {
+		auto msg = make_unique<string>("Not found variable '" + *name + "'");
+		irs.setError(move(msg));
+		// 検査時にエラーとなる要素を返す
+		return builder.CreateUnreachable();
+	}
 
 	return builder.CreateLoad(alloca, "var");
 }

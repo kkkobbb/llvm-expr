@@ -1,0 +1,15 @@
+# グローバル変数 ローカル変数へのアクセス失敗
+
+decl fnc printf:int(:string, ...);
+
+local var b:int;
+
+fnc print_global:void() {
+	printf("%d\n", b);
+};
+
+# 変数bを見つけられずコンパイルエラーとなる
+##output_stderr
+print_global();
+
+

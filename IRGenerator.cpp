@@ -8,6 +8,7 @@
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Verifier.h>
 #include <llvm/IR/GlobalVariable.h>
+#include <iostream>
 #include <fstream>
 #include <memory>
 
@@ -21,27 +22,25 @@ using namespace expr;
 // 生成に成功した場合、真を返す
 bool IRGenerator::generate(Node &ast_root)
 {
-	// デバッグ用
-	// グローバル変数(定数)を生成する
-	auto &c = irs.getContext();
-	auto &m = irs.getModule();
-	auto &builder = irs.getBuilder();
-	new GlobalVariable(
-			m,
-			Type::getInt32Ty(c),
-			true,  // isConstant
-			GlobalValue::PrivateLinkage,
-			builder.getInt32(20),  // Initializer
-			"test_const_20"  // name
-			);
-
 	// IR生成
-	ast_root.getValue(irs);
+	irs.createValueInBlock(&ast_root);
 
-	// エラーがあった場合、終了する
+	// llvmの検査に失敗した場合、エラーとする
+	auto &m = irs.getModule();
 	const bool errored = verifyModule(m, &errs());
 	if (errored)
-		return false;
+		irs.setError("Verification failed (llvm IR)");
+
+	// エラーがあった場合、エラーメッセージを表示する
+	if (irs.isError()) {
+		auto errList = irs.getErrorMsgList();
+
+		cerr << "\nERROR : IR generate\n";
+		for (auto itr = errList->cbegin(); itr != errList->cend(); itr++) {
+			string *msg = (*itr).get();
+			cerr << "  " << *msg << "\n";
+		}
+	}
 
 	TheModule = irs.moveModule();
 

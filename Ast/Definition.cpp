@@ -8,6 +8,7 @@
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Constants.h>
+#include <llvm/IR/GlobalVariable.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
@@ -37,26 +38,88 @@ void DefinitionVar::print_ast(ostream &dout, int indent)
 		init->print_ast(dout, next_indent);
 }
 
+bool DefinitionVar::verifyType(IRState &irs)
+{
+	auto &c = irs.getContext();
+	const auto typeInt32 = Type::getInt32Ty(c);
+	const auto name = decl->getName();
+
+	// TODO 他の型でも定義できるようにする
+	// 変数定義はint型のみ
+	const auto typeVar = decl->getType(irs);
+	if (typeVar != typeInt32) {
+		auto msg = make_unique<string>("no int type '" + *name + "'");
+		irs.setError(move(msg));
+		return false;
+	}
+
+	return true;
+}
+
+// DefinitionVarLocal
+
 // IR 生成
 //
 // 変数定義
 //
-// TODO エラー処理
-Value *DefinitionVar::getValue(IRState &irs)
+Value *DefinitionVarLocal::getValue(IRState &irs)
 {
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
 
+	if (!verifyType(irs))
+		return builder.CreateUnreachable();
+
+	// TODO 他の型でも定義できるようにする
+
 	const auto name = decl->getName();
 	const auto alloca = builder.CreateAlloca(Type::getInt32Ty(c), 0, *name);
 
-	if (this->init.get() != nullptr) {
-		const auto value = init->getValue(irs);
+	// 初期値の指定があれば、設定する
+	if (init.get() != nullptr) {
+		const auto value = irs.createValueInBlock(init.get());
 		builder.CreateStore(value, alloca);
 	}
-	// TODO 初期値無しの場合、型ごとの初期値
 
 	return alloca;
+}
+
+// DefinitionVarGlobal
+
+// IR 生成
+//
+// 変数定義
+//
+Value *DefinitionVarGlobal::getValue(IRState &irs)
+{
+	auto &m = irs.getModule();
+	auto &c = irs.getContext();
+	auto &builder = irs.getBuilder();
+
+	if (!verifyType(irs))
+		return builder.CreateUnreachable();
+
+	// TODO 他の型でも定義できるようにする
+
+	const auto name = decl->getName();
+	auto gvar = new GlobalVariable(
+			m,
+			Type::getInt32Ty(c),
+			false,  // isConstant
+			GlobalValue::PrivateLinkage,
+			builder.getInt32(0),  // Initializer
+			name->c_str()
+			);
+
+	// 初期値の指定があれば、設定する
+	if (init.get() != nullptr) {
+		const auto value = irs.createValueInBlock(init.get());
+		const auto constVal = dyn_cast_or_null<Constant>(value);
+		if (constVal != nullptr)
+			gvar->setInitializer(constVal);
+	}
+
+	return gvar;
 }
 
 // DefinitionFunc
@@ -105,9 +168,6 @@ Value *DefinitionFunc::getValue(IRState &irs)
 	const auto name = decl->getName();
 	const auto func = Function::Create(funcType, Function::ExternalLinkage, *name, &m);
 
-	// 現在の関数を更新
-	irs.pushCurFunc(func);
-
 	// 命令挿入位置の更新
 	BasicBlock *bb = BasicBlock::Create(c, "entry", func);
 	const auto oldBb = builder.GetInsertBlock();
@@ -125,7 +185,7 @@ Value *DefinitionFunc::getValue(IRState &irs)
 		}
 	}
 
-	const auto bodyValue = this->body->getValue(irs);
+	const auto bodyValue = irs.createValueInBlock(body.get(), true);
 
 	// body内でreturn していた場合、ここでreturnを追加しない
 	if (!isa<ReturnInst>(bodyValue)) {
@@ -137,8 +197,6 @@ Value *DefinitionFunc::getValue(IRState &irs)
 
 	// 命令挿入位置を戻す
 	builder.SetInsertPoint(oldBb);
-	// 現在の関数を戻す
-	irs.popCurFunc();
 
 	// 最後にverifyModule()を実行するのでここで関数のチェックをしない
 

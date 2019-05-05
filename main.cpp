@@ -86,9 +86,17 @@ int main(int argc, char *argv[])
 
 	// IR生成
 	IRGenerator irGen;
-	if (!irGen.generate(*ast.get()))
-		return 1;
+	const bool irGenerated = irGen.generate(*ast.get());
 	const auto m = irGen.get();
+	if (!irGenerated) {
+		if (!PrintLlvm)
+			return 1;
+		// llvm IR 表示の指定があれば、エラーでもIRは表示する
+		llvm::outs() << "\n\n";
+		m->print(llvm::outs(), nullptr);
+		llvm::outs() << "\n\n";
+		return 1;
+	}
 
 	// 入力ファイル名を出力用に設定
 	const auto ifname = llvm::sys::path::filename(InputFilename);

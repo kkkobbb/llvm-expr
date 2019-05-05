@@ -1,0 +1,12 @@
+# 変数定義 型不正のエラー
+
+var aaa:int;
+aaa <- 12;
+
+# int型以外の型で変数定義するとエラー
+##output_stderr
+var bbb:string;
+bb <- "string";
+
+0;
+
