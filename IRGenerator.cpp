@@ -8,6 +8,7 @@
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Verifier.h>
 #include <llvm/IR/GlobalVariable.h>
+#include <iostream>
 #include <fstream>
 #include <memory>
 
@@ -37,6 +38,17 @@ bool IRGenerator::generate(Node &ast_root)
 
 	// IR生成
 	ast_root.getValue(irs);
+
+	if (irs.isError()) {
+		auto errList = irs.getErrorMsgList();
+
+		cerr << "ERROR : IR generate\n";
+		for (auto itr = errList->cbegin(); itr != errList->cend(); itr++) {
+			string *msg = (*itr).get();
+			cerr << "  " << *msg << "\n";
+		}
+		cerr << "\n";
+	}
 
 	// エラーがあった場合、フラグを設定する
 	const bool errored = verifyModule(m, &errs());

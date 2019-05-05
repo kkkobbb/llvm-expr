@@ -23,6 +23,20 @@ namespace expr {
 	public:
 		DefinitionVar(Identifier *decl, Node *init);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
+		virtual llvm::Value *getValue(IRState &irs) = 0;
+	};
+
+	class DefinitionVarLocal: public DefinitionVar
+	{
+	public:
+		DefinitionVarLocal(Identifier *decl, Node *init) : DefinitionVar(decl, init) {}
+		virtual llvm::Value *getValue(IRState &irs) override;
+	};
+
+	class DefinitionVarGlobal: public DefinitionVar
+	{
+	public:
+		DefinitionVarGlobal(Identifier *decl, Node *init) : DefinitionVar(decl, init) {}
 		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 

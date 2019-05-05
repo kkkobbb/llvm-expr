@@ -26,10 +26,21 @@ bool IRState::isError()
 	return errorFlag;
 }
 
+const std::vector<unique_ptr<string> > *IRState::getErrorMsgList()
+{
+	return &errorMstList;
+}
+
 // エラーフラグを真にする
 void IRState::setError()
 {
 	errorFlag = true;
+}
+
+void IRState::setError(unique_ptr<string> msg)
+{
+	setError();
+	errorMstList.push_back(move(msg));
 }
 
 LLVMContext &IRState::getContext()

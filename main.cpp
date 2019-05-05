@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 			return 1;
 		// llvm IR 表示の指定があれば、エラーでもIRは表示する
 		m->print(llvm::outs(), nullptr);
-		llvm::outs() << "\n";
+		llvm::outs() << "\n\n";
 		return 1;
 	}
 

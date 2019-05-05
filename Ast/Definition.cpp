@@ -8,6 +8,7 @@
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/Constants.h>
+#include <llvm/IR/GlobalVariable.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/ValueSymbolTable.h>
@@ -37,26 +38,64 @@ void DefinitionVar::print_ast(ostream &dout, int indent)
 		init->print_ast(dout, next_indent);
 }
 
+// DefinitionVarLocal
+
 // IR 生成
 //
 // 変数定義
 //
 // TODO エラー処理
-Value *DefinitionVar::getValue(IRState &irs)
+Value *DefinitionVarLocal::getValue(IRState &irs)
 {
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
 
 	const auto name = decl->getName();
+	// TODO 型ごとの領域確保
 	const auto alloca = builder.CreateAlloca(Type::getInt32Ty(c), 0, *name);
 
+	// TODO 初期値無しの場合、型ごとの初期値
 	if (this->init.get() != nullptr) {
 		const auto value = init->getValue(irs);
 		builder.CreateStore(value, alloca);
 	}
-	// TODO 初期値無しの場合、型ごとの初期値
 
 	return alloca;
+}
+
+// DefinitionVarGlobal
+
+// IR 生成
+//
+// 変数定義
+//
+// TODO エラー処理
+Value *DefinitionVarGlobal::getValue(IRState &irs)
+{
+	auto &m = irs.getModule();
+	auto &c = irs.getContext();
+	auto &builder = irs.getBuilder();
+
+	const auto name = decl->getName();
+	// TODO 型ごとの領域確保
+	auto gvar = new GlobalVariable(
+			m,
+			Type::getInt32Ty(c),
+			false,  // isConstant
+			GlobalValue::PrivateLinkage,
+			builder.getInt32(0),  // Initializer
+			name->c_str()
+			);
+
+	// TODO 初期値無しの場合、型ごとの初期値
+	if (this->init.get() != nullptr) {
+		const auto value = init->getValue(irs);
+		const auto constVal = dyn_cast_or_null<Constant>(value);
+		if (constVal != nullptr)
+			gvar->setInitializer(constVal);
+	}
+
+	return gvar;
 }
 
 // DefinitionFunc

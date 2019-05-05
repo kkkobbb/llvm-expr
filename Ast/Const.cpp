@@ -109,6 +109,13 @@ Value *Identifier::getValue(IRState &irs)
 	const auto name = getName();
 	const auto alloca = irs.getVariable(name);
 
+	if (!alloca) {
+		auto msg = make_unique<string>("Not found variable '" + *name + "'");
+		irs.setError(move(msg));
+		// 検査時にエラーとなる要素を返す
+		return builder.CreateUnreachable();
+	}
+
 	return builder.CreateLoad(alloca, "var");
 }
 

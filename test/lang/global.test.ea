@@ -1,27 +1,28 @@
-# システム定義のグローバル変数
+# グローバル変数
 
 decl fnc printf:int(:string, ...);
 
-v <- test_const_20 + 1;
-##printn 21
-printf("%d\n", v);
+global var b:int;
 
-
-a <- 3;
-
-fnc test:int()
-{
-	# ローカル変数を作成する
-	a <- 12;
-	##printn 12
-	printf("%d\n", a);
+fnc print_local:void() {
+	local var b:int;
+	b <- 2;
+	printf("%d\n", b);
 };
 
-test();
+fnc print_global:void() {
+	printf("%d\n", b);
+};
 
-# グローバル変数は変更されていない
-##printn 3
-printf("%d\n", a);
+
+##printn 19
+b <- 19;
+printf("%d\n", b);
+
+##printn 2
+print_local();
+##printn 19
+print_global();
 
 ##return 0
 0;

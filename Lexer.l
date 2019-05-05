@@ -59,6 +59,9 @@ EscSq     ({EscSq1}|{EscSqX})
 "while"       { return token_type::RE_WHILE; }
 "decl"        { return token_type::RE_DECL; }
 "var"         { return token_type::RE_VAR; }
+"local"       { return token_type::RE_LOCAL; }
+"global"      { return token_type::RE_GLOBAL; }
+"external"    { return token_type::RE_EXTERNAL; }
 "fnc"         { return token_type::RE_FNC; }
 "return"      { return token_type::RE_RETURN; }
 "break"       { return token_type::RE_BREAK; }

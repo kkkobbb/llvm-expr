@@ -72,7 +72,8 @@ std::unique_ptr<MY_NAMESPACE::Node> get_ast();
 /* 予約語 */
 %token           RE_VOID RE_INT RE_STRING
 %token           RE_IF RE_ELSE RE_WHILE
-%token           RE_VAR RE_FNC
+%token           RE_VAR RE_LOCAL RE_GLOBAL RE_EXTERNAL
+%token           RE_FNC
 %token           RE_DECL
 %token           RE_RETURN RE_BREAK RE_CONTINUE
 %token           RE_COMPILEERR RE_RUNTIMEERR
@@ -258,8 +259,8 @@ while_expression
 
 /* 宣言文 */
 declarator
-    : RE_DECL RE_VAR identifier_type
-        {}
+    : RE_DECL RE_GLOBAL RE_VAR identifier_type
+        { error(yyla.location, "Not Implemented: decl global var"); }
     | RE_DECL RE_FNC identifier_type '(' ')'
         { $$ = new DeclarationFunc((Identifier *)$3, nullptr); }
     | RE_DECL RE_FNC identifier_type '(' identifier_type_list ')'
@@ -271,7 +272,11 @@ declarator
 /* 定義文 */
 definition
     : RE_VAR identifier_type
-        { $$ = new DefinitionVar((Identifier *)$2, nullptr); }
+        { $$ = new DefinitionVarLocal((Identifier *)$2, nullptr); }
+    | RE_LOCAL RE_VAR identifier_type
+        { $$ = new DefinitionVarLocal((Identifier *)$3, nullptr); }
+    | RE_GLOBAL RE_VAR identifier_type
+        { $$ = new DefinitionVarGlobal((Identifier *)$3, nullptr); }
     | RE_FNC identifier_type '(' ')' expression_unit
         { $$ = new DefinitionFunc((Identifier *)$2, nullptr, $5);}
     | RE_FNC identifier_type '(' identifier_type_list ')' expression_unit
@@ -320,9 +325,9 @@ myerror_compile
 /* 実行時にエラーとして強制終了させる */
 myerror_runtime
     : RE_RUNTIMEERR
-        {}
+        { error(yyla.location, "Not Implemented: runtimeerr"); }
     | RE_RUNTIMEERR STRING
-        {}
+        { error(yyla.location, "Not Implemented: runtimeerr"); }
     ;
 
 /* 純粋な式 */
