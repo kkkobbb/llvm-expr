@@ -25,7 +25,6 @@ namespace expr {
 	public:
 		IRState();
 		// エラー関係
-		bool isError();
 		const std::vector<std::unique_ptr<std::string> > *getErrorMsgList();
 		void setError();
 		void setError(const char *msg);
@@ -36,7 +35,6 @@ namespace expr {
 		llvm::Module &getModule();
 		llvm::IRBuilder<> &getBuilder();
 		llvm::GlobalVariable *getGlobalString(const char *str);
-		llvm::GlobalVariable *createGlobalString(const char *str);
 		llvm::Value *getVariable(const std::string *name);
 
 		// ブロックの階層をスタックに保存してIR生成する
@@ -71,9 +69,11 @@ namespace expr {
 		}
 
 		// 生成後の処理用
+		bool isError();
 		std::unique_ptr<llvm::Module> moveModule();
 
 	private:
+		llvm::GlobalVariable *createGlobalString(const char *str);
 		void pushBlock(llvm::BasicBlock *block);
 		llvm::BasicBlock *popBlock();
 

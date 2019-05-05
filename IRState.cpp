@@ -20,12 +20,6 @@ IRState::IRState()
 	TheModule = llvm::make_unique<Module>("code", TheContext);
 }
 
-// IR生成中にエラーが発生していた場合、真
-bool IRState::isError()
-{
-	return errorFlag;
-}
-
 const std::vector<unique_ptr<string> > *IRState::getErrorMsgList()
 {
 	return &errorMstList;
@@ -155,6 +149,12 @@ BasicBlock *IRState::popBlock()
 	blockStack.pop_back();
 
 	return block;
+}
+
+// IR生成中にエラーが発生していた場合、真
+bool IRState::isError()
+{
+	return errorFlag;
 }
 
 unique_ptr<Module> IRState::moveModule()
