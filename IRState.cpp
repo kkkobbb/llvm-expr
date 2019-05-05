@@ -37,6 +37,11 @@ void IRState::setError()
 	errorFlag = true;
 }
 
+void IRState::setError(const char *msg)
+{
+	setError(make_unique<string>(msg));
+}
+
 void IRState::setError(unique_ptr<string> msg)
 {
 	setError();
@@ -141,13 +146,14 @@ Value *IRState::getVariable(const string *name)
 
 	Value *alloca = nullptr;
 
-	// 変数の名前空間を制限するため、無駄なif文を付けている
-	if (!alloca) {
+	// 現在の関数のスコープでの検索
+	if (!alloca) {  // 変数の名前空間を制限するため、無駄なif文を付けている
 		const auto func = builder->GetInsertBlock()->getParent();
 		const auto vs_table = func->getValueSymbolTable();
 		alloca = vs_table->lookup(*name);
 	}
 
+	// グローバル領域での検索
 	if (!alloca) {
 		const auto &vs_table = TheModule->getValueSymbolTable();
 		alloca = vs_table.lookup(*name);

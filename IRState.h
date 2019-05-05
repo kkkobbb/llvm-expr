@@ -23,13 +23,16 @@ namespace expr {
 
 	public:
 		IRState();
+		// エラー関係
 		bool isError();
 		const std::vector<std::unique_ptr<std::string> > *getErrorMsgList();
 		void setError();
+		void setError(const char *msg);
 		void setError(std::unique_ptr<std::string> msg);
+
+		// LLVM IR生成用
 		llvm::LLVMContext &getContext();
 		llvm::Module &getModule();
-		std::unique_ptr<llvm::Module> moveModule();
 		llvm::IRBuilder<> &getBuilder();
 		llvm::GlobalVariable *getGlobalString(const char *str);
 		llvm::GlobalVariable *createGlobalString(const char *str);
@@ -37,6 +40,9 @@ namespace expr {
 		void pushCurFunc(llvm::Function *func);
 		llvm::Function *popCurFunc();
 		llvm::Value *getVariable(const std::string *name);
+
+		// 生成後の処理用
+		std::unique_ptr<llvm::Module> moveModule();
 		bool isGlobal();
 	};
 }
