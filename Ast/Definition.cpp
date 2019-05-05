@@ -48,7 +48,7 @@ bool DefinitionVar::verifyType(IRState &irs)
 	// 変数定義はint型のみ
 	const auto typeVar = decl->getType(irs);
 	if (typeVar != typeInt32) {
-		auto msg = make_unique<string>("no int type '" + *name + "'");
+		auto msg = make_unique<string>("No int type '" + *name + "'");
 		irs.setError(move(msg));
 		return false;
 	}
