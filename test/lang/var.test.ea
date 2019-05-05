@@ -4,7 +4,6 @@ decl fnc printf:int(:string, ...);
 
 var aaa:int;
 var bbb:int;
-var ccc:string;
 
 aaa <- 2;
 4 -> bbb;

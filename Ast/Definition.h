@@ -19,6 +19,7 @@ namespace expr {
 	protected:
 		std::unique_ptr<Identifier> decl;
 		std::unique_ptr<Node> init;
+		virtual bool verifyType(IRState &irs);
 
 	public:
 		DefinitionVar(Identifier *decl, Node *init);

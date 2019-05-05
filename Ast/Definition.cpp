@@ -38,24 +38,45 @@ void DefinitionVar::print_ast(ostream &dout, int indent)
 		init->print_ast(dout, next_indent);
 }
 
+bool DefinitionVar::verifyType(IRState &irs)
+{
+	auto &c = irs.getContext();
+	const auto typeInt32 = Type::getInt32Ty(c);
+	const auto name = decl->getName();
+
+	// TODO 他の型でも定義できるようにする
+	// 変数定義はint型のみ
+	const auto typeVar = decl->getType(irs);
+	if (typeVar != typeInt32) {
+		auto msg = make_unique<string>("no int type '" + *name + "'");
+		irs.setError(move(msg));
+		return false;
+	}
+
+	return true;
+}
+
 // DefinitionVarLocal
 
 // IR 生成
 //
 // 変数定義
 //
-// TODO エラー処理
 Value *DefinitionVarLocal::getValue(IRState &irs)
 {
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
 
+	if (!verifyType(irs))
+		return builder.CreateUnreachable();
+
+	// TODO 他の型でも定義できるようにする
+
 	const auto name = decl->getName();
-	// TODO 型ごとの領域確保
 	const auto alloca = builder.CreateAlloca(Type::getInt32Ty(c), 0, *name);
 
-	// TODO 初期値無しの場合、型ごとの初期値
-	if (this->init.get() != nullptr) {
+	// 初期値の指定があれば、設定する
+	if (init.get() != nullptr) {
 		const auto value = init->getValue(irs);
 		builder.CreateStore(value, alloca);
 	}
@@ -69,15 +90,18 @@ Value *DefinitionVarLocal::getValue(IRState &irs)
 //
 // 変数定義
 //
-// TODO エラー処理
 Value *DefinitionVarGlobal::getValue(IRState &irs)
 {
 	auto &m = irs.getModule();
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
 
+	if (!verifyType(irs))
+		return builder.CreateUnreachable();
+
+	// TODO 他の型でも定義できるようにする
+
 	const auto name = decl->getName();
-	// TODO 型ごとの領域確保
 	auto gvar = new GlobalVariable(
 			m,
 			Type::getInt32Ty(c),
@@ -87,8 +111,8 @@ Value *DefinitionVarGlobal::getValue(IRState &irs)
 			name->c_str()
 			);
 
-	// TODO 初期値無しの場合、型ごとの初期値
-	if (this->init.get() != nullptr) {
+	// 初期値の指定があれば、設定する
+	if (init.get() != nullptr) {
 		const auto value = init->getValue(irs);
 		const auto constVal = dyn_cast_or_null<Constant>(value);
 		if (constVal != nullptr)
@@ -164,7 +188,7 @@ Value *DefinitionFunc::getValue(IRState &irs)
 		}
 	}
 
-	const auto bodyValue = this->body->getValue(irs);
+	const auto bodyValue = body->getValue(irs);
 
 	// body内でreturn していた場合、ここでreturnを追加しない
 	if (!isa<ReturnInst>(bodyValue)) {

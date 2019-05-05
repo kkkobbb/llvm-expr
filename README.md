@@ -49,6 +49,8 @@
     * 関数定義 `fnc`
     * 変数定義 `var` `local var` `global var`
     * エラー強制発生 `compileerr`
+* string型
+    * string型は関数宣言時の戻り値と引数の型指定用としてのみ利用可能
 * 変数名前空間
     * 名前空間の分類は以下の2つのみ
         * `global var` __グローバル__

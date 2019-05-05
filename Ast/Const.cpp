@@ -94,7 +94,13 @@ const string *Identifier::getName()
 
 Type *Identifier::getType(IRState &irs)
 {
-	return this->type->getType(irs);
+	auto &c = irs.getContext();
+
+	// 型の指定がない場合、void型とみなす
+	if (type == nullptr)
+		return Type::getVoidTy(c);
+
+	return type->getType(irs);
 }
 
 // IR 生成
