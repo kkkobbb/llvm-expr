@@ -22,21 +22,6 @@ namespace expr {
 		// 文字列のグローバル変数の保存用
 		std::vector<llvm::Value *> GlobalStrList;
 
-		void pushBlock(llvm::BasicBlock *block);
-		llvm::BasicBlock *popBlock();
-
-		// TがNode型以外の場合のみT::getValue()を実行する
-		template <class T>
-		llvm::Value *getValue_(T *node)
-		{
-			// 基底クラスのgetValue()を実行する
-			return node->T::getValue(*this);
-		}
-		llvm::Value *getValue_(Node *node)
-		{
-			return node->getValue(*this);
-		}
-
 	public:
 		IRState();
 		// エラー関係
@@ -87,6 +72,22 @@ namespace expr {
 
 		// 生成後の処理用
 		std::unique_ptr<llvm::Module> moveModule();
+
+	private:
+		void pushBlock(llvm::BasicBlock *block);
+		llvm::BasicBlock *popBlock();
+
+		// TがNode型以外の場合のみT::getValue()を実行する
+		template <class T>
+		llvm::Value *getValue_(T *node)
+		{
+			// 基底クラスのgetValue()を実行する
+			return node->T::getValue(*this);
+		}
+		llvm::Value *getValue_(Node *node)
+		{
+			return node->getValue(*this);
+		}
 	};
 
 }
