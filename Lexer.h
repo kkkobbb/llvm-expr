@@ -1,13 +1,11 @@
 #ifndef MY_LEXER_H
 #define MY_LEXER_H
 
-#include <iostream>
-
+#include "Parser.hh"
 #ifndef yyFlexLexerOnce
 #include <FlexLexer.h>
 #endif
-
-#include "Parser.hh"
+#include <iostream>
 
 namespace expr {
 	class Lexer: public yyFlexLexer {
