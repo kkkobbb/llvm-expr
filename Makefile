@@ -51,11 +51,11 @@ DEPENDS := $(patsubst %.o,$(DEPEND_DIR)/%.d,$(OBJS))
 
 $(DEPEND_DIR)/%.d: %.cpp
 	@install -d $(dir $@)
-	$(CXX) -MM -MG -MF $@ $<
+	$(CXX) -MM -MG -MF $@ -MT $(patsubst %.cpp,%.o,$<) $<
 
 $(DEPEND_DIR)/%.d: %.cc
 	@install -d $(dir $@)
-	$(CXX) -MM -MG -MF $@ $<
+	$(CXX) -MM -MG -MF $@ -MT $(patsubst %.cc,%.o,$<) $<
 
 .PHONY: cleandep
 cleandep:
