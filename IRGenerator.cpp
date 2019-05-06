@@ -33,11 +33,11 @@ bool IRGenerator::generate(Node &ast_root)
 
 	// エラーがあった場合、エラーメッセージを表示する
 	if (irs.isError()) {
-		auto errList = irs.getErrorMsgList();
+		const auto errList = irs.getErrorMsgList();
 
 		cerr << "\nERROR : IR generate\n";
 		for (auto itr = errList->cbegin(); itr != errList->cend(); itr++) {
-			string *msg = (*itr).get();
+			const string *msg = (*itr).get();
 			cerr << "  " << *msg << "\n";
 		}
 	}
