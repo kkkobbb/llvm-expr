@@ -43,7 +43,10 @@ run_test() {
 	cd ${RUN_DIR}
 
 	# 実行
-	${testcase} > ${OUTPUT_STDOUT} 2> ${OUTPUT_STDERR} ; ret=$?
+	# 環境変数を隠すため、別プロセスで実行
+	(unset REAL_EXE RUN_DIR OUTPUT_STDOUT OUTPUT_STDERR base_dir ; \
+		${testcase} ; exit $? ) > ${OUTPUT_STDOUT} 2> ${OUTPUT_STDERR}
+	ret=$?
 
 	# エラー時に出力を表示する
 	if [ "${ret}" -ne 0 ]; then
