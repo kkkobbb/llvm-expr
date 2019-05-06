@@ -9,10 +9,11 @@
 
 %{
 /* .ccの各種定義後に追加するコード */
-#include <iostream>
-
 #include "Lexer.h"
 #include "Parser.hh"
+#include <iostream>
+#include <cstdlib>
+
 using namespace expr;
 
 typedef Parser::token_type token_type;
@@ -22,7 +23,9 @@ typedef Parser::location_type location_type;
 #undef YY_DECL
 #define YY_DECL int Lexer::yylex(semantic_type *val, location_type *loc)
 
-std::string *get_string(char *txt);
+namespace {
+std::string *get_string(const char *txt);
+}
 %}
 
 
@@ -84,7 +87,7 @@ EscSq     ({EscSq1}|{EscSqX})
  /* 識別子 */
 {Letter}({Letter}|{Digit})*  { val->sval = new std::string(yytext); return token_type::IDENTIFIER; }
  /* 10進数の整数定数 */
-{Digit}+                     { val->ival = atoi(yytext); return token_type::INTEGER; }
+{Digit}+                     { val->ival = std::atoi(yytext); return token_type::INTEGER; }
  /* 16進数の整数定数 */
 0[xX]{HexDigit}+             { val->ival = std::stoi(&yytext[2], nullptr, 16); return token_type::INTEGER; }
  /* 文字定数 */
@@ -98,6 +101,7 @@ EscSq     ({EscSq1}|{EscSqX})
 %%
 
 
+namespace {
 /*
  * 文字列生成
  *
@@ -108,9 +112,9 @@ EscSq     ({EscSq1}|{EscSqX})
  *      末尾-1、末尾が\ではないこと
  *      (不正な形式のエスケープシーケンスではないこと)
  */
-std::string *get_string(char *txt)
+std::string *get_string(const char *txt)
 {
-	auto str = new std::string(txt);
+	const auto str = new std::string(txt);
 
 	// 先頭、末尾の"の除去
 	str->erase(str->begin());
@@ -153,5 +157,5 @@ std::string *get_string(char *txt)
 
 	return str;
 }
-
+}
 

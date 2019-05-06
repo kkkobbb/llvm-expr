@@ -10,25 +10,27 @@
 %code top
 {
 /* .ccの先頭に追加するコード */
+#include "Lexer.h"
+#include "Ast/NodeAll.h"
 #include <iostream>
 #include <string>
 #include <memory>
 #include <utility>
-#include "Lexer.h"
-#include "Ast/NodeAll.h"
 
 /* 関数名を強引に変更している */
 #define yylex lexer.yylex
 
 using namespace MY_NAMESPACE;
 
-static void set_ast(Node *root);
+namespace {
+void set_ast(Node *root);
 
 /* 構文木格納用 */
-static std::unique_ptr<Node> ast_root;
+std::unique_ptr<Node> ast_root;
 /* エラー確認用の変数 */
-static bool parse_err_f = false;
-static int parse_err_num = 0;
+bool parse_err_f = false;
+int parse_err_num = 0;
+}
 }
 
 %code requires
@@ -514,9 +516,8 @@ void Parser::error(const location_type& l, const std::string& msg)
 {
 	parse_err_f = true;
 	++parse_err_num;
-	std::cerr << "Error (" << l.end.line << "): " << msg << std::endl;
+	std::cerr << "Error (" << l.end.line << "): " << msg << "\n";
 }
-
 
 /*
  * 構文解析中にエラーがあった場合、真
@@ -526,21 +527,21 @@ bool is_parse_err()
 	return parse_err_f;
 }
 
-
-/*
- * 構文木のルートを保存する
- */
-static void set_ast(Node *root)
-{
-	ast_root = std::unique_ptr<Node>(root);
-}
-
-
 /*
  * 構文木のルートを取得する
  */
 std::unique_ptr<Node> get_ast()
 {
 	return std::move(ast_root);
+}
+
+namespace {
+/*
+ * 構文木のルートを保存する
+ */
+void set_ast(Node *root)
+{
+	ast_root = std::unique_ptr<Node>(root);
+}
 }
 

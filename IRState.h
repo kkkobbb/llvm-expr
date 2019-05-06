@@ -22,25 +22,9 @@ namespace expr {
 		// 文字列のグローバル変数の保存用
 		std::vector<llvm::Value *> GlobalStrList;
 
-		void pushBlock(llvm::BasicBlock *block);
-		llvm::BasicBlock *popBlock();
-
-		// TがNode型以外の場合のみT::getValue()を実行する
-		template <class T>
-		llvm::Value *getValue_(T *node)
-		{
-			// 基底クラスのgetValue()を実行する
-			return node->T::getValue(*this);
-		}
-		llvm::Value *getValue_(Node *node)
-		{
-			return node->getValue(*this);
-		}
-
 	public:
 		IRState();
 		// エラー関係
-		bool isError();
 		const std::vector<std::unique_ptr<std::string> > *getErrorMsgList();
 		void setError();
 		void setError(const char *msg);
@@ -51,7 +35,6 @@ namespace expr {
 		llvm::Module &getModule();
 		llvm::IRBuilder<> &getBuilder();
 		llvm::GlobalVariable *getGlobalString(const char *str);
-		llvm::GlobalVariable *createGlobalString(const char *str);
 		llvm::Value *getVariable(const std::string *name);
 
 		// ブロックの階層をスタックに保存してIR生成する
@@ -86,7 +69,25 @@ namespace expr {
 		}
 
 		// 生成後の処理用
+		bool isError();
 		std::unique_ptr<llvm::Module> moveModule();
+
+	private:
+		llvm::GlobalVariable *createGlobalString(const char *str);
+		void pushBlock(llvm::BasicBlock *block);
+		llvm::BasicBlock *popBlock();
+
+		// TがNode型以外の場合のみT::getValue()を実行する
+		template <class T>
+		llvm::Value *getValue_(T *node)
+		{
+			// 基底クラスのgetValue()を実行する
+			return node->T::getValue(*this);
+		}
+		llvm::Value *getValue_(Node *node)
+		{
+			return node->getValue(*this);
+		}
 	};
 
 }

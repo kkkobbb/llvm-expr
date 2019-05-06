@@ -38,7 +38,7 @@ void Node::print_ast_string(const char *msg, ostream &dout, int indent)
 	for (int i = 0; i < indent; ++i)
 		dout << "  ";
 
-	dout << msg << endl;
+	dout << msg << "\n";
 }
 
 void Node::print_ast(ostream &dout, int indent)

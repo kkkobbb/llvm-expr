@@ -13,7 +13,7 @@ using namespace llvm;
 using namespace expr;
 
 namespace {
-	static const string DEFAULT_FNAME = "a.bc";
+	const string DEFAULT_FNAME = "a.bc";
 }
 
 
