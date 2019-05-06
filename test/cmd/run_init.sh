@@ -6,7 +6,7 @@
 #   テスト用のディレクトリで実行する
 #
 # DEFAULT_EXE:  テスト用の実行ファイルのデフォルト
-# testcase:  テストコード
+# $1: テストコード
 #            テストするコマンドは ${TEST_EXE} で指定すること
 #              (実行時のディレクトリにテストしたいコマンドがコピーされている)
 #            実行時のディレクトリにはテスト用の実行ファイルのみ存在する
@@ -22,8 +22,12 @@ test -f ${REAL_EXE} || { echo "not found '${REAL_EXE}'"; exit 1; }
 
 
 # テストの実施
-# testcase を実行する
+# $1 を実行する
 run_test() {
+	if [ $# -ne 1 ];then
+		return 255
+	fi
+	testcase=$1
 	# テスト用のディレクトリ生成
 	RUN_DIR=$(mktemp -d)
 	cp ${REAL_EXE} ${RUN_DIR}
@@ -35,7 +39,7 @@ run_test() {
 	cd ${RUN_DIR}
 
 	# 実行
-	testcase
+	${testcase}
 	ret=$?
 
 	# 元のディレクトリに戻る
