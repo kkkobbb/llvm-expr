@@ -77,7 +77,7 @@ Value *DefinitionVarLocal::getValue(IRState &irs)
 
 	// 初期値の指定があれば、設定する
 	if (init.get() != nullptr) {
-		const auto value = irs.createValueInBlock(init.get());
+		const auto value = irs.getValueInBlock(init.get());
 		builder.CreateStore(value, alloca);
 	}
 
@@ -113,7 +113,7 @@ Value *DefinitionVarGlobal::getValue(IRState &irs)
 
 	// 初期値の指定があれば、設定する
 	if (init.get() != nullptr) {
-		const auto value = irs.createValueInBlock(init.get());
+		const auto value = irs.getValueInBlock(init.get());
 		const auto constVal = dyn_cast_or_null<Constant>(value);
 		if (constVal != nullptr)
 			gvar->setInitializer(constVal);
@@ -185,7 +185,7 @@ Value *DefinitionFunc::getValue(IRState &irs)
 		}
 	}
 
-	const auto bodyValue = irs.createValueInBlock(body.get(), true);
+	const auto bodyValue = irs.getValueInBlock(body.get(), true);
 
 	// body内でreturn していた場合、ここでreturnを追加しない
 	if (!isa<ReturnInst>(bodyValue)) {
