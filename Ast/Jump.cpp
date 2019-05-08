@@ -49,7 +49,7 @@ Value *JumpReturn::getValue(IRState &irs)
 	if (ret == nullptr) {
 		retV = builder.CreateRetVoid();
 	} else {
-		const auto retval = irs.createValueInBlock(ret.get());
+		const auto retval = irs.getValueInBlock(ret.get());
 		retV = builder.CreateRet(retval);
 	}
 

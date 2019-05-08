@@ -23,7 +23,7 @@ using namespace expr;
 bool IRGenerator::generate(Node &ast_root)
 {
 	// IR生成
-	irs.createValueInBlock(&ast_root);
+	irs.getValueInBlock(&ast_root);
 
 	// llvmの検査に失敗した場合、エラーとする
 	auto &m = irs.getModule();

@@ -43,7 +43,7 @@ Value *NodeList::getValue(IRState &irs)
 	Value *lastVal = nullptr;
 
 	for (auto &child : children)
-		lastVal = irs.createValueInBlock(child.get());
+		lastVal = irs.getValueInBlock(child.get());
 
 	return lastVal;
 }
@@ -86,7 +86,7 @@ Value *Unit::getValue(IRState &irs)
 	builder.SetInsertPoint(bb);
 
 	// 子要素の実行
-	auto *v = irs.createValueInBlock<NodeList>(this, true);
+	auto *v = irs.getValueInBlock<NodeList>(this, true);
 
 	// returnしていない場合、最後の式を戻り値とする
 	if (!isa<ReturnInst>(v)) {

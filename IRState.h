@@ -51,7 +51,7 @@ namespace expr {
 		// node IR生成するノード
 		// needNewBlock 新しい階層のブロックでIR生成する場合、真
 		template<class T=Node, class U>
-		llvm::Value *createValueInBlock(U *node, bool needNewBlock=false)
+		llvm::Value *getValueInBlock(U *node, bool needNewBlock=false)
 		{
 			// TがNodeの派生クラスであること (そうでない場合、コンパイル時エラー)
 			static_assert(std::is_base_of<Node, T>::value, "'T' is bad class");

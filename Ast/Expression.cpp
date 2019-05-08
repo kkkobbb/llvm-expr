@@ -33,10 +33,10 @@ Value *Expression::getValue(IRState &irs)
 {
 	Value *lv = nullptr;
 	if (l != nullptr)
-		lv = irs.createValueInBlock(l.get());
+		lv = irs.getValueInBlock(l.get());
 	Value *rv = nullptr;
 	if (r != nullptr)
-		rv = irs.createValueInBlock(r.get());
+		rv = irs.getValueInBlock(r.get());
 
 	return generate_exp(irs, lv, rv);
 }
@@ -83,7 +83,7 @@ Value *ExpressionFunc::getValue(IRState &irs)
 			return nullptr;  // TODO エラー処理 引数が少ない
 
 		for (auto &arg : *argList)
-			args.push_back(irs.createValueInBlock(arg.get()));
+			args.push_back(irs.getValueInBlock(arg.get()));
 	}
 
 	return builder.CreateCall(callee, args);
@@ -101,7 +101,7 @@ Value *ExpressionAS::getValue(IRState &irs)
 {
 	auto &c = irs.getContext();
 	auto &builder = irs.getBuilder();
-	auto rhs = irs.createValueInBlock(r.get());
+	auto rhs = irs.getValueInBlock(r.get());
 
 	const auto name = identifier->getName();
 
