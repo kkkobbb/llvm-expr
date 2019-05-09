@@ -12,26 +12,19 @@
 
 namespace expr {
 	class IRState {
+		llvm::LLVMContext TheContext;
+		llvm::Module TheModule;
+		llvm::IRBuilder<> builder;
+		std::vector<llvm::BasicBlock *> blockStack;
+		// 文字列のグローバル変数の保存用
+		std::vector<llvm::Value *> GlobalStrList;
 		// 解析時にエラーがある場合、真
 		bool errorFlag = false;
 		// エラーメッセージ保存用
 		std::vector<std::unique_ptr<std::string> > errorMstList;
-		llvm::LLVMContext TheContext;
-		llvm::Module TheModule;
-		std::unique_ptr<llvm::IRBuilder<> > builder;
-		std::vector<llvm::BasicBlock *> blockStack;
-		// 文字列のグローバル変数の保存用
-		std::vector<llvm::Value *> GlobalStrList;
 
 	public:
 		IRState();
-		// エラー関係
-		const std::vector<std::unique_ptr<std::string> > *getErrorMsgList();
-		void setError();
-		void setError(const char *msg);
-		void setError(std::unique_ptr<std::string> msg);
-		bool isError();
-
 		// LLVM IR生成用
 		llvm::LLVMContext &getContext();
 		llvm::Module &getModule();
@@ -63,7 +56,7 @@ namespace expr {
 				return nullptr;
 
 			if (needNewBlock)
-				pushBlock(builder->GetInsertBlock());
+				pushBlock(builder.GetInsertBlock());
 
 			const auto value = getValue_((T *)node);
 
@@ -72,6 +65,13 @@ namespace expr {
 
 			return value;
 		}
+
+		// エラー関係
+		void setError();
+		void setError(const char *msg);
+		void setError(std::unique_ptr<std::string> msg);
+		bool isError();
+		const std::vector<std::unique_ptr<std::string> > *getErrorMsgList();
 
 	private:
 		llvm::GlobalVariable *createGlobalString(const char *str);

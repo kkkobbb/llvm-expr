@@ -15,37 +15,8 @@ using namespace expr;
 
 
 IRState::IRState()
-	: TheModule("code", TheContext)
+	: TheModule("code", TheContext), builder(TheContext)
 {
-	builder = llvm::make_unique<IRBuilder<> >(TheContext);
-}
-
-const std::vector<unique_ptr<string> > *IRState::getErrorMsgList()
-{
-	return &errorMstList;
-}
-
-// エラーフラグを真にする
-void IRState::setError()
-{
-	errorFlag = true;
-}
-
-void IRState::setError(const char *msg)
-{
-	setError(make_unique<string>(msg));
-}
-
-void IRState::setError(unique_ptr<string> msg)
-{
-	setError();
-	errorMstList.push_back(move(msg));
-}
-
-// IR生成中にエラーが発生していた場合、真
-bool IRState::isError()
-{
-	return errorFlag;
 }
 
 LLVMContext &IRState::getContext()
@@ -60,7 +31,7 @@ Module &IRState::getModule()
 
 IRBuilder<> &IRState::getBuilder()
 {
-	return *builder;
+	return builder;
 }
 
 // 文字列のグローバル変数を作成して返す
@@ -122,12 +93,11 @@ GlobalVariable *IRState::createGlobalString(const char *str)
 // 2. グローバルに対象の変数があるか
 Value *IRState::getVariable(const string *name)
 {
-
 	Value *alloca = nullptr;
 
 	// 現在の関数のスコープでの検索
 	if (!alloca) {  // 変数の名前空間を制限するため、無駄なif文を付けている
-		const auto func = builder->GetInsertBlock()->getParent();
+		const auto func = builder.GetInsertBlock()->getParent();
 		const auto vs_table = func->getValueSymbolTable();
 		alloca = vs_table->lookup(*name);
 	}
@@ -139,6 +109,37 @@ Value *IRState::getVariable(const string *name)
 	}
 
 	return alloca;
+}
+
+// エラーフラグを真にする
+void IRState::setError()
+{
+	errorFlag = true;
+}
+
+// エラーメッセージを設定する
+void IRState::setError(const char *msg)
+{
+	setError(make_unique<string>(msg));
+}
+
+// エラーメッセージを設定する
+void IRState::setError(unique_ptr<string> msg)
+{
+	setError();
+	errorMstList.push_back(move(msg));
+}
+
+// IR生成中にエラーが発生していた場合、真
+bool IRState::isError()
+{
+	return errorFlag;
+}
+
+// エラーメッセージを返す
+const std::vector<unique_ptr<string> > *IRState::getErrorMsgList()
+{
+	return &errorMstList;
 }
 
 void IRState::pushBlock(BasicBlock *block)
