@@ -87,10 +87,10 @@ int main(int argc, char *argv[])
 	// IR生成
 	IRGenerator irGen;
 	const bool irGenerated = irGen.generate(*ast.get());
-	const auto module = irGen.get();
+	auto &module = irGen.get();
 	// 入力ファイル名を出力用に設定
 	const auto ifname = llvm::sys::path::filename(InputFilename);
-	module->setSourceFileName(ifname);
+	module.setSourceFileName(ifname);
 
 	// 生成に失敗した場合、終了
 	if (!irGenerated) {
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 			return 1;
 		// llvm IR 表示の指定があれば、エラーでもIRは表示する
 		llvm::outs() << "\n\n";
-		module->print(llvm::outs(), nullptr);
+		module.print(llvm::outs(), nullptr);
 		llvm::outs() << "\n\n";
 		return 1;
 	}
@@ -106,13 +106,13 @@ int main(int argc, char *argv[])
 	if (Optim) {
 		// 最適化
 		OptimPass opp;
-		if (!opp.run(*module.get()))
+		if (!opp.run(module))
 			return 1;
 	}
 
 	if (PrintLlvm) {
 		// llvm IR 表示
-		module->print(llvm::outs(), nullptr);
+		module.print(llvm::outs(), nullptr);
 		llvm::outs() << "\n";
 		return 0;
 	}
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
 	OutputPassFactory opf;
 	const auto op = opf.create(FileType);
 	if (op)
-		op->run(*module.get(), ofname);
+		op->run(module, ofname);
 
 	return 0;
 }

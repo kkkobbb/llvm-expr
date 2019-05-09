@@ -15,9 +15,9 @@ using namespace expr;
 
 
 IRState::IRState()
+	: TheModule("code", TheContext)
 {
 	builder = llvm::make_unique<IRBuilder<> >(TheContext);
-	TheModule = llvm::make_unique<Module>("code", TheContext);
 }
 
 const std::vector<unique_ptr<string> > *IRState::getErrorMsgList()
@@ -42,6 +42,12 @@ void IRState::setError(unique_ptr<string> msg)
 	errorMstList.push_back(move(msg));
 }
 
+// IR生成中にエラーが発生していた場合、真
+bool IRState::isError()
+{
+	return errorFlag;
+}
+
 LLVMContext &IRState::getContext()
 {
 	return TheContext;
@@ -49,7 +55,7 @@ LLVMContext &IRState::getContext()
 
 Module &IRState::getModule()
 {
-	return *TheModule;
+	return TheModule;
 }
 
 IRBuilder<> &IRState::getBuilder()
@@ -97,7 +103,7 @@ GlobalVariable *IRState::createGlobalString(const char *str)
 	const auto strValue = ConstantDataArray::getString(TheContext, str);
 	const auto strType = strValue->getType();
 	const auto gvar = new GlobalVariable(
-			*TheModule,
+			TheModule,
 			strType,
 			true,
 			GlobalValue::PrivateLinkage,
@@ -128,7 +134,7 @@ Value *IRState::getVariable(const string *name)
 
 	// グローバル領域での検索
 	if (!alloca) {
-		const auto &vs_table = TheModule->getValueSymbolTable();
+		const auto &vs_table = TheModule.getValueSymbolTable();
 		alloca = vs_table.lookup(*name);
 	}
 
@@ -149,16 +155,5 @@ BasicBlock *IRState::popBlock()
 	blockStack.pop_back();
 
 	return block;
-}
-
-// IR生成中にエラーが発生していた場合、真
-bool IRState::isError()
-{
-	return errorFlag;
-}
-
-unique_ptr<Module> IRState::moveModule()
-{
-	return move(TheModule);
 }
 

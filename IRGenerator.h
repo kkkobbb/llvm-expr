@@ -19,7 +19,7 @@ namespace expr {
 
 	public:
 		bool generate(Node &ast_root);
-		std::unique_ptr<llvm::Module> get();
+		llvm::Module &get();
 	};
 }
 

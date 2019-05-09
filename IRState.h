@@ -17,7 +17,7 @@ namespace expr {
 		// エラーメッセージ保存用
 		std::vector<std::unique_ptr<std::string> > errorMstList;
 		llvm::LLVMContext TheContext;
-		std::unique_ptr<llvm::Module> TheModule;
+		llvm::Module TheModule;
 		std::unique_ptr<llvm::IRBuilder<> > builder;
 		std::vector<llvm::BasicBlock *> blockStack;
 		// 文字列のグローバル変数の保存用
@@ -30,6 +30,7 @@ namespace expr {
 		void setError();
 		void setError(const char *msg);
 		void setError(std::unique_ptr<std::string> msg);
+		bool isError();
 
 		// LLVM IR生成用
 		llvm::LLVMContext &getContext();
@@ -71,10 +72,6 @@ namespace expr {
 
 			return value;
 		}
-
-		// 生成後の処理用
-		bool isError();
-		std::unique_ptr<llvm::Module> moveModule();
 
 	private:
 		llvm::GlobalVariable *createGlobalString(const char *str);

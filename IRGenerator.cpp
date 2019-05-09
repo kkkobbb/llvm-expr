@@ -42,14 +42,12 @@ bool IRGenerator::generate(Node &ast_root)
 		}
 	}
 
-	TheModule = irs.moveModule();
-
 	return !irs.isError();
 }
 
 // 生成したModuleを返す
-unique_ptr<Module> IRGenerator::get()
+Module &IRGenerator::get()
 {
-	return move(TheModule);
+	return irs.getModule();
 }
 
