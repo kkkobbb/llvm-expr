@@ -22,8 +22,6 @@ using namespace expr;
 // 生成に成功した場合、真を返す
 bool IRGenerator::generate(Node &ast_root)
 {
-	// IR生成時のcontext
-	IRState irs;
 	// IR生成
 	irs.getValueInBlock(&ast_root);
 
