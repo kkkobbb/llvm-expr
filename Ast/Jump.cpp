@@ -7,14 +7,7 @@
 #include "IRState.h"
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
-#include <llvm/IR/Constants.h>
-#include <llvm/IR/Function.h>
-#include <llvm/IR/Verifier.h>
-#include <llvm/IR/BasicBlock.h>
-#include <llvm/IR/ValueSymbolTable.h>
-#include <iostream>
-#include <string>
-#include <memory>
+#include <llvm/IR/IRBuilder.h>
 
 using namespace std;
 using namespace llvm;

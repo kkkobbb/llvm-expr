@@ -2,12 +2,8 @@
 // IR出力時の状態保持
 //
 #include "IRState.h"
-#include <llvm/IR/Module.h>
-#include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/ValueSymbolTable.h>
 #include <llvm/IR/GlobalVariable.h>
-#include <memory>
-#include <vector>
 
 using namespace std;
 using namespace llvm;
@@ -15,31 +11,8 @@ using namespace expr;
 
 
 IRState::IRState()
+	: TheModule("code", TheContext), builder(TheContext)
 {
-	builder = llvm::make_unique<IRBuilder<> >(TheContext);
-	TheModule = llvm::make_unique<Module>("code", TheContext);
-}
-
-const std::vector<unique_ptr<string> > *IRState::getErrorMsgList()
-{
-	return &errorMstList;
-}
-
-// エラーフラグを真にする
-void IRState::setError()
-{
-	errorFlag = true;
-}
-
-void IRState::setError(const char *msg)
-{
-	setError(make_unique<string>(msg));
-}
-
-void IRState::setError(unique_ptr<string> msg)
-{
-	setError();
-	errorMstList.push_back(move(msg));
 }
 
 LLVMContext &IRState::getContext()
@@ -49,12 +22,12 @@ LLVMContext &IRState::getContext()
 
 Module &IRState::getModule()
 {
-	return *TheModule;
+	return TheModule;
 }
 
 IRBuilder<> &IRState::getBuilder()
 {
-	return *builder;
+	return builder;
 }
 
 // 文字列のグローバル変数を作成して返す
@@ -97,7 +70,7 @@ GlobalVariable *IRState::createGlobalString(const char *str)
 	const auto strValue = ConstantDataArray::getString(TheContext, str);
 	const auto strType = strValue->getType();
 	const auto gvar = new GlobalVariable(
-			*TheModule,
+			TheModule,
 			strType,
 			true,
 			GlobalValue::PrivateLinkage,
@@ -116,23 +89,53 @@ GlobalVariable *IRState::createGlobalString(const char *str)
 // 2. グローバルに対象の変数があるか
 Value *IRState::getVariable(const string *name)
 {
-
 	Value *alloca = nullptr;
 
 	// 現在の関数のスコープでの検索
 	if (!alloca) {  // 変数の名前空間を制限するため、無駄なif文を付けている
-		const auto func = builder->GetInsertBlock()->getParent();
+		const auto func = builder.GetInsertBlock()->getParent();
 		const auto vs_table = func->getValueSymbolTable();
 		alloca = vs_table->lookup(*name);
 	}
 
 	// グローバル領域での検索
 	if (!alloca) {
-		const auto &vs_table = TheModule->getValueSymbolTable();
+		const auto &vs_table = TheModule.getValueSymbolTable();
 		alloca = vs_table.lookup(*name);
 	}
 
 	return alloca;
+}
+
+// エラーフラグを真にする
+void IRState::setError()
+{
+	errorFlag = true;
+}
+
+// エラーメッセージを設定する
+void IRState::setError(const char *msg)
+{
+	setError(make_unique<string>(msg));
+}
+
+// エラーメッセージを設定する
+void IRState::setError(unique_ptr<string> msg)
+{
+	setError();
+	errorMstList.push_back(move(msg));
+}
+
+// IR生成中にエラーが発生していた場合、真
+bool IRState::isError()
+{
+	return errorFlag;
+}
+
+// エラーメッセージを返す
+const std::vector<unique_ptr<string> > *IRState::getErrorMsgList()
+{
+	return &errorMstList;
 }
 
 void IRState::pushBlock(BasicBlock *block)
@@ -149,16 +152,5 @@ BasicBlock *IRState::popBlock()
 	blockStack.pop_back();
 
 	return block;
-}
-
-// IR生成中にエラーが発生していた場合、真
-bool IRState::isError()
-{
-	return errorFlag;
-}
-
-unique_ptr<Module> IRState::moveModule()
-{
-	return move(TheModule);
 }
 

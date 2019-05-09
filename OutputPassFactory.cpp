@@ -6,7 +6,6 @@
 #include "OutputPass.h"
 #include "BitcodeOutputPass.h"
 #include "NativeOutputPass.h"
-#include <memory>
 
 using namespace std;
 using namespace llvm;

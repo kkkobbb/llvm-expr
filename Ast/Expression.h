@@ -3,13 +3,10 @@
 
 #include "Node.h"
 #include "NodeList.h"
-#include "Const.h"
-#include <llvm/IR/Module.h>
-#include <llvm/IR/IRBuilder.h>
+#include "ValueVariable.h"
+#include <llvm/IR/Value.h>
 #include <iostream>
-#include <string>
 #include <memory>
-#include <vector>
 
 
 namespace expr {

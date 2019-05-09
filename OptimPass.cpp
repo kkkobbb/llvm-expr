@@ -2,7 +2,6 @@
 // LLVM IRを最適化するためのクラス
 //
 #include "OptimPass.h"
-#include <llvm/IR/Module.h>
 #include <llvm/IR/LegacyPassManager.h>
 #include <llvm/Transforms/Scalar.h>
 #include <memory>
