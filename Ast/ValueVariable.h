@@ -1,8 +1,7 @@
-#ifndef CONSTANT_H
-#define CONSTANT_H
+#ifndef VALUEVARIABLE_H
+#define VALUEVARIABLE_H
 
 #include "Node.h"
-#include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
 #include <iostream>
 #include <string>
@@ -12,26 +11,6 @@
 
 namespace expr {
 	class IRState;
-
-	// 定数 整数
-	class ConstInt: public Node
-	{
-		int num;
-
-	public:
-		ConstInt(int num);
-		virtual llvm::Value *getValue(IRState &irs) override;
-	};
-
-	// 定数 文字列
-	class ConstString: public Node
-	{
-		std::unique_ptr<std::string> str;
-
-	public:
-		ConstString(std::string *str);
-		virtual llvm::Value *getValue(IRState &irs) override;
-	};
 
 	// 識別子
 	class Identifier: public Node
@@ -63,5 +42,5 @@ namespace expr {
 	};
 }
 
-#endif  // CONSTANT_H
+#endif  // VALUEVARIABLE_H
 
