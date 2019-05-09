@@ -7,9 +7,6 @@
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/IR/IRBuilder.h>
-#include <iostream>
-#include <string>
-#include <memory>
 
 using namespace std;
 using namespace llvm;

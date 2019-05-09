@@ -2,6 +2,7 @@
 #define VALUECONST_H
 
 #include "Node.h"
+#include <llvm/IR/Value.h>
 #include <string>
 #include <memory>
 

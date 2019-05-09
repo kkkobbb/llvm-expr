@@ -2,7 +2,8 @@
 #define VALUEVARIABLE_H
 
 #include "Node.h"
-#include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/Value.h>
+#include <llvm/IR/Type.h>
 #include <iostream>
 #include <string>
 #include <memory>
@@ -31,14 +32,14 @@ namespace expr {
 	class IdentifierList: public Node
 	{
 	protected:
-		std::vector<std::unique_ptr<Identifier>> children;
+		std::vector<std::unique_ptr<Identifier> > children;
 
 	public:
 		IdentifierList(Identifier *n);
 		void add(Identifier *n);
 		virtual void print_ast(std::ostream &dout, int indent = 0) override;
-		std::unique_ptr<std::vector<llvm::Type*>> getTypes(IRState &irs);
-		std::unique_ptr<std::vector<const std::string*>> getNames();
+		std::unique_ptr<std::vector<llvm::Type*> > getTypes(IRState &irs);
+		std::unique_ptr<std::vector<const std::string*> > getNames();
 	};
 }
 
