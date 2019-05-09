@@ -1,7 +1,6 @@
 #ifndef IRGENERATOR_H
 #define IRGENERATOR_H
 
-#include "IRState.h"
 #include "Ast/Node.h"
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
@@ -15,7 +14,6 @@ namespace expr {
 	class IRGenerator
 	{
 		std::unique_ptr<llvm::Module> TheModule = nullptr;
-		IRState irs;
 
 	public:
 		bool generate(Node &ast_root);
