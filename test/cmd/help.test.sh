@@ -37,11 +37,9 @@ testcase()
 		result=1
 	fi
 
-	# テスト失敗時出力を表示する
-	if [ ${result} -ne 0 ]; then
-		cat ${out}
-		cat ${err}
-	fi
+	# 出力を表示する
+	cat ${out}
+	cat ${err}
 
 	return ${result}
 }
@@ -49,5 +47,5 @@ testcase()
 
 ######################### 実行 #########################
 
-run_test
+run_test testcase
 

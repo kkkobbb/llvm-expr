@@ -37,6 +37,20 @@ test "${EXEFILE}" = "$(basename ${EXEFILE})" && EXEFILE="./${EXEFILE}"
 test -f ${EXEFILE} || { echo "not found '${EXEFILE}'"; exit 1; }
 
 
+print_result()
+{
+	result=$1
+	name=$2
+	msg=$3
+
+	if [ "${result}" -eq 0 ]; then
+		printf "${COLOR_SUCCESS}Success:${COLOR_RESET}"
+	else
+		printf "${COLOR_FAILURE}Failure: (${msg})${COLOR_RESET}"
+	fi
+	echo "  [${name}]"
+}
+
 run_exefile()
 {
 	${EXEFILE} -f -filetype=bc $* ${TESTOPT}
@@ -62,15 +76,15 @@ for testcase in ${testcaselist}; do
 	# (標準エラー出力に出力があったか確認する、内容は確認しない)
 	if [ -n "${expected_output_stderr}" ]; then
 		test_num=$((test_num + 1))
+		result=1
 		if [ "${err_size}" -ne 0 ]; then
 			success_num=$((success_num + 1))
-			printf "${COLOR_SUCCESS}Success:  (output_stderr)${COLOR_RESET}"
 			# 標準エラー出力に出力しない
 			err_size=0
-		else
-			printf "${COLOR_FAILURE}Failure:  (no output_stderr)${COLOR_RESET}"
+			result=0
 		fi
-		echo "  [$(basename ${testcase})]"
+		name="$(basename ${testcase}) (output_stderr)"
+		print_result ${result} "${name}"
 	fi
 
 	# 標準エラー出力に出力があれば表示する
@@ -82,25 +96,31 @@ for testcase in ${testcaselist}; do
 	# 戻り値のテスト
 	if [ -n "${expected_r}" ]; then
 		test_num=$((test_num + 1))
+		result=1
+		msg=""
 		if [ ${result_ret} -eq ${expected_r} ]; then
 			success_num=$((success_num + 1))
-			printf "${COLOR_SUCCESS}Success:  (return)${COLOR_RESET}"
+			result=0
 		else
-			printf "${COLOR_FAILURE}Failure:  (return ${result_ret}:${expected_r})${COLOR_RESET}"
+			msg="${result_ret}:${expected_r}"
 		fi
-		echo "  [$(basename ${testcase})]"
+		name="$(basename ${testcase}) (return)"
+		print_result ${result} "${name}" "${msg}"
 	fi
 
 	# 標準出力への出力のテスト
 	if [ -n "${expected_p}" ]; then
 		test_num=$((test_num + 1))
+		result=1
+		msg=""
 		if [ "${result_pn}" = "${expected_p}" ]; then
 			success_num=$((success_num + 1))
-			printf "${COLOR_SUCCESS}Success:  (printn)${COLOR_RESET}"
+			result=0
 		else
-			printf "${COLOR_FAILURE}Failure:  (printn\n${result_pn}\n:\n${expected_p}\n)${COLOR_RESET}"
+			msg="\n${result_pn}\n<--- result : expected --->\n${expected_p}\n"
 		fi
-		echo "  [$(basename ${testcase})]"
+		name="$(basename ${testcase}) (printn)"
+		print_result ${result} "${name}" "${msg}"
 	fi
 done
 
