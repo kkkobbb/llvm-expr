@@ -88,6 +88,11 @@ int main(int argc, char *argv[])
 	IRGenerator irGen;
 	const bool irGenerated = irGen.generate(*ast.get());
 	const auto m = irGen.get();
+	// 入力ファイル名を出力用に設定
+	const auto ifname = llvm::sys::path::filename(InputFilename);
+	m->setSourceFileName(ifname);
+
+	// 生成に失敗した場合、終了
 	if (!irGenerated) {
 		if (!PrintLlvm)
 			return 1;
@@ -97,10 +102,6 @@ int main(int argc, char *argv[])
 		llvm::outs() << "\n\n";
 		return 1;
 	}
-
-	// 入力ファイル名を出力用に設定
-	const auto ifname = llvm::sys::path::filename(InputFilename);
-	m->setSourceFileName(ifname);
 
 	if (Optim) {
 		// 最適化
