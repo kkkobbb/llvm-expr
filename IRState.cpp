@@ -2,12 +2,8 @@
 // IR出力時の状態保持
 //
 #include "IRState.h"
-#include <llvm/IR/Module.h>
-#include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/ValueSymbolTable.h>
 #include <llvm/IR/GlobalVariable.h>
-#include <memory>
-#include <vector>
 
 using namespace std;
 using namespace llvm;

@@ -3,11 +3,8 @@
 
 #include "Ast/Node.h"
 #include "IRState.h"
-#include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
-#include <llvm/IR/GlobalVariable.h>
 #include <memory>
-#include <vector>
 
 
 namespace expr {

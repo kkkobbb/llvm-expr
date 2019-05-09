@@ -2,11 +2,9 @@
 // ビットコード出力
 //
 #include "BitcodeOutputPass.h"
-#include <llvm/IR/Module.h>
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Bitcode/BitcodeWriter.h>
-#include <memory>
 
 using namespace std;
 using namespace llvm;

@@ -2,11 +2,8 @@
 // 構文木を生成するためのクラス
 //
 #include "AstGenerator.h"
-#include "Ast/Node.h"
 #include "Lexer.h"
 #include "Parser.hh"
-#include <fstream>
-#include <memory>
 
 using namespace std;
 using namespace expr;

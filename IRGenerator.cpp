@@ -2,14 +2,10 @@
 // LLVM IRを生成するためのクラス
 //
 #include "IRGenerator.h"
-#include "IRState.h"
-#include "Ast/Node.h"
-#include <llvm/IR/Module.h>
+#include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Verifier.h>
-#include <llvm/IR/GlobalVariable.h>
 #include <iostream>
-#include <fstream>
 #include <memory>
 
 using namespace std;
