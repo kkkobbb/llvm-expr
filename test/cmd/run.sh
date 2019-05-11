@@ -68,7 +68,7 @@ for testcase in ${testcaselist}; do
 	if [ "${ret}" -eq 0 ]; then
 		printf "${COLOR_SUCCESS}Success:${COLOR_RESET}"
 	else
-		cat ${out} ${err}
+		cat ${out} ${err} ${msg}
 		printf "${COLOR_FAILURE}Failure:${COLOR_RESET}"
 	fi
 
