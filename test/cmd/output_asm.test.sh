@@ -19,13 +19,13 @@ testcase()
 
 	# 戻り値が0でない場合、失敗
 	if [ "${ret}" -ne 0 ]; then
-		echo "bad return (${ret})"
+		error_msg "bad return (${ret})"
 		return 1
 	fi
 
 	# ファイルを生成していない場合、失敗
 	if [ ! -f "a.s" ]; then
-		echo "no asm file"
+		error_msg "no asm file"
 		return 1
 	fi
 
@@ -36,7 +36,7 @@ testcase()
 
 	# 生成ファイルをコンパイルしてできた実行ファイルの戻り値
 	if [ "${output_ret}" -ne 12 ]; then
-		echo "bad generated exefile return (${output_ret})"
+		error_msg "bad generated exefile return (${output_ret})"
 		return 1
 	fi
 
