@@ -18,22 +18,23 @@ testcase()
 	# 標準エラー出力 取得用
 	err="test_stderr"
 
-	${TEST_EXE} -help > ${out} 2> ${err}
+	${TEST_EXE} --help > ${out} 2> ${err}
 	ret=$?
 
 	result=0
 	# 戻り値が0であること
 	if [ ${ret} -ne 0 ]; then
-		echo "bad return (${ret})"
+		error_msg "bad return (${ret})"
 		result=1
 	fi
 	# 標準出力に出力されていること
 	if [ -z "$(cat ${out})" ]; then
-		echo "no help output"
+		error_msg "no help output"
 		result=1
 	fi
 	# 標準エラー出力に出力されていないこと
 	if [ -n "$(cat ${err})" ]; then
+		error_msg "output stderr"
 		result=1
 	fi
 

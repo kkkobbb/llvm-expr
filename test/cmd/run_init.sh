@@ -34,33 +34,34 @@ run_test() {
 	# テスト実行時に実行ファイルを参照する場合の名前
 	TEST_EXE="./$(basename ${REAL_EXE})"
 
-	# 出力の保存用
-	OUTPUT_STDOUT=$(mktemp)
-	OUTPUT_STDERR=$(mktemp)
-
 	# テスト用のディレクトリに移動
 	base_dir=$(pwd)
 	cd ${RUN_DIR}
 
 	# 実行
 	# 環境変数を隠すため、別プロセスで実行
-	(unset REAL_EXE RUN_DIR OUTPUT_STDOUT OUTPUT_STDERR base_dir ; \
-		${testcase} ; exit $? ) > ${OUTPUT_STDOUT} 2> ${OUTPUT_STDERR}
+	(unset REAL_EXE RUN_DIR base_dir ; \
+		${testcase} ; exit $? )
 	ret=$?
-
-	# エラー時に出力を表示する
-	if [ "${ret}" -ne 0 ]; then
-		cat ${OUTPUT_STDOUT}
-		cat ${OUTPUT_STDERR}
-	fi
 
 	# 元のディレクトリに戻る
 	cd ${base_dir}
 
 	# テスト用のディレクトリの削除
 	rm -rf ${RUN_DIR}
-	rm -f ${OUTPUT_STDOUT} ${OUTPUT_STDERR}
 
 	return ${ret}
+}
+
+# エラー時のメッセージ出力
+#
+# ファイルディスクリプタ3番がオープンしていればそこへ出力する
+# xml用に'<'、'>'はそれぞれ'('、')'に変換する
+error_msg() {
+	if [ -f /dev/fd/3 ]; then
+		printf "Error: %s;\n" "$1" | tr '<>' '()' >&3
+	else
+		printf "Error: %s;\n" "$1" | tr '<>' '()'
+	fi
 }
 

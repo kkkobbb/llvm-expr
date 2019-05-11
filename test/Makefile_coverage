@@ -1,0 +1,85 @@
+# カバレッジ計測用
+#
+# * ビルド、テスト、オブジェクトファイル単位の集計を行う
+#     * `make -f Makefile_coverage`
+# * gcovrコマンドがあれば全体の集計を行ってhtmlで出力も可能
+#     * `mkdir -p _html && gcovr --html --html-detail -o _html/cov.html`
+#         * _html/以下にhtmlファイルを生成する
+CXX := g++
+LLVM-CONFIG := llvm-config
+CXXFLAGS := -g -I. `$(LLVM-CONFIG) --cxxflags` -O0 -fprofile-arcs -ftest-coverage
+#LDLIBS := `$(LLVM-CONFIG) --ldflags --system-libs --libs core` -lfl -ly -Xlinker --allow-shlib-undefined
+LDLIBS := `$(LLVM-CONFIG) --ldflags --system-libs --libs core` -lgcov
+
+DEST := exparrc-cov
+SRC  := main.cpp \
+        $(wildcard Ast/*.cpp) \
+        AstGenerator.cpp IRGenerator.cpp IRState.cpp OptimPass.cpp \
+        OutputPassFactory.cpp BitcodeOutputPass.cpp NativeOutputPass.cpp
+
+OBJS := Lexer.o Parser.o $(patsubst %.cpp,%.o,$(SRC))
+
+
+all: $(DEST) test cov
+
+$(DEST): $(OBJS)
+	$(CXX) -Wall -o $@ $^ $(LDLIBS)
+
+# bisonが生成したファイルは-fno-exceptionsが付いているとコンパイルに失敗する
+Parser.o: Parser.cc
+	$(CXX) $(CXXFLAGS) -fexceptions -c -o $@ $<
+
+%.cc: %.l
+	flex -o $@ $^
+%.cc %.hh: %.y
+	bison -v -o $(basename $^).cc $^
+
+
+clean:
+	$(RM) $(OBJS) $(DEST)
+	$(RM) Lexer.cc
+	$(RM) Parser.cc Parser.hh stack.hh location.hh position.hh Parser.output
+	$(RM) *.gcda *.gcno Ast/*.gcda Ast/*.gcno
+
+
+test: $(DEST)
+	test/run.sh $^
+
+
+cov:
+	gcov -r *.o
+	gcov -r Ast/*.o -o Ast
+
+clean_cov:
+	$(RM) *.gcov Ast/*.gcov
+
+
+.PHONY: all clean test cov clean_cov
+.PRECIOUS: %.cc %.hh
+
+
+
+distclean: clean clean_cov
+
+### ヘッダ依存関係 自動解決 ###
+DEPEND_DIR := _depend
+DEPENDS := $(patsubst %.o,$(DEPEND_DIR)/%.d,$(OBJS))
+
+$(DEPEND_DIR)/%.d: %.cpp
+	@install -d $(dir $@)
+	$(CXX) -MM -MG -MF $@ -MT $(patsubst %.cpp,%.o,$<) $<
+
+$(DEPEND_DIR)/%.d: %.cc
+	@install -d $(dir $@)
+	$(CXX) -MM -MG -MF $@ -MT $(patsubst %.cc,%.o,$<) $<
+
+.PHONY: cleandep
+cleandep:
+	$(RM) -r $(DEPEND_DIR)
+distclean: cleandep
+
+ifneq "$(findstring clean, $(MAKECMDGOALS))" "clean"
+  -include $(DEPENDS)
+endif
+
+
