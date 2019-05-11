@@ -14,8 +14,12 @@ TESTDIR="$(dirname $0)"
 # テストとして実行するコマンド
 testcase()
 {
+	# 試験用ソースコード生成
+	srcfname="test.ea"
+	printf "38;" > ${srcfname}
+
 	# 実行
-	printf "12;\n" | ${TEST_EXE} /dev/stdin
+	${TEST_EXE} ${srcfname}
 	ret=$?
 
 	# 戻り値が0出ない場合、失敗
@@ -36,7 +40,7 @@ testcase()
 	output_ret=$?
 
 	# 生成ファイルをコンパイルしてできた実行ファイルの戻り値
-	if [ "${output_ret}" -ne 12 ]; then
+	if [ "${output_ret}" -ne 38 ]; then
 		error_msg "bad generated exefile return (${output_ret})"
 		return 1
 	fi

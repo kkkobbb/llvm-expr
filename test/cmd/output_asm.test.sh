@@ -13,8 +13,12 @@ TESTDIR="$(dirname $0)"
 # テストとして実行するコマンド
 testcase()
 {
+	# 試験用ソースコード生成
+	srcfname="test.ea"
+	printf "12;" > ${srcfname}
+
 	# 実行
-	printf "12;\n" | ${TEST_EXE} -filetype=asm /dev/stdin
+	${TEST_EXE} -filetype=asm ${srcfname}
 	ret=$?
 
 	# 戻り値が0でない場合、失敗
