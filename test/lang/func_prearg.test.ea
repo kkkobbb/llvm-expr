@@ -1,0 +1,22 @@
+# 関数引数前置呼び出し
+
+decl fnc printf:int(:string, ...);
+
+fnc func:int(a:int, b:int) {
+	c <- a + b + 1;
+	return c;
+};
+
+fnc funcv:int() {
+	return 2;
+};
+
+##printn 6
+printf("%d\n", .(2, 3)func);
+
+##printn 2
+printf("%d\n", .()funcv);
+
+##return 0
+0;
+
