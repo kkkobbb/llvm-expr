@@ -484,6 +484,10 @@ primary_expression
         { $$ = new ExpressionFunc((Identifier *)$1, (NodeList *)$3); }
     | identifier '(' ')'
         { $$ = new ExpressionFunc((Identifier *)$1, nullptr); }
+    | '.' '(' mixed_expression_list ')' identifier
+        { $$ = new ExpressionFunc((Identifier *)$5, (NodeList *)$3); }
+    | '.' '(' ')' identifier
+        { $$ = new ExpressionFunc((Identifier *)$4, nullptr); }
     ;
 
 /* 定数 */
