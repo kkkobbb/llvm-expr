@@ -1,8 +1,0 @@
-# エラーの強制発生
-
-1 + 2;
-
-#compileerr;
-compileerr "string test\tstring";
-
-

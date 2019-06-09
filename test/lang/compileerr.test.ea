@@ -1,0 +1,11 @@
+# コンパイル時のエラー強制発生
+
+1 + 2;
+
+# コンパイル時にここでエラーとなる
+##output_stderr
+compileerr "string test\tstring";
+
+# lliでエラーになるので戻り値は0にならない
+##return 255
+
