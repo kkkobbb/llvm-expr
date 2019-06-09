@@ -20,21 +20,15 @@
 #     * `##return 0`       戻り値の期待値
 #     * `##printn aaa`     標準出力への出力の期待値(改行付き)
 #     * `##output_stderr`  標準エラー出力への出力があること (内容は問わない)
-EXEFILE="./exparrc"
-TESTDIR="$(dirname $0)"
+DEFAULT_EXE="./exparrc"
+TESTDIR="$(cd $(dirname $0); pwd)"
+. ${TESTDIR}/../run_init.sh
+
 TESTEXT="test.ea"
 
 COLOR_SUCCESS="\e[32m"
 COLOR_FAILURE="\e[31m"
 COLOR_RESET="\e[m"
-
-
-# 実行ファイルの指定
-test $# -eq 1 && EXEFILE="$1"
-# ./付きかの確認
-test "${EXEFILE}" = "$(basename ${EXEFILE})" && EXEFILE="./${EXEFILE}"
-# 実行ファイルの存在確認
-test -f ${EXEFILE} || { echo "not found '${EXEFILE}'"; exit 1; }
 
 
 print_result()
@@ -51,23 +45,16 @@ print_result()
 	echo "  [${name}]"
 }
 
-run_exefile()
+testcase_lang()
 {
-	${EXEFILE} -f -filetype=bc $* ${TESTOPT}
-}
+	err="output_err"
+	testfile=$1
+	expected_output_stderr=$(grep "^##output_stderr" ${testfile})
+	expected_r=$(grep "^\s*##return " ${testfile} | sed "s/^\s*##return //")
+	expected_p=$(grep "^\s*##printn " ${testfile} | sed "s/^\s*##printn //")
 
-# 標準エラー出力取得用の一時ファイル生成
-err=$(mktemp)
-
-testcaselist=$(ls ${TESTDIR}/*.${TESTEXT})
-test_num=0
-success_num=0
-for testcase in ${testcaselist}; do
-	expected_output_stderr=$(grep "^##output_stderr" ${testcase})
-	expected_r=$(grep "^\s*##return " ${testcase} | sed "s/^\s*##return //")
-	expected_p=$(grep "^\s*##printn " ${testcase} | sed "s/^\s*##printn //")
-
-	result_pn=$(run_exefile ${testcase} 2> ${err} | lli -force-interpreter 2> ${err})
+	result_pn=$(${TEST_EXE} -f -filetype=bc ${testfile} ${TESTOPT} 2> ${err} | \
+		lli -force-interpreter 2>> ${err})
 	result_ret=$?
 
 	err_size=$(cat ${err} | wc -c)
@@ -83,7 +70,7 @@ for testcase in ${testcaselist}; do
 			err_size=0
 			result=0
 		fi
-		name="$(basename ${testcase}) (output_stderr)"
+		name="$(basename ${testfile}) (output_stderr)"
 		print_result ${result} "${name}"
 	fi
 
@@ -104,7 +91,7 @@ for testcase in ${testcaselist}; do
 		else
 			msg="${result_ret}:${expected_r}"
 		fi
-		name="$(basename ${testcase}) (return)"
+		name="$(basename ${testfile}) (return)"
 		print_result ${result} "${name}" "${msg}"
 	fi
 
@@ -119,13 +106,24 @@ for testcase in ${testcaselist}; do
 		else
 			msg="\n${result_pn}\n<--- result : expected --->\n${expected_p}\n"
 		fi
-		name="$(basename ${testcase}) (printn)"
+		name="$(basename ${testfile}) (printn)"
 		print_result ${result} "${name}" "${msg}"
 	fi
-done
 
-# 一時ファイルの削除
-rm -f ${err}
+	return ${result}
+}
+
+testcaselist=$(ls ${TESTDIR}/*.${TESTEXT})
+test_num=0
+success_num=0
+for testcase in ${testcaselist}; do
+	run_test testcase_lang ${testcase}
+	ret=$?
+	test_num=$((test_num + 1))
+	if [ "${ret}" -eq 0 ]; then
+		success_num=$((success_num + 1))
+	fi
+done
 
 # 全体の成否
 all_result=0
@@ -138,7 +136,7 @@ color="${COLOR_SUCCESS}"
 if [ "${all_result}" -ne 0 ]; then
 	color="${COLOR_FAILURE}"
 fi
-printf "\n${color}${success_num} / ${test_num}${COLOR_RESET}\n"
+printf "\n${color}${success_num} / ${test_num}${COLOR_RESET} (files)\n"
 
 exit ${all_result}
 

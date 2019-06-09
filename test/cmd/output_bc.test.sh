@@ -6,8 +6,8 @@
 
 ######################### 準備 #########################
 DEFAULT_EXE="./exparrc"
-TESTDIR="$(dirname $0)"
-. ${TESTDIR}/run_init.sh
+TESTDIR="$(cd $(dirname $0) ; pwd)"
+. ${TESTDIR}/../run_init.sh
 
 
 # テストとして実行するコマンド
