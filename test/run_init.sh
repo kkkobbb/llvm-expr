@@ -7,6 +7,7 @@
 #
 # DEFAULT_EXE: テスト用の実行ファイルのデフォルト
 # run_test $1: テストコード
+#     テスト成功時0、失敗時非0を返す
 #     テストするコマンドは ${TEST_EXE} で指定すること
 #     (実行時のディレクトリにテストしたいコマンドがコピーされている)
 #     実行時のディレクトリにはテスト用の実行ファイルのみ存在する
@@ -28,6 +29,7 @@ run_test() {
 		return 255
 	fi
 	testcase=$1
+	shift ; testcase_arg="$@"
 	# テスト用のディレクトリ生成
 	RUN_DIR=$(mktemp -d)
 	cp ${REAL_EXE} ${RUN_DIR}
@@ -41,7 +43,7 @@ run_test() {
 	# 実行
 	# 環境変数を隠すため、別プロセスで実行
 	(unset REAL_EXE RUN_DIR base_dir ; \
-		${testcase} ; exit $? )
+		${testcase} ${testcase_arg} ; exit $? )
 	ret=$?
 
 	# 元のディレクトリに戻る
