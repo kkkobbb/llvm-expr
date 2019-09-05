@@ -69,6 +69,7 @@ EscSq     ({EscSq1}|{EscSqX})
 "return"      { return token_type::RE_RETURN; }
 "break"       { return token_type::RE_BREAK; }
 "continue"    { return token_type::RE_CONTINUE; }
+"through"     { return token_type::RE_THROUGH; }
 "compileerr"  { return token_type::RE_COMPILEERR; }
 "runtimeerr"  { return token_type::RE_RUNTIMEERR; }
 "..."         { return token_type::RE_VARARG; }
