@@ -78,6 +78,7 @@ std::unique_ptr<MY_NAMESPACE::Node> get_ast();
 %token           RE_FNC
 %token           RE_DECL
 %token           RE_RETURN RE_BREAK RE_CONTINUE
+%token           RE_THROUGH
 %token           RE_COMPILEERR RE_RUNTIMEERR
 %token           RE_VARARG
 
