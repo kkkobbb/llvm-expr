@@ -3,7 +3,7 @@
 //
 #include "OptimPass.h"
 #include <llvm/IR/LegacyPassManager.h>
-#include <llvm/Transforms/Scalar.h>
+#include <llvm/Transforms/Utils.h>
 #include <memory>
 
 using namespace std;

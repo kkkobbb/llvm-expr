@@ -1,5 +1,5 @@
 CXX := g++
-LLVM-CONFIG := llvm-config
+LLVM-CONFIG := llvm-config-8
 CXXFLAGS := -g -I. `$(LLVM-CONFIG) --cxxflags`
 #LDLIBS := `$(LLVM-CONFIG) --ldflags --system-libs --libs core` -lfl -ly -Xlinker --allow-shlib-undefined
 LDLIBS := `$(LLVM-CONFIG) --ldflags --system-libs --libs core`

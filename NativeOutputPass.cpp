@@ -97,7 +97,7 @@ bool NativeOutputPass::run(Module &module, string &fname)
 
 	legacy::PassManager pass;
 
-	if (targetMachine->addPassesToEmitFile(pass, outfile, fileType)) {
+	if (targetMachine->addPassesToEmitFile(pass, outfile, nullptr, fileType)) {
 		errs() << "targetMachine can't emit a file of this type";
 		return false;
 	}
