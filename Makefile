@@ -35,7 +35,7 @@ clean:
 
 
 test: $(DEST)
-	test/run.sh $^
+	tests/run.sh $^
 
 
 .PHONY: all clean test
