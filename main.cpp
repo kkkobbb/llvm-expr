@@ -49,7 +49,7 @@ namespace {
 			llvm::cl::desc("Choose a file type"),
 			llvm::cl::init(FileTypeKind::asm_),
 			llvm::cl::values(
-				clEnumValN(FileTypeKind::asm_, "asm", "Emit an assembly ('.s') file"),
+				clEnumValN(FileTypeKind::asm_, "asm", "Emit an assembly ('.s') file (default)"),
 				clEnumValN(FileTypeKind::obj, "obj", "Emit a native object ('.o') file"),
 				clEnumValN(FileTypeKind::bc, "bc", "Emit a llvm bitcode ('.bc') file")),
 			llvm::cl::cat(CompilerCategory));

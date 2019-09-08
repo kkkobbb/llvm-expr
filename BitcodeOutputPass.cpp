@@ -32,7 +32,7 @@ bool BitcodeOutputPass::run(Module &module, string &fname)
 			outfname,
 			errorInfo,
 			sys::fs::OpenFlags::F_None);
-	WriteBitcodeToFile(&module, outfile);
+	WriteBitcodeToFile(module, outfile);
 	outfile.flush();
 
 	return true;

@@ -10,12 +10,8 @@
 ## 準備
 * ビルドに使用するコマンドのインストール
     * `sudo apt install make g++ flex bison`
-* Ubuntu 16.04
-    * llvm 3.8を使う場合 `sudo apt install llvm zlib1g-dev`
-        * (ビルドオプションで`-lz`が指定されるためzlibも必要)
-    * llvm 5.0を使う場合 `sudo apt install llvm-5.0`
 * Ubuntu 18.04
-    * `sudo apt install llvm` (llvm 6.0)
+    * `sudo apt install llvm-8-dev` (llvm 8.0)
 
 
 ## ビルド
@@ -24,14 +20,15 @@
 
 
 ## コマンド使い方 概要
-* `./exparrc srcfile.ea` で`a.s`ファイルが生成される
-    * 中身はアセンブリコード
+* `./exparrc src.ea` 
+    * `a.s`ファイルが生成される
+        * 中身はアセンブリコード
     * `gcc a.s` `clang a.s`で実行ファイル生成
 
-* `./exparrc -filetype=bc srcfile.ea`で`a.bc`ファイルが生成される
-    * 中身はllvmビットコード
-    * インタプリタ
-        * `lli a.bc` で実行可能
-    * コンパイル (picじゃないとgccでエラーになる)
-        * `llc -relocation-model=pic a.bc` で `a.s` が生成される
+* `./exparrc -filetype=bc srcfile.ea`
+    * `a.bc`ファイルが生成される
+        * 中身はllvmビットコード
+    * `lli a.bc` で実行可能
+    * `llc -relocation-model=pic a.bc` で `a.s` が生成される
+        * picじゃないとgccでエラーになる
 
