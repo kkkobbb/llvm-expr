@@ -9,9 +9,9 @@
 
 ## 準備
 * ビルドに使用するコマンドのインストール
-    * `sudo apt install make g++ flex bison`
-* Ubuntu 18.04
-    * `sudo apt install llvm-8-dev` (llvm 8.0)
+    * Ubuntu 18.04
+        * `sudo apt install make g++ flex bison`
+        * `sudo apt install llvm-8-dev` (llvm 8.0)
 
 
 ## ビルド
