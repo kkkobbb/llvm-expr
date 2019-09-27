@@ -12,10 +12,13 @@ fnc funcv:int() {
 };
 
 ##printn 6
-printf("%d\n", .(2, 3)func);
+printf("%d\n", ( , 2, 3)func);
+
+##printn 10
+printf("%d\n", (, 4)func(5));
 
 ##printn 2
-printf("%d\n", .()funcv);
+printf("%d\n", ()funcv);
 
 ##return 0
 0;
