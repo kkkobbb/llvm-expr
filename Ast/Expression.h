@@ -35,6 +35,7 @@ namespace expr {
 
 	public:
 		ExpressionFunc(Identifier *identifier, NodeList *argumentList);
+		ExpressionFunc(Identifier *identifier, NodeList *argumentListPre, NodeList *argumentList);
 		virtual llvm::Value *getValue(IRState &irs) override;
 	};
 

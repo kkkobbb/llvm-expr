@@ -58,8 +58,25 @@ void Expression::print_ast(ostream &dout, int indent)
 
 // ExpressionFunc
 
+// l1の末尾にl2のノードを結合する
+// l2は空になる
+static NodeList *concat(NodeList *l1, NodeList *l2) {
+	auto v1 = l1->getList();
+	auto v2 = l2->getList();
+	while(!v2->empty()) {
+		v1->push_back(move(v2->back()));
+		v2->pop_back();
+	}
+	return l1;
+}
+
 ExpressionFunc::ExpressionFunc(Identifier *identifier, NodeList *argumentList)
 	: Expression(identifier, argumentList), identifier(identifier), argumentList(argumentList)
+{}
+
+ExpressionFunc::ExpressionFunc(Identifier *identifier, NodeList *argumentListPre, NodeList *argumentList)
+	: Expression(identifier, argumentList), identifier(identifier),
+	argumentList(concat(argumentListPre, argumentList))
 {}
 
 // IR 生成

@@ -485,10 +485,12 @@ primary_expression
         { $$ = new ExpressionFunc((Identifier *)$1, (NodeList *)$3); }
     | identifier '(' ')'
         { $$ = new ExpressionFunc((Identifier *)$1, nullptr); }
-    | '.' '(' mixed_expression_list ')' identifier
+    | '(' ',' mixed_expression_list ')' identifier
         { $$ = new ExpressionFunc((Identifier *)$5, (NodeList *)$3); }
-    | '.' '(' ')' identifier
-        { $$ = new ExpressionFunc((Identifier *)$4, nullptr); }
+    | '(' ',' mixed_expression_list ')' identifier '(' mixed_expression_list ')'
+        { $$ = new ExpressionFunc((Identifier *)$5, (NodeList *)$3, (NodeList *)$7); }
+    | '(' ')' identifier
+        { $$ = new ExpressionFunc((Identifier *)$3, nullptr); }
     ;
 
 /* 定数 */
