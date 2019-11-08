@@ -2,7 +2,7 @@
 // ネイティブコード出力
 // assembly or objfile
 //
-#include "NativeOutputPass.h"
+#include "NativeOutput.h"
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/IR/LegacyPassManager.h>
@@ -24,12 +24,12 @@ namespace {
 }
 
 
-NativeOutputPass::NativeOutputPass(TargetMachine::CodeGenFileType fileType)
+NativeOutput::NativeOutput(TargetMachine::CodeGenFileType fileType)
 	: fileType(fileType), defaultName(getDefaultName(fileType))
 {}
 
 // ファイルタイプからデフォルトのファイル名を取得する
-string NativeOutputPass::getDefaultName(TargetMachine::CodeGenFileType fileType)
+string NativeOutput::getDefaultName(TargetMachine::CodeGenFileType fileType)
 {
 	string name = DEFAULT_FNAME;
 
@@ -54,7 +54,7 @@ string NativeOutputPass::getDefaultName(TargetMachine::CodeGenFileType fileType)
 // fnameがnullptrの場合、標準出力に出力する
 //
 // 生成に成功した場合、真を返す
-bool NativeOutputPass::run(Module &module, string &fname)
+bool NativeOutput::run(Module &module, string &fname)
 {
 	// Initialize the target registry etc.
 	InitializeAllTargetInfos();

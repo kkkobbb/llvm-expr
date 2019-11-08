@@ -1,7 +1,7 @@
 //
 // ビットコード出力
 //
-#include "BitcodeOutputPass.h"
+#include "BitcodeOutput.h"
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/Bitcode/BitcodeWriter.h>
@@ -20,7 +20,7 @@ namespace {
 // fnameがnullptrの場合、標準出力に出力する
 //
 // 生成に成功した場合、真を返す
-bool BitcodeOutputPass::run(Module &module, string &fname)
+bool BitcodeOutput::run(Module &module, string &fname)
 {
 	string outfname = DEFAULT_FNAME;
 	if (!fname.empty())

@@ -1,15 +1,15 @@
-#ifndef OPTIMPASS_H
-#define OPTIMPASS_H
+#ifndef OPTIMIZATION_H
+#define OPTIMIZATION_H
 
 #include <llvm/IR/Module.h>
 
 
 namespace expr {
-	class OptimPass {
+	class Optimization {
 	public:
 		bool run(llvm::Module &module);
 	};
 }
 
-#endif  // OPTIMPASS_H
+#endif  // OPTIMIZATION_H
 

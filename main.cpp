@@ -3,9 +3,9 @@
 //
 #include "AstGenerator.h"
 #include "IRGenerator.h"
-#include "OptimPass.h"
-#include "OutputPass.h"
-#include "OutputPassFactory.h"
+#include "Optimization.h"
+#include "OutputBase.h"
+#include "OutputFactory.h"
 #include "Ast/Node.h"
 #include <llvm/IR/Module.h>
 #include <llvm/Support/CommandLine.h>
@@ -105,8 +105,8 @@ int main(int argc, char *argv[])
 
 	if (Optim) {
 		// 最適化
-		OptimPass opp;
-		if (!opp.run(module))
+		Optimization opt;
+		if (!opt.run(module))
 			return 1;
 	}
 
@@ -126,8 +126,8 @@ int main(int argc, char *argv[])
 		ofname = STDOUT_FNAME;
 
 	// ファイル生成
-	OutputPassFactory opf;
-	const auto op = opf.create(FileType);
+	OutputFactory of;
+	const auto op = of.create(FileType);
 	if (op)
 		op->run(module, ofname);
 

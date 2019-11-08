@@ -1,7 +1,7 @@
 //
 // LLVM IRを最適化するためのクラス
 //
-#include "OptimPass.h"
+#include "Optimization.h"
 #include <llvm/IR/LegacyPassManager.h>
 #include <llvm/Transforms/Utils.h>
 #include <memory>
@@ -14,7 +14,7 @@ using namespace expr;
 // 最適化を行ったLLVM IRを生成する
 //
 // 生成に成功した場合、真を返す
-bool OptimPass::run(Module &module)
+bool Optimization::run(Module &module)
 {
 	legacy::PassManager pm;
 

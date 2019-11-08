@@ -1,16 +1,16 @@
-#ifndef OUTPUT_PASS_H
-#define OUTPUT_PASS_H
+#ifndef OUTPUT_BASE_H
+#define OUTPUT_BASE_H
 
 #include <llvm/IR/Module.h>
 #include <string>
 
 
 namespace expr {
-	class OutputPass {
+	class OutputBase {
 	public:
 		virtual bool run(llvm::Module &module, std::string &fname) = 0;
 	};
 }
 
-#endif  // OUTPUT_PASS_H
+#endif  // OUTPUT_BASE_H
 
