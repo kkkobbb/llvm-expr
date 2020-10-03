@@ -18,7 +18,7 @@ using namespace expr;
 Identifier::Identifier(string *name, Node *type)
 {
 	if (name == nullptr)
-		this->name = llvm::make_unique<string>("");
+		this->name = make_unique<string>("");
 	else
 		this->name = unique_ptr<string>(name);
 	dbg_msg = "\"" + *this->name + "\"";

@@ -18,11 +18,11 @@ unique_ptr<OutputBase> OutputFactory::create(FileTypeKind fileType) {
 	switch (fileType) {
 	case FileTypeKind::asm_:
 		// アセンブリ生成用
-		op = make_unique<NativeOutput>(TargetMachine::CGFT_AssemblyFile);
+		op = make_unique<NativeOutput>(CGFT_AssemblyFile);
 		break;
 	case FileTypeKind::obj:
 		// オブジェクトファイル生成用
-		op = make_unique<NativeOutput>(TargetMachine::CGFT_ObjectFile);
+		op = make_unique<NativeOutput>(CGFT_ObjectFile);
 		break;
 	case FileTypeKind::bc:
 		// llvm bitcode 生成用

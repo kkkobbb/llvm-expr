@@ -6,6 +6,7 @@
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Support/FileSystem.h>
 #include <llvm/IR/LegacyPassManager.h>
+#include <llvm/Support/CodeGen.h>
 #include <llvm/Support/TargetRegistry.h>
 #include <llvm/Support/TargetSelect.h>
 #include <llvm/Target/TargetMachine.h>
@@ -24,24 +25,24 @@ namespace {
 }
 
 
-NativeOutput::NativeOutput(TargetMachine::CodeGenFileType fileType)
+NativeOutput::NativeOutput(CodeGenFileType fileType)
 	: fileType(fileType), defaultName(getDefaultName(fileType))
 {}
 
 // ファイルタイプからデフォルトのファイル名を取得する
-string NativeOutput::getDefaultName(TargetMachine::CodeGenFileType fileType)
+string NativeOutput::getDefaultName(CodeGenFileType fileType)
 {
 	string name = DEFAULT_FNAME;
 
 	// デフォルトのファイル名
 	switch (fileType) {
-	case TargetMachine::CGFT_AssemblyFile:
+	case CGFT_AssemblyFile:
 		name = DEFAULT_FNAME_ASM;
 		break;
-	case TargetMachine::CGFT_ObjectFile:
+	case CGFT_ObjectFile:
 		name = DEFAULT_FNAME_OBJ;
 		break;
-	case TargetMachine::CGFT_Null:
+	case CGFT_Null:
 		// 何もしない
 		break;
 	}

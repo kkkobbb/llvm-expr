@@ -35,7 +35,7 @@ Value *ConstInt::getValue(IRState &irs)
 ConstString::ConstString(string *str)
 {
 	if (str == nullptr)
-		this->str = llvm::make_unique<string>("");
+		this->str = make_unique<string>("");
 	else
 		this->str = unique_ptr<string>(str);
 

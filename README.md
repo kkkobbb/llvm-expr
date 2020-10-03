@@ -9,9 +9,9 @@
 
 ## 準備
 * ビルドに使用するコマンドのインストール
-    * Ubuntu 18.04
+    * Ubuntu 20.04
         * `sudo apt install make g++ flex bison`
-        * `sudo apt install llvm-8-dev` (llvm 8.0)
+        * `sudo apt install llvm-dev` (llvm 10.0)
 
 
 ## ビルド

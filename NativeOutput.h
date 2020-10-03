@@ -9,15 +9,15 @@
 
 namespace expr {
 	class NativeOutput: public OutputBase {
-		const llvm::TargetMachine::CodeGenFileType fileType;
+		const llvm::CodeGenFileType fileType;
 		const std::string defaultName;
 
 	public:
-		NativeOutput(llvm::TargetMachine::CodeGenFileType fileType);
+		NativeOutput(llvm::CodeGenFileType fileType);
 		bool run(llvm::Module &module, std::string &fname) override;
 
 	private:
-		std::string getDefaultName(llvm::TargetMachine::CodeGenFileType fileType);
+		std::string getDefaultName(llvm::CodeGenFileType fileType);
 	};
 }
 

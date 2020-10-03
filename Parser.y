@@ -56,7 +56,7 @@ std::unique_ptr<MY_NAMESPACE::Node> get_ast();
 %skeleton "lalr1.cc"
 %locations
 %define api.namespace {MY_NAMESPACE}
-%define parser_class_name {Parser}
+%define api.parser.class {Parser}
 %parse-param {Lexer &lexer}
 
 
