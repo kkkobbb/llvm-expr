@@ -72,3 +72,10 @@
         * `llvm::MCAsmBackend::createDwoObjectWriter()`参照
         * `dwo` -> `DWARF object file`のこと?
 
+
+## LLVM 10.0
+* `llvm::make_unique()`は削除
+    * `std::make_unique()`を使用すること
+* `llvm::TargetMachine::CodeGenFileType`は`llvm::CodeGenFileType`に変更された
+* `llvm::GlobalObject::setAlginment(unsigned)`は非推奨
+    * `llvm::GlobalObject::setAlginment(MaybeAlign)`を使用すること
